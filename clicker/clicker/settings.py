@@ -28,7 +28,7 @@ SECRET_KEY = 'bd=468r0rche=5k$!r7mcu!mcta*j)_g38z)62!d863)s_b5-6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.28','127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['192.168.1.28','127.0.0.1', 'localhost', '79.191.21.143']
 SITE_URL = 'http://192.168.1.28:80'
 
 # Application definition

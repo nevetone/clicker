@@ -3,3 +3,35 @@
     padding:0;
     box-sizing: border-box;
 }
+
+.container-fluid{
+    background-color: #1A1A1D;
+}
+
+.main{
+    max-height: 100vh;
+    max-width: 100vw;
+}
+
+.hp-bar{
+    width: 93.5%;
+    position: relative;
+    left:50%;
+    transform: translateX(-50%); 
+    background-color: #4E4E50;
+}
+
+.progress-bar{
+    width: 63%;
+}
+
+.bg-dark2{
+    background-color: #1A1A1D;
+}
+.bg-dark3{
+    background-color: #6F2232;
+}
+
+.border-red{
+    border: solid #6F2232 3px;
+}
