@@ -54,9 +54,15 @@
 .mob{
     position:relative; 
     z-index:999;
-    bottom:-15vh; 
+    bottom:-30px; 
     height:150px; 
     width:150px;
     left:50%;
     transform: translateX(-50%); 
+}
+
+@media(min-height:901px){
+    .mob{
+        bottom:-150px; 
+    }
 }

@@ -9,3 +9,10 @@ def home(request):
     }
     return render(request, template, context)
     
+
+def test(request):
+    template="test.html"
+    context={
+        
+    }
+    return render(request, template, context)
