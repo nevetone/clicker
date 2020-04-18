@@ -20,7 +20,12 @@ $(document).ready(function(){
     var goldUpgradesAmount = 10;
     var actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
 
-
+    // army'x'_name
+    // army'x'_cost
+    // army'x'_count
+    // tam gdzie jest 'x' to jest np army1_name / zrobilem na sztywno ich 5
+    // tak mysle ze mozna by generowac html za pomca funckcji .html() 
+    // i tyle ile bedzie w tablicy rzeczy to mozna je z automatu wypisywac jak sie html wczyta
 
     function multiplierPrice(x, y, z){
         var currentPrice = y;
@@ -30,9 +35,9 @@ $(document).ready(function(){
             currentPrice = currentPrice*z;
         }
         return final.toFixed(0);
-    }; // jakbys srpawdzal to nie jest dokladne bo liczy w np . 143.2414124
+    }; // jakbys sprawdzal to nie jest dokladne, bo liczy np . 143.2414124 sie moza o multiplier i wychodzi jakies gowno 
     // i jak sie to mnozy to sie psuje i wychodzi wiecej niz kosztuje standardowo
-    // chyba ze masz jakis inny pomysl na to to smialo 
+    // chyba ze masz jakis inny pomysl na to, to smialo 
     var cost10 = multiplierPrice(10, actualPrice, priceMultipler);
     var cost25 = multiplierPrice(25, actualPrice, priceMultipler);
     

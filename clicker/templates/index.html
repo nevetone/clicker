@@ -39,6 +39,94 @@
                     <span class="text-warning"><i class="fas fa-coins"></i></span>
                 </button>
                 </div>
+                <br />
+                <div style="position: relative;">
+                <button class="btn btn-dark border" style="width: 50%;" id="army1">
+                    <span id="army1_name" >
+                        Łucznik
+                    </span>
+                    <div style="position: relative; left:50%; transform: translateX(-50%);">
+                    Cost:
+                    <span id="army1_cost" >
+                        100
+                    </span>
+                    <span class="text-warning border-right p-1" ><i class="fas fa-coins"></i></span> 
+                    Count:
+                    <span id="army1_count" >
+                        0
+                    </span>
+                    <span> <i class="fas fa-box-open"></i> </span>
+                    </div>
+                </button><br />
+                <button class="btn btn-dark border" style="width: 50%;" id="army2">
+                    <span id="army2_name" >
+                        Rycerz
+                    </span>
+                    <div style="position: relative; left:50%; transform: translateX(-50%);">
+                    Cost:
+                    <span id="army2_cost" >
+                        100
+                    </span>
+                    <span class="text-warning border-right p-1" ><i class="fas fa-coins"></i></span> 
+                    Count:
+                    <span id="army2_count" >
+                        0
+                    </span>
+                    <span> <i class="fas fa-box-open"></i> </span>
+                    </div>
+                </button><br />
+                <button class="btn btn-dark border" style="width: 50%;" id="army3">
+                    <span id="army3_name" >
+                        ArmyX
+                    </span>
+                    <div style="position: relative; left:50%; transform: translateX(-50%);">
+                    Cost:
+                    <span id="army3_cost" >
+                        100
+                    </span>
+                    <span class="text-warning border-right p-1" ><i class="fas fa-coins"></i></span> 
+                    Count:
+                    <span id="army3_count" >
+                        0
+                    </span>
+                    <span> <i class="fas fa-box-open"></i> </span>
+                    </div>
+                </button><br />
+                <button class="btn btn-dark border" style="width: 50%;" id="army4">
+                    <span id="army4_name" >
+                        ArmyY
+                    </span>
+                    <div style="position: relative; left:50%; transform: translateX(-50%);">
+                    Cost:
+                    <span id="army4_cost" >
+                        100
+                    </span>
+                    <span class="text-warning border-right p-1" ><i class="fas fa-coins"></i></span> 
+                    Count:
+                    <span id="army4_count" >
+                        0
+                    </span>
+                    <span> <i class="fas fa-box-open"></i> </span>
+                    </div>
+                </button><br />
+                <button class="btn btn-dark border" style="width: 50%;" id="army5">
+                    <span id="army5_name" >
+                        ArmyZ
+                    </span>
+                    <div style="position: relative; left:50%; transform: translateX(-50%);">
+                    Cost:
+                    <span id="army5_cost" >
+                        100
+                    </span>
+                    <span class="text-warning border-right p-1" ><i class="fas fa-coins"></i></span> 
+                    Count:
+                    <span id="army5_count" >
+                        0
+                    </span>
+                    <span> <i class="fas fa-box-open"></i> </span>
+                    </div>
+                </button><br />
+                </div>
                 </div>
             <div class="col-sm-4" style="padding:0; height: 100%; position: relative;">
                 <div style="position: relative; top:0; height: 500px;">
@@ -73,11 +161,10 @@
             <div class="text-light text-center"> 
                 <h3> Statystyki </h3> 
 
-                <table class="table-sm table-borderless table-dark border" style="position: relative; left: 50%; transform: translateX(-50%); ">
+                <table class="table table-borderless table-dark border" style="position: relative; left: 50%; transform: translateX(-50%); width:50%; ">
                     <tbody>
                       <tr>
-                        <td>Gold:</td>
-                        <td>
+                        <td colspan="2" class="border" style="font-size:25px;">
                             <div class="text-light" >
                             Gold: <span id="gold"></span> <span class="text-warning"><i class="fas fa-coins"></i></span>
                             </div>
@@ -85,11 +172,11 @@
                       </tr>
                       <tr>
                         <td>ClickDMG:</td>
-                        <td id="clickDmg"></td>
+                        <td id="clickDmg" class="border border-left;"></td>
                       </tr>
                       <tr>
                         <td>Click Count:</td>
-                        <td id="clickCount"></td>
+                        <td id="clickCount" class="border border-left;"></td>
                       </tr>
                     </tbody>
                   </table>
