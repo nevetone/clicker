@@ -1,6 +1,9 @@
 
 $(document).ready(function(){
     
+
+
+    //ASDASASDASDAASDADASDAGHRTHRT
     // zmienne
     var clickCount=0;
     var stage = 1;
