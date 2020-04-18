@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
     
     // zmienne
@@ -18,38 +19,35 @@ $(document).ready(function(){
     var goldUpgradesAmount = 0;
     var actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
 
-    
-    
-    $('#boughtUpgrades').text(goldUpgradesAmount);
-    $('#goldPrice').text(actualPrice);
-    $('#gold').text(gold);
-    $('#level').text(" "+level);
-    $('#maxLevel').text(maxLevel);
-    $('#stage').text(stage);
-    $('#max_hp').text(maxhp);
-    $('.current_hp').text(current);
-    $('#clickDmg').text(clickDmg);
-    $('.progress-bar').css('width', hpbar.toFixed(2)+'%');
-    $('#clickCount').text(clickCount);
-    
-    
-    function checkStage(stagePassed,stage){
-        if (stagePassed == stage) {
-            $('.next_arrow').css('overflow', 'hidden');
-        }else{
-            $('.next_arrow').css('overflow', 'visible');
-        }
-    }
 
-    function checkback(stage){
+
+    function refreshHTML(){
+        $('#boughtUpgrades').text(goldUpgradesAmount);
+        $('#goldPrice').text(actualPrice);
+        $('#gold').text(gold);
+        $('#level').text(" "+level);
+        $('#maxLevel').text(maxLevel);
+        $('#stage').text(stage);
+        $('#max_hp').text(maxhp.toFixed(0));
+        $('.current_hp').text(current);
+        $('#clickDmg').text(clickDmg);
+        $('.progress-bar').css('width', hpbar.toFixed(2)+'%');
+        $('#clickCount').text(clickCount);
+
         if (stage == 1) {
             $('.back_arrow').css('overflow', 'hidden');
         }else{
             $('.back_arrow').css('overflow', 'visible');
         }
-    }
-    checkback(stage);
-    checkStage(stagePassed,stage);
+        if (stagePassed == stage) {
+            $('.next_arrow').css('overflow', 'hidden');
+        }else{
+            $('.next_arrow').css('overflow', 'visible');
+        }
+
+
+    };
+    refreshHTML();
 
     $('#clickUpgrade').click(function(){
             if(gold>=actualPrice){
@@ -57,10 +55,7 @@ $(document).ready(function(){
                 clickDmg++;
                 goldUpgradesAmount++;
                 actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
-                $('#boughtUpgrades').text(goldUpgradesAmount);
-                $('#goldPrice').text(actualPrice);
-                $('#gold').text(gold);
-                $('#clickDmg').text(clickDmg);
+                refreshHTML();
                 
             }
 
@@ -72,22 +67,13 @@ $(document).ready(function(){
         // funckja klikania
         clickCount++;
         current -= clickDmg;
-        $('.current_hp').text(current);
         var hpbar =  current/100*maxhp;
-        $('.progress-bar').css('width', hpbar.toFixed(2)+'%');
-        checkback(stage);
-        $('#clickCount').text(clickCount);
         
-    
             if (current < 0) {
                 level++;
-                $('#level').text(" "+level);
                 current = maxhp.toFixed(0);
-                $('.current_hp').text(current);
                 var hpbar =  current/100*maxhp;
-                $('.progress-bar').css('width', hpbar.toFixed(2)+'%');
                 gold += 101;
-                $('#gold').text(gold);
                 console.log("Zadałes "+clickDmg +"dmg");
                 
             }
@@ -97,34 +83,25 @@ $(document).ready(function(){
                 stage ++;
                 stagePassed++;
                 maxhp *= hpMultipler;
-                $('#max_hp').text(maxhp.toFixed(0));
                 }
                 level = 1;
-                $('#level').text(" "+level);
-                $('#stage').text(stage);
             }
-
-            checkStage(stagePassed,stage);
-
+            refreshHTML();
     });
+
+
         
     $('.next_arrow').click(function(){
         stage++;
         level = 1;
-        $('#level').text(" "+level);
-        checkback(stage);
-        checkStage(stagePassed,stage);
-        $('#stage').text(stage);
+        refreshHTML();
     });
     $('.back_arrow').click(function(){
         if(stage > 1){
             stage--;
         }
         level = 1;
-        $('#level').text(" "+level);
-        checkback(stage);
-        checkStage(stagePassed,stage);
-        $('#stage').text(stage);
+        refreshHTML();
     });
     
         
