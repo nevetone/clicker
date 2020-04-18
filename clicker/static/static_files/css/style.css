@@ -20,7 +20,7 @@
 }
 
 .hp-bar{
-    width: 93.5%;
+    width: 40%;
     position: relative;
     left:50%;
     transform: translateX(-50%); 
@@ -60,9 +60,31 @@
     left:50%;
     transform: translateX(-50%); 
 }
+.text{
+    top: -140%;
+}
+.main_view{
+    position: fixed; 
+    top:20%;
+}
+
+.next_arrow{
+    overflow: hidden;
+}
+.back_arrow{
+    overflow: hidden;
+}
 
 @media(min-height:901px){
     .mob{
         bottom:-150px; 
     }
+    .text{
+        top: -85%;
+    }
+    .main_view{
+        top:5%;
+    }
+
 }
+
