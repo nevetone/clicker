@@ -3,26 +3,39 @@ $(document).ready(function(){
     
 
 
-    //ASDASASDASDAASDADASDAGHRTHRT
     // zmienne
     var clickCount=0;
     var stage = 1;
     var stagePassed = 1;
-    var clickDmg = 75;
+    var clickDmg = 70;
     var level = 1;
     var maxLevel = 3;
     var gold = 0; 
     var maxhp = 100;
     var current = maxhp;
-    var hpbar =  current/100*maxhp;
+    var hpbar =  current/maxhp*100;
     var hpMultipler= 1.1;
-
     var baseCost=10;
     var priceMultipler = 1.1;
-    var goldUpgradesAmount = 0;
+    var goldUpgradesAmount = 10;
     var actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
 
 
+
+    function multiplierPrice(x, y, z){
+        var currentPrice = y;
+        var final = 0;
+        for(var i=1; i <= x; i++){
+            final += currentPrice;
+            currentPrice = currentPrice*z;
+        }
+        return final.toFixed(0);
+    }; // jakbys srpawdzal to nie jest dokladne bo liczy w np . 143.2414124
+    // i jak sie to mnozy to sie psuje i wychodzi wiecej niz kosztuje standardowo
+    // chyba ze masz jakis inny pomysl na to to smialo 
+    var cost10 = multiplierPrice(10, actualPrice, priceMultipler);
+    var cost25 = multiplierPrice(25, actualPrice, priceMultipler);
+    
 
     function refreshHTML(){
         $('#boughtUpgrades').text(goldUpgradesAmount);
@@ -36,6 +49,8 @@ $(document).ready(function(){
         $('#clickDmg').text(clickDmg);
         $('.progress-bar').css('width', hpbar.toFixed(2)+'%');
         $('#clickCount').text(clickCount);
+        $('#cost25').text(cost25);
+        $('#cost10').text(cost10);
 
         if (stage == 1) {
             $('.back_arrow').css('overflow', 'hidden');
@@ -52,12 +67,30 @@ $(document).ready(function(){
     };
     refreshHTML();
 
+
+
+    // zrobic funkcje klikania w Xy
+    // $('#buy10').click(function(){
+    //     if(gold>=cost10){
+
+    //     }
+    // });
+
+    // $('#buy25').click(function(){
+    //     if(gold>=cost25){
+            
+    //     }
+    // });
+
+
     $('#clickUpgrade').click(function(){
             if(gold>=actualPrice){
                 gold -= actualPrice;
                 clickDmg++;
                 goldUpgradesAmount++;
                 actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
+                cost10 = multiplierPrice(10, actualPrice, priceMultipler);
+                cost25 = multiplierPrice(25, actualPrice, priceMultipler);
                 refreshHTML();
                 
             }
@@ -70,12 +103,12 @@ $(document).ready(function(){
         // funckja klikania
         clickCount++;
         current -= clickDmg;
-        var hpbar =  current/100*maxhp;
         
-            if (current < 0) {
+        
+            if (current <= 0) {
                 level++;
                 current = maxhp.toFixed(0);
-                var hpbar =  current/100*maxhp;
+                hpbar =  current/maxhp*100;
                 gold += 101;
                 console.log("Zadałes "+clickDmg +"dmg");
                 
@@ -86,9 +119,12 @@ $(document).ready(function(){
                 stage ++;
                 stagePassed++;
                 maxhp *= hpMultipler;
+                current = maxhp.toFixed(0);
                 }
                 level = 1;
             }
+
+            hpbar =  current/maxhp*100;
             refreshHTML();
     });
 
