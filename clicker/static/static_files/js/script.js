@@ -18,14 +18,18 @@ $(document).ready(function(){
     var baseCost=10;
     var priceMultipler = 1.1;
     var goldUpgradesAmount = 10;
-    var actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
+    var actualPrice = baseCost*priceMultipler*goldUpgradesAmount;
 
-    // army'x'_name
-    // army'x'_cost
-    // army'x'_count
-    // tam gdzie jest 'x' to jest np army1_name / zrobilem na sztywno ich 5
-    // tak mysle ze mozna by generowac html za pomca funckcji .html() 
-    // i tyle ile bedzie w tablicy rzeczy to mozna je z automatu wypisywac jak sie html wczyta
+    // 'unit_id'_'unit_name' -> np. 1_archer
+    // 'unit_id'_'unit_name'_cost -> np. 1_archer_cost
+    // 'unit_id'_'unit_name'_count -> np. 1_archer_count
+    // zrobiłem baze danych Units, / localhost:8000/admin   id- test  haslo- 123
+    // automatyczne tworzenie html jest weic wystarczy wczytac to do tablicy za pomoca for django 
+
+    //testowe tablice sa w templates/extends/base.html , bo muszą być:
+    
+
+
 
     function multiplierPrice(x, y, z){
         var currentPrice = y;

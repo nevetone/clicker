@@ -24,8 +24,19 @@
 <script src="{% static 'js/script.js' %}"></script>
 <script>
 $(document).ready(function(){
-{% block jquery %}
-{% endblock jquery %}
+    const tab = [];
+
+    {% for unit in units %}
+
+        tab.push("{{ unit.unit_name }}");
+       
+    {% endfor %}
+
+   console.log(tab[0]);
+   console.log(tab[1]);
+   console.log(tab[2]);
+
+    
 });
 </script>
 </body>
