@@ -4,30 +4,25 @@ $(document).ready(function(){
 
 
     // zmienne
-    var clickCount=0;
-    var stage = 1;
-    var stagePassed = 1;
-    var clickDmg = 70;
-    var level = 1;
-    var maxLevel = 3;
+    var clickCount=0; // ilosc nacisniec
+    var stage = 1; // aktualny stage
+    var stagePassed = 1; // ilosc stage ktore przeszedles
+    var clickDmg = 70; // aktualny click dmg
+    var level = 1; // aktualny level na danym stage
+    var maxLevel = 3; // ilosc leveli
     var gold = 1000000; // base gold 
-    var maxhp = 100;
-    var current = maxhp;
-    var hpbar =  current/maxhp*100;
-    var hpMultipler = 1.3;
-    var baseCost=10;
-    var priceMultipler = 1.1;
-    var goldUpgradesAmount = 10;
-    var actualPrice = baseCost*priceMultipler*goldUpgradesAmount;
-    const  numberOfUpgrades = 5;
+    var maxhp = 100; // pierwsze hp mobka
+    var current = maxhp; // aktualne hp
+    var hpbar =  current/maxhp*100; // aktualny hp bar w %%
+    var hpMultipler = 1.3; // huj wi cos wojtek napisal xd
+    var baseCost=10; // mnoznik do ceny ulepszenia na klikanie x1 
+    var priceMultipler = 1.1; // mnoznik do ceny ulepszenia na klikanie x2
+    var goldUpgradesAmount = 10; // mnoznik do ceny ulepszenia na klikanie x3
+    var actualPrice = baseCost*priceMultipler*goldUpgradesAmount; // aktuwalna cena ulepszenia
+    const  numberOfUpgrades = {{ units.count }}; // liczba obecnych ulepszen
 
-    // upgrade'unit_id'_name -> np. upgrade1_name
-    // upgrade'unit_id'_cost -> np. upgrade1_cost
-    // upgrade'unit_id'_count -> np. upgrade1_count
+
     // zrobiłem baze danych Units, / localhost:8000/admin   id- test  haslo- 123
-    // automatyczne tworzenie html jest weic wystarczy wczytac to do tablicy za pomoca for django 
-
-    //testowe tablice sa w templates/extends/base.html , bo muszą być
     
 
 
@@ -39,7 +34,7 @@ $(document).ready(function(){
             currentPrice = currentPrice*z;
         }
         return final.toFixed(0);
-    }; // jakbys sprawdzal to nie jest dokladne, bo liczy np . 143.2414124 sie moza o multiplier i wychodzi jakies gowno 
+    }; // jakbys sprawdzal to nie jest dokladne, bo liczy np . 143.2414124 sie mnoza o multiplier i wychodzi jakies gowno 
     // i jak sie to mnozy to sie psuje i wychodzi wiecej niz kosztuje standardowo
     // chyba ze masz jakis inny pomysl na to, to smialo 
     var cost10 = multiplierPrice(10, actualPrice, priceMultipler);
@@ -75,28 +70,6 @@ $(document).ready(function(){
 
     };
     refreshHTML();
-
-
-
-    // zrobic funkcje klikania w Xy
-    // $('#buy10').click(function(){
-    //     if(gold>=cost10){
-
-    //     }
-    // });
-
-    // $('#buy25').click(function(){
-    //     if(gold>=cost25){
-            
-    //     }
-    // });
-    
-
-
-
-    
-
-    
 
     class Upgrade{
         constructor(nameId,nameOfUpgrade){
@@ -180,6 +153,7 @@ $(document).ready(function(){
         //upgradesButtonsArray[i].bindClick();
     };
 
+    //  ulepszanie podstawowego click powera
     $('#clickUpgrade').click(function(){
             if(gold>=actualPrice){
                 gold -= actualPrice;
@@ -193,7 +167,21 @@ $(document).ready(function(){
             }
     });
 
+        // zrobic funkcje klikania w Xy
+    // $('#buy10').click(function(){
+    //     if(gold>=cost10){
+
+    //     }
+    // });
+
+    // $('#buy25').click(function(){
+    //     if(gold>=cost25){
+            
+    //     }
+    // });
+
     
+    // zadawanie obrażen
     $('.click_area').click(function(){
         // funckja klikania
         clickCount++;
@@ -202,12 +190,13 @@ $(document).ready(function(){
     });
 
 
-        
+        // zmiana stage ++
     $('.next_arrow').click(function(){
         stage++;
         level = 1;
         refreshHTML();
     });
+        // zmiana stage --
     $('.back_arrow').click(function(){
         if(stage > 1){
             stage--;
