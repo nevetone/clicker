@@ -4,7 +4,7 @@ from django.db import models
 
 class Units(models.Model):
     unit_name = models.CharField(max_length=50)
-    unit_id = models.CharField(max_length=50, default='xyz')
+    unit_id = models.IntegerField(default=0)
     unit_default_cost = models.IntegerField(default=0)
     unit_count = models.IntegerField(default=0)
     

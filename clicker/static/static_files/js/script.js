@@ -14,34 +14,20 @@ $(document).ready(function(){
     var maxhp = 100;
     var current = maxhp;
     var hpbar =  current/maxhp*100;
-    var hpMultipler= 1.1;
     var baseCost=10;
     var priceMultipler = 1.1;
     var goldUpgradesAmount = 10;
-<<<<<<< HEAD
     var actualPrice = baseCost*priceMultipler*goldUpgradesAmount;
 
-    // 'unit_id'_'unit_name' -> np. 1_archer
-    // 'unit_id'_'unit_name'_cost -> np. 1_archer_cost
-    // 'unit_id'_'unit_name'_count -> np. 1_archer_count
+    // upgrade'unit_id'_name -> np. upgrade1_name
+    // upgrade'unit_id'_cost -> np. upgrade1_cost
+    // upgrade'unit_id'_count -> np. upgrade1_count
     // zrobiłem baze danych Units, / localhost:8000/admin   id- test  haslo- 123
     // automatyczne tworzenie html jest weic wystarczy wczytac to do tablicy za pomoca for django 
 
-    //testowe tablice sa w templates/extends/base.html , bo muszą być:
+    //testowe tablice sa w templates/extends/base.html , bo muszą być
     
 
-
-=======
-    var actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
-    const  numberOfUpgrades = 5;
-
-    // army'x'_name
-    // army'x'_cost
-    // army'x'_count
-    // tam gdzie jest 'x' to jest np army1_name / zrobilem na sztywno ich 5
-    // tak mysle ze mozna by generowac html za pomca funckcji .html() 
-    // i tyle ile bedzie w tablicy rzeczy to mozna je z automatu wypisywac jak sie html wczyta
->>>>>>> eadf62a33f86107f63461de5822b6ff354503d93
 
     function multiplierPrice(x, y, z){
         var currentPrice = y;
@@ -104,97 +90,7 @@ $(document).ready(function(){
     // });
     
 
-    class Upgrade{
-        constructor(nameId,nameOfUpgrade){
-            this.nameId=nameId;
-            this.nameOfUpgrade=nameOfUpgrade;
-            this.baseDmg=1;
-            this.boughtUpgrades=0;
-            this.price=0;
-            this.discountMultipler=0.0;
-            this.priceMultipler=0.15;
-           // $(this.nameId).click(this.buyUpgrade()); 
-        }
-        dealDmg(){
-            current -= this.baseDmg*this.boughtUpgrades/10;
-        }
-        buyUpgrade(){
-            if(gold >= this.price){
-                gold -= this.price;
-                this.boughtUpgrades++;
-                console.log("Kupiłeś upgrade dla "+this.nameOfUpgrade+ " za " +this.price+ " golda!" );
-                this.price = this.price + (this.price*this.priceMultipler)*this.boughtUpgrades;
-            }
-        }
-        refreshPriceAndCount(){
-            $(this.nameId+'_count').text(this.boughtUpgrades);
-            $(this.nameId+'_cost').text(this.price);
-        }
-      //  bindClick(){     
-     //       $(this.nameId).click(this.buyUpgrade());
-    //   }
-        
 
-
-    };
-
-        $('#upgrade0').click(function(){upgradesButtonsArray[0].buyUpgrade()});
-        $('#upgrade1').click(function(){upgradesButtonsArray[1].buyUpgrade()});
-        $('#upgrade2').click(function(){upgradesButtonsArray[2].buyUpgrade()});
-        $('#upgrade3').click(function(){upgradesButtonsArray[3].buyUpgrade()});
-        $('#upgrade4').click(function(){upgradesButtonsArray[4].buyUpgrade()});
-
-    setInterval(function(){ 
-        for(var i = 0;i<numberOfUpgrades; i++){
-            upgradesButtonsArray[i].dealDmg();
-        }
-        if (current <= 0) {
-            level++;
-            current = maxhp;
-            hpbar =  current/maxhp*100;
-            gold += 101;
-            
-        }
-        
-        if(level > maxLevel){
-            if (stagePassed == stage){
-            stage ++;
-            stagePassed++;
-            maxhp *= hpMultipler;
-            current = maxhp;
-            }
-            level = 1;
-        }
-        hpbar =  current/maxhp*100;
-        for(var i = 0;i<numberOfUpgrades;i++){
-            upgradesButtonsArray[i].refreshPriceAndCount();
-        }
-        refreshHTML();
-        
-        }, 100);
-
-
-    var upgradeNames = [   // to do klasy Upgrade
-        'lucznik',
-        'rycerz',
-        'cwasdl',
-        'asd',
-        'QWE',
-        
-    ];
-    var baseUpgradePrices = [  //  to do klasy Upgrade
-        1000,
-        20000,
-        100000,
-        500000,
-        1000000,
-    ];
-    var upgradesButtonsArray = [];
-    for(var i = 0;i<numberOfUpgrades;i++){
-        upgradesButtonsArray[i]=new Upgrade( "#upgrade"+i , upgradeNames[i] );
-        upgradesButtonsArray[i].price=baseUpgradePrices[i];
-        //upgradesButtonsArray[i].bindClick();
-    };
 
 
 
@@ -209,7 +105,6 @@ $(document).ready(function(){
                 actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
                 cost10 = multiplierPrice(10, actualPrice, priceMultipler);
                 cost25 = multiplierPrice(25, actualPrice, priceMultipler);
-                console.log(upgradesButtonsArray[1].price);
             }
     });
 
