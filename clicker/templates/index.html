@@ -18,7 +18,7 @@
     <div class="col-sm-12 main_view" style="height: 80vh;">
         <div class="row" style="height: 90%; padding-top:5%;">
             <div class="col-sm-4">
-                <div class="text-white back_arrow" style="font-size:40px; position: relative;">
+                <div class="text-white back_arrow" style="font-size:40px; position: relative; z-index:1;">
                     <i class="fas fa-arrow-left" style="position:absolute; right:0;" id="back"></i>
                 </div>
                 <div style="position: relative;">
@@ -42,7 +42,7 @@
                 <br />
                 <div style="position: relative;">
                     {% for unit  in units %}
-                <button class="btn btn-dark border" style="width: 50%;" id="unit1">
+                <button class="btn btn-dark border" id="upgrade{{ unit.unit_id }}" style="width: 50%;" id="unit1">
                     <span id="upgrade{{ unit.unit_id }}_name" >
                         {{ unit.unit_name|capfirst }}
                     </span>
@@ -89,7 +89,7 @@
             <div class="text-center text-light text" id="mob_name" style="font-size: 25px; position: relative;" >Slime</div>
         </div>
             <div class="col-sm-4">
-            <div class="text-white next_arrow" style="font-size:40px; position: relative;">
+            <div class="text-white next_arrow" style="font-size:40px; position: relative; z-index:1;">
                 <i class="fas fa-arrow-right" id="next" style="position:absolute; left:0;"></i>
             </div>
             <div class="text-light text-center"> 
