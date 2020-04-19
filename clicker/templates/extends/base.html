@@ -29,13 +29,12 @@ $(document).ready(function(){
     {% for unit in units %}
 
         tab.push("{{ unit.unit_name }}");
-       
+        console.log(tab[{{ unit.unit_id }}]);
+
     {% endfor %}
 
    console.log('{{ units.count }}')
-   console.log(tab[0]);
-   console.log(tab[1]);
-   console.log(tab[2]);
+   
 
     
 });
