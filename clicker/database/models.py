@@ -14,6 +14,7 @@ class Units(models.Model):
 class Mobs(models.Model):
     mob_name = models.CharField(max_length=50)
     mob_default_hp = models.IntegerField()
+    mob_image = models.ImageField(upload_to='mobs/', default=None)
     
     def __str__(self):
         return self.mob_name
@@ -22,8 +23,10 @@ class Mobs(models.Model):
 
 class Islands(models.Model):
     island_name = models.CharField(max_length=50)
+    ends = models.IntegerField(default=1)
     units = models.ManyToManyField("database.Mobs")
     boss = models.ForeignKey("database.Mobs", on_delete=models.CASCADE, related_name="boss")
+    island_image = models.ImageField(upload_to='islands/', default=None)
     
     def __str__(self):
         return self.island_name

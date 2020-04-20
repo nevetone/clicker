@@ -19,7 +19,32 @@ $(document).ready(function(){
     var priceMultipler = 1.1; // mnoznik do ceny ulepszenia na klikanie x2
     var goldUpgradesAmount = 10; // mnoznik do ceny ulepszenia na klikanie x3
     var actualPrice = baseCost*priceMultipler*goldUpgradesAmount; // aktuwalna cena ulepszenia
-    const  numberOfUpgrades = {{ units.count }}; // liczba obecnych ulepszen
+    const numberOfUpgrades = {{ units.count }}; // liczba obecnych ulepszen
+    
+    // zmienne wysp i mobków z bazy danych
+    var chandeIsland = 0;
+
+    var islands = [];
+    var islands_images = [];
+    var islands_ends = [];
+
+
+    var mobs = [];
+    var mobs_images = [];
+    var mobs_on_island_count = [];
+
+    
+    {% for island in islands %}
+        islands.push('{{ island.island_name }}');
+        islands_images.push('{{ island.island_image.url }}');
+        islands_ends.push({{ island.ends }});
+        {% for mob in island.units.all %}
+        mobs.push('{{ mob.mob_name }}');
+        mobs_images.push('{{ mob.mob_image.url }}');
+        {% endfor %}
+        mobs_on_island_count.push({{ island.units.count }});
+    {% endfor %}
+
 
 
     // zrobiłem baze danych Units, / localhost:8000/admin   id- test  haslo- 123
@@ -40,6 +65,22 @@ $(document).ready(function(){
     var cost10 = multiplierPrice(10, actualPrice, priceMultipler);
     var cost25 = multiplierPrice(25, actualPrice, priceMultipler);
     
+
+    function refreshIsland(){
+        $('.island').css('background-image', 'url(' + islands_images[0] + ')');
+        $('#mob_image').attr("src",  mobs_images[0] );
+
+        var o = 0;
+        islands_count = {{ islands.count }};
+        if(islands_count >= o){
+        if(chandeIsland > islands_ends[o]){
+            o++;
+
+        }else{
+            chandeIsland++;
+        };
+
+    };};
 
     function refreshHTML(){
         $('#boughtUpgrades').text(goldUpgradesAmount);
@@ -70,6 +111,7 @@ $(document).ready(function(){
 
     };
     refreshHTML();
+    refreshIsland();
 
     class Upgrade{
         constructor(nameId,nameOfUpgrade){
