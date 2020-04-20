@@ -17,7 +17,7 @@
 {% include 'includes/menu.html' %}
     <div class="col-sm-12 main_view" style="height: 80vh;">
         <div class="row" style="height: 90%; padding-top:5%;">
-            <div class="col-sm-4">
+            <div class="col-sm-4" style="height:100%;">
                 <div class="text-white back_arrow" style="font-size:40px; position: relative; z-index:1;">
                     <i class="fas fa-arrow-left" style="position:absolute; right:0;" id="back"></i>
                 </div>
@@ -40,9 +40,9 @@
                 </button>
                 </div>
                 <br />
-                <div style="position: relative;">
+                <div class="scrollbar" style="position: relative; overflow-y:auto; height:100%; width:50%; ">
                     {% for unit  in units %}
-                <button class="btn btn-dark border" id="upgrade{{ unit.unit_id }}" style="width: 50%;" id="unit1">
+                <button class="btn btn-dark border" id="upgrade{{ unit.unit_id }}" style="width: 100%;" id="unit1">
                     <span id="upgrade{{ unit.unit_id }}_name" >
                         {{ unit.unit_name|capfirst }}
                     </span>
@@ -59,7 +59,7 @@
                     <span> <i class="fas fa-box-open"></i> </span>
                     </div>
                 </button><br />
-                    {% endfor %}
+                    {% endfor %}<br /><br /><br />
                 </div>
                 </div>
             <div class="col-sm-4" style="padding:0; height: 100%; position: relative;">
@@ -82,7 +82,7 @@
             <div class="text-center text-light text" id="level_level" style="font-size: 40px; position: relative;" >
             
             <span style="font-size: 15px;">Stage:</span> <span id="stage" style="font-size: 15px;"></span><br />
-            Level: <span id="level"></span> / 
+            <span id="level_name">Level:</span> :<span id="level"></span> / 
             <span id="maxLevel"></span>
             
             </div>
@@ -107,6 +107,10 @@
                       <tr>
                         <td>ClickDMG:</td>
                         <td id="clickDmg" class="border border-left;"></td>
+                      </tr>
+                      <tr>
+                        <td>Dmg per/s:</td>
+                        <td id="dmg_s" class="border border-left;"></td>
                       </tr>
                       <tr>
                         <td>Click Count:</td>

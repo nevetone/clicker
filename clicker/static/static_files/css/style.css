@@ -44,10 +44,11 @@
 .click_area{
     position:fixed;
     z-index:999;
-    height:50%;
-    width:40%;
+    height:30%;
+    width:25%;
     top:25%;
-    left:30%;
+    left:50%;
+    transform: translateX(-50%); 
 
 }
 
@@ -85,6 +86,28 @@
     .main_view{
         top:5%;
     }
+    .click_area{
+        width:40%;
+        height:50%;
+    }
+
 
 }
 
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+::-webkit-scrollbar-track {
+    background-color: #ebebeb;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #6d6d6d; 
+}

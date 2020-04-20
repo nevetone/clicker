@@ -28,6 +28,9 @@ class Islands(models.Model):
     boss = models.ForeignKey("database.Mobs", on_delete=models.CASCADE, related_name="boss")
     island_image = models.ImageField(upload_to='islands/', default=None)
     
+    class Meta:
+        ordering = ['ends']
+    
     def __str__(self):
         return self.island_name
     

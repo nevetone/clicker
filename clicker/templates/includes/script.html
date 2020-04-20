@@ -3,18 +3,20 @@ $(document).ready(function(){
     
 
 
+    // zmienne pomocnicze
+    var o = -1;
     // zmienne
     var clickCount=0; // ilosc nacisniec
     var stage = 1; // aktualny stage
     var stagePassed = 1; // ilosc stage ktore przeszedles
-    var clickDmg = 70; // aktualny click dmg
+    var clickDmg = 300; // aktualny click dmg
     var level = 1; // aktualny level na danym stage
     var maxLevel = 3; // ilosc leveli
     var gold = 1000000; // base gold 
-    var maxhp = 100; // pierwsze hp mobka
+    var maxhp = 10; // pierwsze hp mobka
     var current = maxhp; // aktualne hp
     var hpbar =  current/maxhp*100; // aktualny hp bar w %%
-    var hpMultipler = 1.3; // huj wi cos wojtek napisal xd
+    var hpMultipler = 1.12; // huj wi cos wojtek napisal xd
     var baseCost=10; // mnoznik do ceny ulepszenia na klikanie x1 
     var priceMultipler = 1.1; // mnoznik do ceny ulepszenia na klikanie x2
     var goldUpgradesAmount = 10; // mnoznik do ceny ulepszenia na klikanie x3
@@ -22,16 +24,14 @@ $(document).ready(function(){
     const numberOfUpgrades = {{ units.count }}; // liczba obecnych ulepszen
     
     // zmienne wysp i mobków z bazy danych
-    var chandeIsland = 0;
-
     var islands = [];
     var islands_images = [];
     var islands_ends = [];
 
-
     var mobs = [];
     var mobs_images = [];
     var mobs_on_island_count = [];
+
 
     
     {% for island in islands %}
@@ -44,12 +44,10 @@ $(document).ready(function(){
         {% endfor %}
         mobs_on_island_count.push({{ island.units.count }});
     {% endfor %}
-
-
-
-    // zrobiłem baze danych Units, / localhost:8000/admin   id- test  haslo- 123
-    
-
+        // zmienne random dla moba
+        var last_mobs = 0;
+        var min = last_mobs;
+        var max = last_mobs + mobs_on_island_count[o+1] - 1;
 
     function multiplierPrice(x, y, z){
         var currentPrice = y;
@@ -64,23 +62,81 @@ $(document).ready(function(){
     // chyba ze masz jakis inny pomysl na to, to smialo 
     var cost10 = multiplierPrice(10, actualPrice, priceMultipler);
     var cost25 = multiplierPrice(25, actualPrice, priceMultipler);
+       
+       
+       class Upgrade{
+        constructor(nameId,nameOfUpgrade){
+            this.nameId=nameId;
+            this.nameOfUpgrade=nameOfUpgrade;
+            this.baseDmg=0.5;
+            this.boughtUpgrades=0;
+            this.price=0;
+            this.discountMultipler=1.0;
+            this.priceMultipler=1.15;
+           // $(this.nameId).click(this.buyUpgrade()); 
+        }
+        dealDmg(){
+            current -= this.baseDmg*this.boughtUpgrades/10;
+        }
+        buyUpgrade(){
+            if(gold >= (this.price*this.discountMultipler)){
+                gold -= this.price*this.discountMultipler;
+                this.boughtUpgrades++;
+                console.log("Kupiłeś upgrade dla "+this.nameOfUpgrade+ " za " +this.price+ " golda!" );
+                this.price = this.price*this.priceMultipler;
+            }
+        }
+        refreshPriceAndCount(){
+            $(this.nameId+'_count').text(this.boughtUpgrades);
+            $(this.nameId+'_cost').text(this.price.toFixed(0));
+        }
+      //  bindClick(){     
+     //       $(this.nameId).click(this.buyUpgrade());
+    //   }
+
+    };
+       
+       
+       
+       
+    var upgradeNames = [];   // to do klasy Upgrade
+    var baseUpgradePrices = [];  //  to do klasy Upgrade
+    var upgradesButtonsArray = [];
+
+    {% for unit in units %}
+        upgradeNames.push('{{ unit.unit_name }}');
+        baseUpgradePrices.push({{ unit.unit_default_cost }}); 
+    {% endfor %}
+            
+
+            // miejece na ) aby zmienic kolorki :danych
+
+            //
     
+    for(var i = 0;i<numberOfUpgrades;i++){
+        upgradesButtonsArray[i]=new Upgrade( "#upgrade"+i , upgradeNames[i] );
+        upgradesButtonsArray[i].price=baseUpgradePrices[i];
+        //upgradesButtonsArray[i].bindClick();
+    };
 
     function refreshIsland(){
         $('.island').css('background-image', 'url(' + islands_images[0] + ')');
-        $('#mob_image').attr("src",  mobs_images[0] );
-
-        var o = 0;
+        minV = Math.ceil(min);
+        maxV = Math.floor(max);
+        k = Math.floor(Math.random() * (max - min + 1)) + min;
         islands_count = {{ islands.count }};
         if(islands_count >= o){
-        if(chandeIsland > islands_ends[o]){
-            o++;
-
-        }else{
-            chandeIsland++;
-        };
-
-    };};
+            if(stage-1 == islands_ends[o+1] ){
+                o++;
+                last_mobs = max;
+                min = max+1;
+                max = max + mobs_on_island_count[o+1];
+                $('.island').css('background-image', 'url(' + islands_images[o] + ')');
+            };};
+            $('#mob_image').attr("src",  mobs_images[k] );
+            $('#mob_name').text(mobs[k]);
+            $('#level_name').text(islands[o+1]);
+    };
 
     function refreshHTML(){
         $('#boughtUpgrades').text(goldUpgradesAmount);
@@ -96,6 +152,17 @@ $(document).ready(function(){
         $('#clickCount').text(clickCount);
         $('#cost25').text(cost25);
         $('#cost10').text(cost10);
+        
+        var totalDmg = 0;
+        var ALLdps = 0;
+         
+        for(var l = 0;l<numberOfUpgrades;l++){
+        ALLdps = ALLdps + upgradesButtonsArray[l].baseDmg * upgradesButtonsArray[l].boughtUpgrades;
+        }
+        $('#dmg_s').text(ALLdps);
+
+
+
 
         if (stage == 1) {
             $('.back_arrow').css('overflow', 'hidden');
@@ -113,37 +180,7 @@ $(document).ready(function(){
     refreshHTML();
     refreshIsland();
 
-    class Upgrade{
-        constructor(nameId,nameOfUpgrade){
-            this.nameId=nameId;
-            this.nameOfUpgrade=nameOfUpgrade;
-            this.baseDmg=1;
-            this.boughtUpgrades=0;
-            this.price=0;
-            this.discountMultipler=0.0;
-            this.priceMultipler=0.15;
-           // $(this.nameId).click(this.buyUpgrade()); 
-        }
-        dealDmg(){
-            current -= this.baseDmg*this.boughtUpgrades/10;
-        }
-        buyUpgrade(){
-            if(gold >= this.price){
-                gold -= this.price;
-                this.boughtUpgrades++;
-                console.log("Kupiłeś upgrade dla "+this.nameOfUpgrade+ " za " +this.price+ " golda!" );
-                this.price = this.price + (this.price*this.priceMultipler)*this.boughtUpgrades;
-            }
-        }
-        refreshPriceAndCount(){
-            $(this.nameId+'_count').text(this.boughtUpgrades);
-            $(this.nameId+'_cost').text(this.price.toFixed(0));
-        }
-      //  bindClick(){     
-     //       $(this.nameId).click(this.buyUpgrade());
-    //   }
-
-    };
+    
 
     {% for unit in units %}
     $('#upgrade{{ unit.unit_id }}').click(function(){upgradesButtonsArray[{{ unit.unit_id }}].buyUpgrade()});
@@ -158,6 +195,7 @@ $(document).ready(function(){
             current = maxhp;
             hpbar =  current/maxhp*100;
             gold += 101;
+            refreshIsland();
 
         }
 
@@ -165,9 +203,12 @@ $(document).ready(function(){
             if (stagePassed == stage){
             stage ++;
             stagePassed++;
-            maxhp = maxhp*hpMultipler;
+            maxhp = maxhp*(hpMultipler);
+           // maxhp = maxhp + (stagePassed-1)*(maxhp*hpMultipler);
             current = maxhp;
+            refreshIsland();
             }
+            refreshIsland();
             level = 1;
         }
         hpbar =  current/maxhp*100;
@@ -179,21 +220,7 @@ $(document).ready(function(){
         }, 100);
 
 
-    var upgradeNames = [];   // to do klasy Upgrade
-    var baseUpgradePrices = [];  //  to do klasy Upgrade
-    var upgradesButtonsArray = [];
 
-    {% for unit in units %}
-        upgradeNames.push('{{ unit.unit_name }}');
-        baseUpgradePrices.push({{ unit.unit_default_cost }}); 
-    {% endfor %}
-
-
-    for(var i = 0;i<numberOfUpgrades;i++){
-        upgradesButtonsArray[i]=new Upgrade( "#upgrade"+i , upgradeNames[i] );
-        upgradesButtonsArray[i].price=baseUpgradePrices[i];
-        //upgradesButtonsArray[i].bindClick();
-    };
 
     //  ulepszanie podstawowego click powera
     $('#clickUpgrade').click(function(){
@@ -235,6 +262,7 @@ $(document).ready(function(){
         // zmiana stage ++
     $('.next_arrow').click(function(){
         stage++;
+        refreshIsland();
         level = 1;
         refreshHTML();
     });
@@ -242,10 +270,10 @@ $(document).ready(function(){
     $('.back_arrow').click(function(){
         if(stage > 1){
             stage--;
-            console.log('xx');
         }
         level = 1;
         refreshHTML();
+        refreshIsland();
     });
     
         
