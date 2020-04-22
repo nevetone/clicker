@@ -12,7 +12,7 @@ $(document).ready(function(){
     var clickDmg = 300; // aktualny click dmg
     var level = 1; // aktualny level na danym stage
     var maxLevel = 3; // ilosc leveli
-    var gold = 1000000; // base gold 
+    var gold = 200; // base gold 
     var maxhp = 10; // pierwsze hp mobka
     var current = maxhp; // aktualne hp
     var hpbar =  current/maxhp*100; // aktualny hp bar w %%
@@ -21,7 +21,12 @@ $(document).ready(function(){
     var priceMultipler = 1.1; // mnoznik do ceny ulepszenia na klikanie x2
     var goldUpgradesAmount = 10; // mnoznik do ceny ulepszenia na klikanie x3
     var actualPrice = baseCost*priceMultipler*goldUpgradesAmount; // aktuwalna cena ulepszenia
-    const numberOfUpgrades = {{ units.count }}; // liczba obecnych ulepszen
+    const numberOfUpgrades = {{ units.count }}; // liczba obecnych ulepszen 
+            {% comment %} ) {% endcomment %}
+    var visibleUpgrades = -1; // obecnie pokazane upgrade
+    var time_left = 3;
+    var b_startTime=0;
+    var b_getBonusgold=0;
     
     // zmienne wysp i mobków z bazy danych
     var islands = [];
@@ -71,6 +76,7 @@ $(document).ready(function(){
             this.price=0;
             this.discountMultipler=1.0;
             this.priceMultipler=1.15;
+            this.checked = false;
            // $(this.nameId).click(this.buyUpgrade()); 
         }
         dealDmg(){
@@ -82,6 +88,25 @@ $(document).ready(function(){
                 this.boughtUpgrades++;
                 console.log("Kupiłeś upgrade dla "+this.nameOfUpgrade+ " za " +this.price+ " golda!" );
                 this.price = this.price*this.priceMultipler;
+            }
+        }
+        checkVisible(){
+            if(gold >= this.price){
+                if(this.checked == false){
+                    if(visibleUpgrades < numberOfUpgrades ){
+                    this.checked = true;
+                    visibleUpgrades++;
+                    }
+                }
+                
+            }
+            $('#upgrade'+visibleUpgrades.toString()).prop('hidden', false);
+        }
+        checkUpgrade(){
+            if(gold < (this.price*this.discountMultipler)){
+            $(''+this.nameId+'').prop('disabled', true);
+            }else{
+                $(''+this.nameId+'').prop('disabled', false);
             }
         }
         refreshPriceAndCount(){
@@ -162,6 +187,8 @@ $(document).ready(function(){
     };
 
     function refreshHTML(){
+
+        hpbar =  current/maxhp*100;
         $('#boughtUpgrades').text(goldUpgradesAmount);
         $('#goldPrice').text(actualPrice);
         $('#gold').text(gold.toFixed(0));
@@ -175,6 +202,7 @@ $(document).ready(function(){
         $('#clickCount').text(clickCount);
         $('#cost25').text(cost25);
         $('#cost10').text(cost10);
+        $('#boss_time').text(time_left.toFixed(1)+'s.');
         
         var totalDmg = 0;
         var ALLdps = 0;
@@ -206,34 +234,83 @@ $(document).ready(function(){
     $('#upgrade{{ unit.unit_id }}').click(function(){upgradesButtonsArray[{{ unit.unit_id }}].buyUpgrade()});
     {% endfor %}
 
+    /*
+    function setStage(stg){
+        level=1;
+        stage=stg;
+        maxhp = 10;
+        for(var i=0;i<(stage-1);i++){
+            maxhp=maxhp*(hpMultipler);
+        }
+        current=maxhp;
+
+
+    }
+
+
+
+   */
     setInterval(function(){ 
         for(var i = 0;i<numberOfUpgrades; i++){
             upgradesButtonsArray[i].dealDmg();
         }
         if (current <= 0) {
             level++;
-            current = maxhp;
-            hpbar =  current/maxhp*100;
+            maxhp = 10;
+            for(var i=0;i<(stage-1);i++){
+                maxhp=maxhp*(hpMultipler);
+            }
+            current=maxhp;
             gold += 101 + 1.2*stage; // trza dodac mnoznik od stageow konkretny
+            if(b_getBonusgold) { gold+=2000;b_getBonusgold=0; };
+            b_startTime=0; time_left=3;
             refreshIsland(true);
-
-        }
 
         if(level > maxLevel){
             if (stagePassed == stage){
             stage ++;
             stagePassed++;
             maxhp = maxhp*(hpMultipler);
-           // maxhp = maxhp + (stagePassed-1)*(maxhp*hpMultipler);
             current = maxhp;
             }
             refreshIsland(true);
             level = 1;
         }
-        hpbar =  current/maxhp*100;
+        if(((stage %10)==0) && level == maxLevel){
+            maxhp = 10;
+            for(var i=0;i<(stage-1);i++){
+                maxhp=maxhp*(hpMultipler);
+            }
+            maxhp=maxhp*3;
+            current=maxhp;
+            b_startTime=1;
+            b_getBonusgold=1;
+
+            
+        }
+        }
+        if(b_startTime){
+            time_left -= 0.1;
+            if(time_left < 0){
+                maxhp = 10;
+                for(var i=0;i<(stage-1);i++){
+                maxhp=maxhp*(hpMultipler);
+                }
+                maxhp=maxhp*3;
+                current=maxhp;
+                time_left=3;
+                
+            }
+
+        }
+
         for(var i = 0;i<numberOfUpgrades;i++){
             upgradesButtonsArray[i].refreshPriceAndCount();
+            upgradesButtonsArray[i].checkUpgrade();
+            upgradesButtonsArray[i].checkVisible();
+            
         }
+        
         refreshHTML();
 
         }, 100);
@@ -280,7 +357,11 @@ $(document).ready(function(){
         // zmiana stage ++
     $('.next_arrow').click(function(){
         stage++;
+        maxhp = maxhp*(hpMultipler);
+        current=maxhp;
         level = 1;
+        b_startTime=0;
+        time_left=3;
         refreshIsland(true);
         refreshHTML();
 
@@ -291,7 +372,19 @@ $(document).ready(function(){
         if(stage > 1){
             stage--;
         }
+        if(stage==1){
+            maxhp=10;
+            current=maxhp;
+        }else{
+        maxhp = 10;
+        for(var i=0;i<(stage-1);i++){
+            maxhp=maxhp*(hpMultipler);
+        }
+        current=maxhp;
+        }
         level = 1;
+        b_startTime=0;
+        time_left=3;
         refreshIsland(false);
         refreshHTML();
     });

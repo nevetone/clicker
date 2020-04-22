@@ -42,7 +42,7 @@
                 <br />
                 <div class="scrollbar" style="position: relative; overflow-y:auto; height:100%; width:50%; ">
                     {% for unit  in units %}
-                <button class="btn btn-dark border" id="upgrade{{ unit.unit_id }}" style="width: 100%;" id="unit1">
+                <button class="btn btn-dark border" id="upgrade{{ unit.unit_id }}" style="width: 100%;" hidden id="unit1">
                     <span id="upgrade{{ unit.unit_id }}_name" >
                         {{ unit.unit_name|capfirst }}
                     </span>
@@ -87,6 +87,7 @@
             
             </div>
             <div class="text-center text-light text" id="mob_name" style="font-size: 25px; position: relative;" >Slime</div>
+            <div class="text-center text-light text" id="boss_time" style="font-size: 25px; position: relative;" >0.00</div>
         </div>
             <div class="col-sm-4">
             <div class="text-white next_arrow" style="font-size:40px; position: relative; z-index:1;">
