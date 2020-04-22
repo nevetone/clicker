@@ -24,6 +24,7 @@ $(document).ready(function(){
     var clikMultipler = 1;
     var visibleUpgrades = -1; // obecnie pokazane upgrade
     var time_left = 30;
+    var maxtime_left=30;
     var b_startTime=0;
     var b_getBonusgold=0;
     
@@ -248,8 +249,9 @@ $(document).ready(function(){
             setHp();
             gold += stage; // trza dodac mnoznik od stageow konkretny
             if(b_getBonusgold) { gold+=stage*10;b_getBonusgold=0; };
-
-            b_startTime=0; time_left=3;
+            
+            b_startTime=0; time_left=maxtime_left;
+            $('#boss_time').prop('hidden', true);
             refreshIsland(true);
 
              if(level > maxLevel){
@@ -262,6 +264,7 @@ $(document).ready(function(){
             level = 1;
                 }
           if( ((stage %10) == 0) && level == maxLevel){
+            $('#boss_time').prop('hidden', false);
             setHp();
             maxhp=maxhp*3;
             current=maxhp;
@@ -277,7 +280,7 @@ $(document).ready(function(){
                 setHp();
                 maxhp=maxhp*3;
                 current=maxhp;
-                time_left=3;
+                time_left=maxtime_left;
             }
 
         }
