@@ -89,7 +89,7 @@ $(document).ready(function(){
          for(var i = 0;i<this.numberOfUpgrades;i++){
             this.upgradesButtonsArray[i]=new Upgrade( "#upgrade"+i , Upgrade.upgradeNames[i] );
             this.upgradesButtonsArray[i].price=Upgrade.baseUpgradePrices[i];
-            this.upgradesButtonsArray[i].baseDmg +=1;
+            this.upgradesButtonsArray[i].baseDmg +=i;
          };
 
 
