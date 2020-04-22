@@ -44,10 +44,8 @@ $(document).ready(function(){
         {% endfor %}
         mobs_on_island_count.push({{ island.units.count }});
     {% endfor %}
-        // zmienne random dla moba
-        var last_mobs = 0;
-        var min = last_mobs;
-        var max = last_mobs + mobs_on_island_count[o+1] - 1;
+                                                                                                                    {% comment %} ) {% endcomment %}
+
 
     function multiplierPrice(x, y, z){
         var currentPrice = y;
@@ -96,7 +94,9 @@ $(document).ready(function(){
 
     };
        
-       
+        // juz nie trzeba tego usuwac aby zmienic kolorki :danych
+            {% comment %} ) {% endcomment %}
+        //
        
        
     var upgradeNames = [];   // to do klasy Upgrade
@@ -109,8 +109,8 @@ $(document).ready(function(){
     {% endfor %}
             
 
-            // miejece na ) aby zmienic kolorki :danych
-
+            // juz nie trzeba tego usuwac aby zmienic kolorki :danych
+                {% comment %} ) {% endcomment %}
             //
     
     for(var i = 0;i<numberOfUpgrades;i++){
@@ -119,23 +119,46 @@ $(document).ready(function(){
         //upgradesButtonsArray[i].bindClick();
     };
 
-    function refreshIsland(){
-        $('.island').css('background-image', 'url(' + islands_images[0] + ')');
-        minV = Math.ceil(min);
-        maxV = Math.floor(max);
-        k = Math.floor(Math.random() * (max - min + 1)) + min;
-        islands_count = {{ islands.count }};
+
+    // zmienne random dla moba
+    var last_mobs = 0;
+    var min = last_mobs;
+    var max = last_mobs + mobs_on_island_count[o+1] - 1;
+    var islands_count = {{ islands.count }};
+    $('.island').css('background-image', 'url('+islands_images[o+1]+')');
+
+    function refreshIsland(next){
         if(islands_count >= o){
-            if(stage-1 == islands_ends[o+1] ){
-                o++;
-                last_mobs = max;
-                min = max+1;
-                max = max + mobs_on_island_count[o+1];
-                $('.island').css('background-image', 'url(' + islands_images[o] + ')');
-            };};
+            if(next == true){
+                if(stage-1 == islands_ends[o+1] ){
+                    o++;
+                    last_mobs = max;
+                    min = max+1;
+                    max = max + mobs_on_island_count[o+1];
+                };
+            }else{
+                if(stage == islands_ends[o] ){
+                    if(stage == islands_ends[0]){
+                    o = -1;
+                    last_mobs = 0;
+                    min = last_mobs;
+                    max = last_mobs + mobs_on_island_count[o+1] - 1;
+                    }else{
+                    min = min - mobs_on_island_count[o];
+                    max = max - mobs_on_island_count[o+1];
+                    o--;
+                    };};
+                };
+            };
+            minV = Math.ceil(min);
+            maxV = Math.floor(max);
+            k = Math.floor(Math.random() * (max - min + 1)) + min;
+
+
             $('#mob_image').attr("src",  mobs_images[k] );
             $('#mob_name').text(mobs[k]);
             $('#level_name').text(islands[o+1]);
+            $('.island').css('background-image', 'url('+islands_images[o+1]+')');
     };
 
     function refreshHTML(){
@@ -161,9 +184,6 @@ $(document).ready(function(){
         }
         $('#dmg_s').text(ALLdps);
 
-
-
-
         if (stage == 1) {
             $('.back_arrow').css('overflow', 'hidden');
         }else{
@@ -178,7 +198,7 @@ $(document).ready(function(){
 
     };
     refreshHTML();
-    refreshIsland();
+    refreshIsland(true);
 
     
 
@@ -194,8 +214,8 @@ $(document).ready(function(){
             level++;
             current = maxhp;
             hpbar =  current/maxhp*100;
-            gold += 101;
-            refreshIsland();
+            gold += 101 + 1.2*stage; // trza dodac mnoznik od stageow konkretny
+            refreshIsland(true);
 
         }
 
@@ -206,9 +226,8 @@ $(document).ready(function(){
             maxhp = maxhp*(hpMultipler);
            // maxhp = maxhp + (stagePassed-1)*(maxhp*hpMultipler);
             current = maxhp;
-            refreshIsland();
             }
-            refreshIsland();
+            refreshIsland(true);
             level = 1;
         }
         hpbar =  current/maxhp*100;
@@ -255,25 +274,26 @@ $(document).ready(function(){
         // funckja klikania
         clickCount++;
         current -= clickDmg;
-        console.log("Zadałes "+clickDmg +"dmg");
     });
 
 
         // zmiana stage ++
     $('.next_arrow').click(function(){
         stage++;
-        refreshIsland();
         level = 1;
+        refreshIsland(true);
         refreshHTML();
+
     });
         // zmiana stage --
     $('.back_arrow').click(function(){
+
         if(stage > 1){
             stage--;
         }
         level = 1;
+        refreshIsland(false);
         refreshHTML();
-        refreshIsland();
     });
     
         
