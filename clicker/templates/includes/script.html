@@ -1,7 +1,19 @@
 <script>
 $(document).ready(function(){
     
-
+    // funkcja pokazywania menu
+    var clicked = false;
+    $( "#showmenu" ).click(function() {
+    if(clicked == true){
+        clicked = false;
+    $( "#menu" ).animate({ 
+      "left": "+=-47.5%",
+       }, "slow" );}else{
+        clicked = true;
+        $( "#menu" ).animate({ 
+        "left": "+=47.5%",
+       }, "slow" );}
+    });
 
     // zmienne pomocnicze
     var o = -1;
@@ -12,7 +24,7 @@ $(document).ready(function(){
     var clickDmg = 1; // aktualny click dmg
     var level = 1; // aktualny level na danym stage
     var maxLevel = 10; // ilosc leveli
-    var gold = 30000; // base gold 
+    var gold = 3000000; // base gold 
     var maxhp = 10; // pierwsze hp mobka
     var current = maxhp; // aktualne hp
     var hpbar =  current/maxhp*100; // aktualny hp bar w %%

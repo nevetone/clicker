@@ -26,11 +26,11 @@
                     <span style="color:gold;">
                         <i class="fas fa-mouse-pointer"></i>
                     </span> Click Power<br />
-                <span class="text-center">
-                    Cost: <span class="text-warning"><i class="fas fa-coins"></i></span>
-                    <span id="goldPrice"></span><br />
-                    Count: <i class="fas fa-box-open"></i> <span id="boughtUpgrades"></span>
-                </span>
+                    <span class="text-center">
+                        Cost: <span class="text-warning"><i class="fas fa-coins"></i></span>
+                        <span id="goldPrice"></span><br />
+                        Count: <i class="fas fa-box-open"></i> <span id="boughtUpgrades"></span>
+                    </span>
                 </button>
                 <button class="btn btn-dark border" id="buy10" style="position: absolute; top:0; height: 50%; font-size: 12px; padding:1% 1%; min-width: 100px;"> Buy x10<br/>cost: <span id="cost10"></span>
                     <span class="text-warning"><i class="fas fa-coins"></i></span>
@@ -40,7 +40,11 @@
                 </button>
                 </div>
                 <br />
-                <div class="scrollbar" style="position: relative; overflow-y:auto; height:100%; width:50%; ">
+                <div style="position:relative; width:50%; left:-47.5%;" id="menu">
+                    <button id="showmenu" class="text-white">
+                        <span style="position:relative; top:40%; transform:translateY(50%); font-size:70px;" ><i class="fas fa-caret-right"></i></span>
+                    </button>
+                <div class="scrollbar" style="position: relative; overflow-y:scroll; overflow-x:hidden; height:100%; width:90%;">
                     {% for unit  in units %}
                 <button class="btn btn-dark border" id="upgrade{{ unit.unit_id }}" style="width: 100%;" hidden id="unit1">
                     <span id="upgrade{{ unit.unit_id }}_name" >
@@ -62,14 +66,12 @@
                     {% endfor %}<br /><br /><br />
                 </div>
                 </div>
+                </div>
             <div class="col-sm-4" style="padding:0; height: 100%; position: relative;">
                 <div style="position: relative; top:0; height: 500px;">
-
                     <img class="mob" id="mob_image" src="" /> 
-
                 </div>
         <div class="island" style="z-index:1; position: absolute; bottom:0; height: 400px; width: 100%; ;" >
-            
             <div class="progress hp-bar" style="position: relative; top: 25%;" >  
                 <div class="progress-bar" style="background-color: rgb(55, 0, 87);" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
                     <div style="position: absolute; left:50%;transform: translateX(-50%); ">
@@ -80,22 +82,19 @@
                 </div>
             </div>
             <div class="text-center text-light text" id="level_level" style="font-size: 40px; position: relative;" >
-            
             <span style="font-size: 15px;">Stage:</span> <span id="stage" style="font-size: 15px;"></span><br />
             <span id="level_name">Level:</span> :<span id="level"></span> / 
             <span id="maxLevel"></span>
-            
             </div>
-            <div class="text-center text-light text" id="mob_name" style="font-size: 25px; position: relative;" >Slime</div>
-            <div class="text-center text-light text" id="boss_time" style="font-size: 25px; position: relative;" hidden >0.00</div>
-        </div>
+                <div class="text-center text-light text" id="mob_name" style="font-size: 25px; position: relative;" >Slime</div>
+                <div class="text-center text-light text" id="boss_time" style="font-size: 25px; position: relative;" hidden >0.00</div>
+            </div>
             <div class="col-sm-4">
-            <div class="text-white next_arrow" style="font-size:40px; position: relative; z-index:1;">
-                <i class="fas fa-arrow-right" id="next" style="position:absolute; left:0;"></i>
+                <div class="text-white next_arrow" style="font-size:40px; position: relative; z-index:1;">
+                    <i class="fas fa-arrow-right" id="next" style="position:absolute; left:0;"></i>
             </div>
             <div class="text-light text-center"> 
                 <h3> Stats </h3> 
-
                 <table class="table table-borderless table-dark border" style="position: relative; left: 50%; transform: translateX(-50%); width:50%; ">
                     <tbody>
                       <tr>
@@ -119,8 +118,7 @@
                       </tr>
                     </tbody>
                   </table>
-
-            </div>
+                </div>
             </div>
             <div class="col-sm-12 text-light" style="padding:0;">
                 <span class="text-white" id="test" ></span>
