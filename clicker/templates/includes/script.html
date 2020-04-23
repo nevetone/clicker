@@ -77,8 +77,7 @@ $(document).ready(function(){
     var cost25 = multiplierPrice(25, priceMultipler);
        
        
-      class Upgrade{
-            static buttons = [];     
+      class Upgrade{  
         constructor(){
             this.nameId='';
             this.nameOfUpgrade='';
@@ -87,8 +86,30 @@ $(document).ready(function(){
             this.price=0;
             this.discountMultipler=1.0;
             this.priceMultipler=1.15;
-            this.checked = false;
         }
+        buyUpgrade(){
+            if(gold >= (this.price*this.discountMultipler)){
+                gold -= this.price*this.discountMultipler;
+                this.boughtUpgrades++;
+                console.log("Kupiłeś upgrade dla "+this.nameOfUpgrade+ " za " +this.price+ " golda!" );
+                this.price *= this.priceMultipler;
+            }
+        }
+        
+
+    };
+    class SkillButton extends Upgrade {
+        constructor(){
+            super();
+        }
+   };
+
+    class UpgradeButton extends Upgrade {
+        static buttons=[];
+        constructor(){
+            super();
+            this.checked = false;
+        };
         static Init(){
         var baseUpgradePrices = []; 
         var numberOfUpgrades = {{ units.count }};
@@ -99,32 +120,30 @@ $(document).ready(function(){
           upgradeNames.push('{{ unit.unit_name }}');
           baseUpgradePrices.push({{ unit.unit_default_cost }}); 
          {% endfor %}
+
          for(var i = 0;i<numberOfUpgrades;i++){
-            this.buttons[i]=new Upgrade;//( "#upgrade"+i , Upgrade.upgradeNames[i] );
+            this.buttons[i]=new UpgradeButton();
+            console.log(this.buttons[0].baseDmg);
             this.buttons[i].price=baseUpgradePrices[i];
             this.buttons[i].nameId="#upgrade"+i;
             this.buttons[i].nameOfUpgrade=upgradeNames[i];
             this.buttons[i].baseDmg +=i;
          };
-          {% for unit in units %}
-          $('#upgrade{{ unit.unit_id }}').click(function(){Upgrade.buttons[{{ unit.unit_id }}].buyUpgrade()});
-          {% endfor %}
+
+        {% for unit in units %}
+          $('#upgrade{{ unit.unit_id }}').click(function(){UpgradeButton.buttons[{{ unit.unit_id }}].buyUpgrade()});
+        {% endfor %}
+
+
 
         }
+
         static getAllDmg(){
             var dmg=0;
             for(var i = 0;i<this.buttons.length;i++){
             dmg += this.buttons[i].baseDmg*this.buttons[i].boughtUpgrades/10;
             }
             return dmg;
-        }
-        buyUpgrade(){
-            if(gold >= (this.price*this.discountMultipler)){
-                gold -= this.price*this.discountMultipler;
-                this.boughtUpgrades++;
-                console.log("Kupiłeś upgrade dla "+this.nameOfUpgrade+ " za " +this.price+ " golda!" );
-                this.price *= this.priceMultipler;
-            }
         }
         static refreshButtons(){
             for(var i = 0;i<this.buttons.length;i++){
@@ -141,43 +160,9 @@ $(document).ready(function(){
 
     };
 
-    class UpgradeButton extends Upgrade {
 
+    UpgradeButton.Init();
 
-
-
-    };
-
-    class UpgradeSkill extends Upgrade {
-
-
-
-
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    Upgrade.Init();
-       
             {% comment %} ) {% endcomment %}
 
 
@@ -223,7 +208,7 @@ $(document).ready(function(){
     };
 
     function refreshHTML(){
-            Upgrade.refreshButtons();
+            UpgradeButton.refreshButtons();
         
         $('#boughtUpgrades').text(goldUpgradesAmount);
         $('#goldPrice').text(actualPrice);
@@ -243,8 +228,8 @@ $(document).ready(function(){
         
 
         var ALLdps = 0;
-        for(var l = 0;l<Upgrade.buttons.length;l++){
-        ALLdps = ALLdps + Upgrade.buttons[l].baseDmg * Upgrade.buttons[l].boughtUpgrades;
+        for(var l = 0;l<UpgradeButton.buttons.length;l++){
+        ALLdps = ALLdps + UpgradeButton.buttons[l].baseDmg * UpgradeButton.buttons[l].boughtUpgrades;
         }
         $('#dmg_s').text(ALLdps);
 
@@ -278,7 +263,7 @@ $(document).ready(function(){
     }
 
  setInterval(function(){ 
-        current -= Upgrade.getAllDmg();
+        current -= UpgradeButton.getAllDmg();
         if (current <= 0) {
             level++;
             setHp();
