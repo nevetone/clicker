@@ -10,24 +10,25 @@ $(document).ready(function(){
     var clickDmg = 1; // aktualny click dmg
     var level = 1; // aktualny level na danym stage
     var maxLevel = 10; // ilosc leveli
-    var gold = 998; // base gold 
+    var gold = 998999; // base gold 
     var maxhp = 10; // pierwsze hp mobka
     var current = maxhp; // aktualne hp
     var hpbar =  current/maxhp*100; // aktualny hp bar w %%
     var hpMultipler = 1.12; // huj wi cos wojtek napisal xd
-    var baseCost=10; // mnoznik do ceny ulepszenia na klikanie x1 
-    var priceMultipler = 1.1; // mnoznik do ceny ulepszenia na klikanie x2
-    var goldUpgradesAmount = 1; // mnoznik do ceny ulepszenia na klikanie x3
-    var actualPrice = baseCost*priceMultipler*goldUpgradesAmount; // aktuwalna cena ulepszenia
-    var clikMultipler = 1;
+
+    var clickUpgradesBought = 1; // ile kupionych click upgradow
+    var clickUpgradePrice=100;
+
     var visibleUpgrades = -1; // obecnie pokazane upgrade
-    var time_left = 30;
-    var maxtime_left=30;
-    var b_startTime=false;
+    var bossTime=30;
+    var time_left =bossTime;
+    var b_startBossTime=false;
     var b_getBonusgold=false;
 
     var dpsMeter=1.0;
     var dps=0;
+    var cost10=clickUpgradePrice*2*10;
+    var cost25=clickUpgradePrice*2*25;
     $('#dps').text(dps.toFixed(1)+' dmg.');
 
 
@@ -53,20 +54,6 @@ $(document).ready(function(){
         mobs_on_island_count.push({{ island.units.count }});
     {% endfor %}
                                                                                                                     {% comment %} ) {% endcomment %}
-
-
-    function multiplierPrice(x, z){
-        var final = 0;
-        var goldUpgradesCount = goldUpgradesAmount;
-        for(var i=1; i <= x; i++){
-            final += baseCost*goldUpgradesCount*z;
-            goldUpgradesCount++;
-        }
-        return final.toFixed(0);
-    }; 
-    var cost10 = multiplierPrice(10, priceMultipler);
-    var cost25 = multiplierPrice(25, priceMultipler);
-       
        
       class Upgrade{  
         constructor(){
@@ -201,9 +188,9 @@ $(document).ready(function(){
     function refreshHTML(){
             UpgradeButton.refreshButtons();
         
-        $('#boughtUpgrades').text(goldUpgradesAmount);
-        $('#goldPrice').text(actualPrice);
         $('#gold').text(gold.toFixed(0));
+        $('#boughtUpgrades').text(clickUpgradesBought-1);
+        $('#goldPrice').text(clickUpgradePrice);
         $('#level').text(" "+level);
         $('#maxLevel').text(maxLevel);
         $('#stage').text(stage);
@@ -215,6 +202,7 @@ $(document).ready(function(){
         $('#clickCount').text(clickCount);
         $('#cost25').text(cost25);
         $('#cost10').text(cost10);
+        $('#boss_time').prop('hidden', !b_startBossTime);
         $('#boss_time').text(time_left.toFixed(1)+'s.');
 
 
@@ -227,17 +215,9 @@ $(document).ready(function(){
         }
         $('#dmg_s').text(ALLdps);
 
-        if (stage == 1) {
-            $('.back_arrow').prop('hidden', true);
-        }else{
-            $('.back_arrow').prop('hidden', false);
-        }
-        if (stagePassed == stage) {
-            $('.next_arrow').prop('hidden', true);
-        }else{
-            $('.next_arrow').prop('hidden', false);
-        }
 
+        $('.back_arrow').prop('hidden', ( stage==1 ) ? true:false );
+        $('.next_arrow').prop('hidden', ( stagePassed==stage ) ? true:false );
 
     };
     refreshHTML();
@@ -265,8 +245,7 @@ $(document).ready(function(){
             gold += stage; // trza dodac mnoznik od stageow konkretny
             if(b_getBonusgold) { gold+=stage*10;b_getBonusgold=0; };
             
-            b_startTime=0; time_left=maxtime_left;
-            $('#boss_time').prop('hidden', true);
+            b_startBossTime=false; time_left=bossTime;
             refreshIsland(true);
 
              if(level > maxLevel){
@@ -282,23 +261,22 @@ $(document).ready(function(){
                 level=maxLevel;
             }
           if( ((stage %10) == 0) && level == maxLevel){
-            $('#boss_time').prop('hidden', false);
             setHp();
             maxhp=maxhp*3;
             current=maxhp;
-            b_startTime=1;
+            b_startBossTime=true;
             b_getBonusgold=1;
 
             
          }
         }
-        if(b_startTime){
+        if(b_startBossTime){
             time_left -= 0.1;
             if(time_left < 0){
                 setHp();
                 maxhp=maxhp*3;
                 current=maxhp;
-                time_left=maxtime_left;
+                time_left=bossTime;
             }
 
         }
@@ -315,45 +293,39 @@ $(document).ready(function(){
 
         }, 100);
 
-
-
-
     //  ulepszanie podstawowego click powera
     $('#clickUpgrade').click(function(){
-        if(gold>=actualPrice){
-            gold -= actualPrice;
-            clikMultipler += 0.1;
-            clickDmg = clickDmg + (1*clikMultipler);
-            goldUpgradesAmount++;
-            actualPrice=baseCost*priceMultipler*goldUpgradesAmount;
-            cost10 = multiplierPrice(10, priceMultipler);
-            cost25 = multiplierPrice(25, priceMultipler);
+        if(gold>=clickUpgradePrice){
+            gold -= clickUpgradePrice;
+            clickUpgradePrice *=2;
+            clickDmg +=1;
+            clickUpgradesBought++;
+            cost10 = clickUpgradePrice*(2*10) ;
+            cost25 = clickUpgradePrice*(2*25) ;
             }
         });
 
     $('#buy10').click(function(){
         if(gold>=cost10){
             gold -= cost10;
-            clikMultipler += 1;
-            clickDmg = clickDmg + (1*clikMultipler);
-            goldUpgradesAmount += 10;
-            actualPrice = baseCost*priceMultipler*goldUpgradesAmount;
-            cost10 = multiplierPrice(10, priceMultipler);
-            cost25 = multiplierPrice(25, priceMultipler);
+            clickDmg +=1*10;
+            clickUpgradesBought += 10;
+            clickUpgradePrice *=2*10;
+            cost10 = clickUpgradePrice*(2*10) ;
+            cost25 = clickUpgradePrice*(2*25) ;
             refreshHTML();
         }
     });
 
     $('#buy25').click(function(){
-    if(gold>=cost25){
-        gold -= cost25;
-        clikMultipler += 2.5;
-        clickDmg = clickDmg + (1*clikMultipler);
-        goldUpgradesAmount += 25;
-        actualPrice = baseCost*priceMultipler*goldUpgradesAmount;
-        cost25 = multiplierPrice(25, priceMultipler);
-        cost10 = multiplierPrice(10, priceMultipler);
-        refreshHTML();
+        if(gold>=cost25){
+            gold -= cost25;
+            clickDmg +=1*25;
+            clickUpgradesBought += 25;
+            clickUpgradePrice *=2*25;
+            cost10 = clickUpgradePrice*(2*10) ;
+            cost25 = clickUpgradePrice*(2*25) ;
+            refreshHTML();
         }
     });
 
@@ -370,8 +342,8 @@ $(document).ready(function(){
         stage++;
         setHp();
         level = 1;
-        b_startTime=0;
-        time_left=3;
+        b_startBossTime=false;
+        time_left=bossTime;
         refreshHTML();
         refreshIsland(true);
 
@@ -382,8 +354,8 @@ $(document).ready(function(){
             stage--;
             setHp();
         level = 1;
-        b_startTime=0;
-        time_left=3;
+        b_startBossTime=false;
+        time_left=bossTime;
         refreshHTML();
         refreshIsland(false);
         }
