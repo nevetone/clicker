@@ -78,13 +78,10 @@ $(document).ready(function(){
        
        
       class Upgrade{
-            static upgradeNames = [];   
-            static baseUpgradePrices = [];  
-            static buttons = [];
-            static numberOfUpgrades = {{ units.count }};
-        constructor(nameId,nameOfUpgrade){
-            this.nameId=nameId;
-            this.nameOfUpgrade=nameOfUpgrade;
+            static buttons = [];     
+        constructor(){
+            this.nameId='';
+            this.nameOfUpgrade='';
             this.baseDmg=0.5;
             this.boughtUpgrades=0;
             this.price=0;
@@ -93,21 +90,30 @@ $(document).ready(function(){
             this.checked = false;
         }
         static Init(){
+        var baseUpgradePrices = []; 
+        var numberOfUpgrades = {{ units.count }};
+        var upgradeNames = [];   
+        var baseUpgradePrices = [];  
+
          {% for unit in units %}
-          this.upgradeNames.push('{{ unit.unit_name }}');
-          this.baseUpgradePrices.push({{ unit.unit_default_cost }}); 
+          upgradeNames.push('{{ unit.unit_name }}');
+          baseUpgradePrices.push({{ unit.unit_default_cost }}); 
          {% endfor %}
-         for(var i = 0;i<this.numberOfUpgrades;i++){
-            this.buttons[i]=new Upgrade( "#upgrade"+i , Upgrade.upgradeNames[i] );
-            this.buttons[i].price=Upgrade.baseUpgradePrices[i];
+         for(var i = 0;i<numberOfUpgrades;i++){
+            this.buttons[i]=new Upgrade;//( "#upgrade"+i , Upgrade.upgradeNames[i] );
+            this.buttons[i].price=baseUpgradePrices[i];
+            this.buttons[i].nameId="#upgrade"+i;
+            this.buttons[i].nameOfUpgrade=upgradeNames[i];
             this.buttons[i].baseDmg +=i;
          };
-
+          {% for unit in units %}
+          $('#upgrade{{ unit.unit_id }}').click(function(){Upgrade.buttons[{{ unit.unit_id }}].buyUpgrade()});
+          {% endfor %}
 
         }
         static getAllDmg(){
             var dmg=0;
-            for(var i = 0;i<this.numberOfUpgrades;i++){
+            for(var i = 0;i<this.buttons.length;i++){
             dmg += this.buttons[i].baseDmg*this.buttons[i].boughtUpgrades/10;
             }
             return dmg;
@@ -121,11 +127,11 @@ $(document).ready(function(){
             }
         }
         static refreshButtons(){
-            for(var i = 0;i<this.numberOfUpgrades;i++){
+            for(var i = 0;i<this.buttons.length;i++){
             $(this.buttons[i].nameId+'_count').text(this.buttons[i].boughtUpgrades);
             $(this.buttons[i].nameId+'_cost').text(this.buttons[i].price.toFixed(0));
             $(''+this.buttons[i].nameId+'').prop('disabled', ((gold < this.buttons[i].price*this.buttons[i].discountMultipler)?true:false));
-            if(gold >= this.buttons[i].price && !this.buttons[i].checked  && visibleUpgrades < this.numberOfUpgrades){
+            if(gold >= this.buttons[i].price && !this.buttons[i].checked  && visibleUpgrades < this.buttons.length){
                     this.buttons[i].checked = true;
                     visibleUpgrades++;
                     }
@@ -143,6 +149,7 @@ $(document).ready(function(){
     };
 
     class UpgradeSkill extends Upgrade {
+
 
 
 
@@ -236,7 +243,7 @@ $(document).ready(function(){
         
 
         var ALLdps = 0;
-        for(var l = 0;l<Upgrade.numberOfUpgrades;l++){
+        for(var l = 0;l<Upgrade.buttons.length;l++){
         ALLdps = ALLdps + Upgrade.buttons[l].baseDmg * Upgrade.buttons[l].boughtUpgrades;
         }
         $('#dmg_s').text(ALLdps);
@@ -258,9 +265,7 @@ $(document).ready(function(){
     refreshIsland(true);
 
     
-    {% for unit in units %}
-    $('#upgrade{{ unit.unit_id }}').click(function(){Upgrade.buttons[{{ unit.unit_id }}].buyUpgrade()});
-    {% endfor %}
+
 
 
 
@@ -289,10 +294,13 @@ $(document).ready(function(){
                    stage ++;
                     stagePassed++;
                     setHp();
+                    level = 1;
                }
             refreshIsland(true);
-            level = 1;
                 }
+            if(stagePassed>stage && level > maxLevel){
+                level=maxLevel;
+            }
           if( ((stage %10) == 0) && level == maxLevel){
             $('#boss_time').prop('hidden', false);
             setHp();
