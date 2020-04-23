@@ -14,6 +14,15 @@
     background-color: #1A1A1D;
 }
 
+
+.island{
+
+    background-repeat:no-repeat;
+    background-position:60% 100%;
+    background-size:500px;
+    z-index:1;
+}
+
 #showmenu{
     position:absolute;
     width:10%;
