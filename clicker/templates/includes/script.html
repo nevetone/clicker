@@ -228,14 +228,14 @@ $(document).ready(function(){
         $('#dmg_s').text(ALLdps);
 
         if (stage == 1) {
-            $('.back_arrow').css('overflow', 'hidden');
+            $('.back_arrow').prop('hidden', true);
         }else{
-            $('.back_arrow').css('overflow', 'visible');
+            $('.back_arrow').prop('hidden', false);
         }
         if (stagePassed == stage) {
-            $('.next_arrow').css('overflow', 'hidden');
+            $('.next_arrow').prop('hidden', true);
         }else{
-            $('.next_arrow').css('overflow', 'visible');
+            $('.next_arrow').prop('hidden', false);
         }
 
 
@@ -372,6 +372,7 @@ $(document).ready(function(){
         level = 1;
         b_startTime=0;
         time_left=3;
+        refreshHTML();
         refreshIsland(true);
 
     });
@@ -383,6 +384,7 @@ $(document).ready(function(){
         level = 1;
         b_startTime=0;
         time_left=3;
+        refreshHTML();
         refreshIsland(false);
         }
     });
