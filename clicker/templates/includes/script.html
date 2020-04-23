@@ -24,7 +24,7 @@ $(document).ready(function(){
     var clickDmg = 1; // aktualny click dmg
     var level = 1; // aktualny level na danym stage
     var maxLevel = 10; // ilosc leveli
-    var gold = 3000000; // base gold 
+    var gold = 998; // base gold 
     var maxhp = 10; // pierwsze hp mobka
     var current = maxhp; // aktualne hp
     var hpbar =  current/maxhp*100; // aktualny hp bar w %%
@@ -80,7 +80,7 @@ $(document).ready(function(){
       class Upgrade{
             static upgradeNames = [];   
             static baseUpgradePrices = [];  
-            static upgradesButtonsArray = [];
+            static buttons = [];
             static numberOfUpgrades = {{ units.count }};
         constructor(nameId,nameOfUpgrade){
             this.nameId=nameId;
@@ -98,49 +98,77 @@ $(document).ready(function(){
           this.baseUpgradePrices.push({{ unit.unit_default_cost }}); 
          {% endfor %}
          for(var i = 0;i<this.numberOfUpgrades;i++){
-            this.upgradesButtonsArray[i]=new Upgrade( "#upgrade"+i , Upgrade.upgradeNames[i] );
-            this.upgradesButtonsArray[i].price=Upgrade.baseUpgradePrices[i];
-            this.upgradesButtonsArray[i].baseDmg +=i;
+            this.buttons[i]=new Upgrade( "#upgrade"+i , Upgrade.upgradeNames[i] );
+            this.buttons[i].price=Upgrade.baseUpgradePrices[i];
+            this.buttons[i].baseDmg +=i;
          };
 
 
         }
-        static dealDmg(){
+        static getAllDmg(){
+            var dmg=0;
             for(var i = 0;i<this.numberOfUpgrades;i++){
-            current -= this.upgradesButtonsArray[i].baseDmg*this.upgradesButtonsArray[i].boughtUpgrades/10;
+            dmg += this.buttons[i].baseDmg*this.buttons[i].boughtUpgrades/10;
             }
+            return dmg;
         }
         buyUpgrade(){
             if(gold >= (this.price*this.discountMultipler)){
                 gold -= this.price*this.discountMultipler;
                 this.boughtUpgrades++;
                 console.log("Kupiłeś upgrade dla "+this.nameOfUpgrade+ " za " +this.price+ " golda!" );
-                this.price = this.price*this.priceMultipler;
+                this.price *= this.priceMultipler;
             }
         }
         static refreshButtons(){
             for(var i = 0;i<this.numberOfUpgrades;i++){
-            $(this.upgradesButtonsArray[i].nameId+'_count').text(this.upgradesButtonsArray[i].boughtUpgrades);
-            $(this.upgradesButtonsArray[i].nameId+'_cost').text(this.upgradesButtonsArray[i].price.toFixed(0));
-            if(gold < (this.upgradesButtonsArray[i].price*this.upgradesButtonsArray[i].discountMultipler)){
-                $(''+this.upgradesButtonsArray[i].nameId+'').prop('disabled', true);
-             }else{
-                $(''+this.upgradesButtonsArray[i].nameId+'').prop('disabled', false);
-            }
-            if(gold >= this.upgradesButtonsArray[i].price){
-                if(this.upgradesButtonsArray[i].checked == false){
-                    if(visibleUpgrades < this.numberOfUpgrades ){
-                    this.upgradesButtonsArray[i].checked = true;
+            $(this.buttons[i].nameId+'_count').text(this.buttons[i].boughtUpgrades);
+            $(this.buttons[i].nameId+'_cost').text(this.buttons[i].price.toFixed(0));
+            $(''+this.buttons[i].nameId+'').prop('disabled', ((gold < this.buttons[i].price*this.buttons[i].discountMultipler)?true:false));
+            if(gold >= this.buttons[i].price && !this.buttons[i].checked  && visibleUpgrades < this.numberOfUpgrades){
+                    this.buttons[i].checked = true;
                     visibleUpgrades++;
                     }
-                }
-                
-            }
             $('#upgrade'+visibleUpgrades.toString()).prop('hidden', false);
             }
         }
 
     };
+
+    class UpgradeButton extends Upgrade {
+
+
+
+
+    };
+
+    class UpgradeSkill extends Upgrade {
+
+
+
+
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     Upgrade.Init();
        
             {% comment %} ) {% endcomment %}
@@ -209,7 +237,7 @@ $(document).ready(function(){
 
         var ALLdps = 0;
         for(var l = 0;l<Upgrade.numberOfUpgrades;l++){
-        ALLdps = ALLdps + Upgrade.upgradesButtonsArray[l].baseDmg * Upgrade.upgradesButtonsArray[l].boughtUpgrades;
+        ALLdps = ALLdps + Upgrade.buttons[l].baseDmg * Upgrade.buttons[l].boughtUpgrades;
         }
         $('#dmg_s').text(ALLdps);
 
@@ -231,7 +259,7 @@ $(document).ready(function(){
 
     
     {% for unit in units %}
-    $('#upgrade{{ unit.unit_id }}').click(function(){Upgrade.upgradesButtonsArray[{{ unit.unit_id }}].buyUpgrade()});
+    $('#upgrade{{ unit.unit_id }}').click(function(){Upgrade.buttons[{{ unit.unit_id }}].buyUpgrade()});
     {% endfor %}
 
 
@@ -245,8 +273,7 @@ $(document).ready(function(){
     }
 
  setInterval(function(){ 
-            Upgrade.dealDmg();
-
+        current -= Upgrade.getAllDmg();
         if (current <= 0) {
             level++;
             setHp();
