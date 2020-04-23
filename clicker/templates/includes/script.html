@@ -37,9 +37,14 @@ $(document).ready(function(){
     var visibleUpgrades = -1; // obecnie pokazane upgrade
     var time_left = 30;
     var maxtime_left=30;
-    var b_startTime=0;
-    var b_getBonusgold=0;
-    
+    var b_startTime=false;
+    var b_getBonusgold=false;
+
+    var dpsMeter=1.0;
+    var dps=0;
+    $('#dps').text(dps.toFixed(1)+' dmg.');
+
+
     // zmienne wysp i mobków z bazy danych
     var islands = [];
     var islands_images = [];
@@ -225,6 +230,9 @@ $(document).ready(function(){
         $('#cost25').text(cost25);
         $('#cost10').text(cost10);
         $('#boss_time').text(time_left.toFixed(1)+'s.');
+
+
+        
         
 
         var ALLdps = 0;
@@ -264,6 +272,7 @@ $(document).ready(function(){
 
  setInterval(function(){ 
         current -= UpgradeButton.getAllDmg();
+
         if (current <= 0) {
             level++;
             setHp();
@@ -306,6 +315,14 @@ $(document).ready(function(){
                 time_left=maxtime_left;
             }
 
+        }
+
+        dpsMeter -=0.1;
+        dps += UpgradeButton.getAllDmg();
+        if(dpsMeter <= 0){
+            dpsMeter=1.0;
+            $('#dps').text(dps.toFixed(1)+' dmg.');
+            dps=0;
         }
 
         refreshHTML();
@@ -359,6 +376,7 @@ $(document).ready(function(){
    $('.click_area').click(function(){
         clickCount++;
         current -= clickDmg;
+        dps+=clickDmg;
     });
 
 
