@@ -316,7 +316,6 @@ $(document).ready(function(){
             }
 
         }
-
         dpsMeter -=0.1;
         dps += UpgradeButton.getAllDmg();
         if(dpsMeter <= 0){
@@ -324,6 +323,7 @@ $(document).ready(function(){
             $('#dps').text(dps.toFixed(1)+' dmg.');
             dps=0;
         }
+
 
         refreshHTML();
 
