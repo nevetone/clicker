@@ -1,13 +1,127 @@
 {% extends 'extends/base.html' %}
 {% block content %}
-
-{% comment %} tu se pisz {% endcomment %}
-
-
-
-<div class="progress">
-  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="900" style="width: 75%"></div>
+{% load static %}
+{% load humanize %}
+<div class="container-fluid" style="position: fixed; height: 100vh; width: 100vw; margin:0; padding:0;">
+{% include 'includes/menu.html' %}
+<div class="block-upgrades border" style="position: absolute; width: 20vw; height: 90%;">
+<div style="position: relative; height: auto; width: 100%;">
+<button class="btn btn-dark border" id="clickUpgrade" style="width: 70%;">
+<span style="color:gold;">
+<i class="fas fa-mouse-pointer"></i>
+</span> Click Power<br />
+<span class="text-center">
+Cost: <span class="text-warning"><i class="fas fa-coins"></i></span>
+<span id="goldPrice"></span><br />
+Count: <i class="fas fa-box-open"></i> <span id="boughtUpgrades"></span>
+</span>
+</button>
+<button class="btn btn-dark border" id="buy10" style="position: absolute; top:0; height: 50%; font-size: 12px; padding:1% 1%; width: 30%;"> Buy x10<br/>cost: <span id="cost10"></span>
+<span class="text-warning"><i class="fas fa-coins"></i></span>
+</button>
+<button class="btn btn-dark border" id="buy25" style="position: absolute; bottom:0; height: 50%; font-size: 12px; padding:1% 1%; width: 30%;">Buy x25<br/>cost: <span id="cost25"></span>
+<span class="text-warning"><i class="fas fa-coins"></i></span>
+</button>
 </div>
-
-
+<div class="show-menu border border-warning text-white" style="position: relative; width:100%; height:auto; ">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+<li class="nav-item" style="width: 50%; text-align: center;">
+<a class="nav-link active btn btn-primary border" id="units-tab" data-toggle="tab" href="#units" role="tab" aria-controls="units" aria-selected="true">Units</a>
+</li>
+<li class="nav-item" style="width: 50%; text-align: center;">
+<a class="nav-link btn btn-primary border" id="skills-tab" data-toggle="tab" href="#skills" role="tab" aria-controls="skills" aria-selected="false">Skills</a>
+</li>
+</ul>
+<div class="tab-content" id="myTabContent">
+<div class="tab-pane fade show active" id="units" role="tabpanel" aria-labelledby="units-tab">
+<div class="scrollbar" style="position: relative; overflow-y:auto; overflow-x:hidden; height:auto; width:100%;">
+{% for unit  in units %}
+<button class="btn btn-dark border" id="upgrade{{ unit.unit_id }}" style="width: 100%;" hidden>
+<span id="upgrade{{ unit.unit_id }}_name" >
+{{ unit.unit_name|capfirst }}
+</span>
+<div style="position: relative; left:50%; transform: translateX(-50%);">
+Cost:
+<span id="upgrade{{ unit.unit_id }}_cost" >
+{{ unit.unit_default_cost }}
+</span>
+<span class="text-warning border-right p-1" ><i class="fas fa-coins"></i></span> 
+Count:
+<span id="upgrade{{ unit.unit_id }}_count" >
+{{ unit.unit_count }}
+</span>
+<span> <i class="fas fa-box-open"></i> </span>
+</div>
+</button>
+{% endfor %}
+</div>
+</div>
+<div class="tab-pane fade" id="skills" role="tabpanel" aria-labelledby="skills-tab">
+<h1>Skille</h1>
+</div>
+</div>
+</div>
+</div>
+<div class="block-clicker border" style="position: absolute; width: 60vw; left: 20vw; height: 90%;">
+<div class="text-white back_arrow" style="font-size:40px; position: absolute; z-index:0; left:0; top:5%; height: 10%; width: 10%;">
+<i class="fas fa-arrow-left" style="position:absolute; right:0;" id="back"></i>
+</div>
+<div class="text-white next_arrow" style="font-size:40px; position: absolute; z-index:0; right:0; top:5%; height: 10%; width: 10%;">
+<i class="fas fa-arrow-right" id="next" style="position:absolute; left:0;"></i>
+</div>
+<div class="islands-mobs" style="position: absolute; height: 80%; width:100%; left:50%; transform:translateX(-50%); top:20%;">
+<img class="mob" id="mob_image" src="#" style="position: absolute; left:50%; height: 20%; top:10%; transform:translateX(-50%); z-index: 1;" /> 
+<img class="island" src="#" style="position: absolute; height: 80%; width: 50%; left:50%; transform:translateX(-50%);" />
+</div>
+<div class="visualization" style="position: absolute; top:0; height: auto; width: auto; z-index: 1; left:50%; transform:translateX(-50%);">
+<div class="text-center text-light text" id="level_level" style="font-size: 40px; position: relative;" >
+<span style="font-size: 15px;">Stage:</span> <span id="stage" style="font-size: 15px;"></span><br />
+<span id="level_name">Level:</span> :<span id="level"></span> / 
+<span id="maxLevel"></span>
+</div>
+<div class="text-center text-light text" id="mob_name" style="font-size: 25px; position: relative;" >Slime</div>
+<div class="progress hp-bar" style="position:relative;" >  
+<div class="progress-bar" style="background-color: rgb(104, 0, 14);" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+<div style="position: absolute; left:50%;transform: translateX(-50%); ">
+<span class="current_hp"></span>
+/
+<span id="max_hp"></span></div>
+</div>
+</div>
+<div class="text-center text-light text" id="boss_time" style="font-size: 25px; position: relative;" hidden >0.00</div>
+</div>
+<div class="click_area" ></div>
+</div>
+<div class="block-stats border" style="position: absolute; width: 20vw; left: 80vw; height: 90%;">
+<div class="text-light text-center" style="position: absolute; left:0; top:0; width: 100%; height:auto;"> 
+<table class="table table-borderless table-dark border" style="position: relative; left: 50%; transform: translateX(-50%); width:100%; ">
+<tbody>
+<tr>
+<td colspan="2" class="border" style="font-size:25px;">
+<div class="text-light" >
+Gold: <span id="gold"></span> <span class="text-warning"><i class="fas fa-coins"></i></span>
+</div>
+</td>
+</tr>
+<tr>
+<td>ClickDMG:</td>
+<td id="clickDmg" class="border border-left;"></td>
+</tr>
+<tr>
+<td>Dmg per/s:</td>
+<td id="dmg_s" class="border border-left;"></td>
+</tr>
+<tr>
+<td>Click Count:</td>
+<td id="clickCount" class="border border-left;"></td>
+</tr>
+<tr>
+<td>DPS:</td>
+<td id="dps" class="border border-left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 {% endblock content %}

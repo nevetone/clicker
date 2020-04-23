@@ -1,20 +1,6 @@
 <script>
 $(document).ready(function(){
     
-    // funkcja pokazywania menu
-    var clicked = false;
-    $( "#showmenu" ).click(function() {
-    if(clicked == true){
-        clicked = false;
-    $( "#menu" ).animate({ 
-      "left": "+=-47.5%",
-       }, "slow" );}else{
-        clicked = true;
-        $( "#menu" ).animate({ 
-        "left": "+=47.5%",
-       }, "slow" );}
-    });
-
     // zmienne pomocnicze
     var o = -1;
     // zmienne
@@ -176,7 +162,7 @@ $(document).ready(function(){
     var min = last_mobs;
     var max = last_mobs + mobs_on_island_count[o+1] - 1;
     var islands_count = {{ islands.count }};
-    $('.island').css('background-image', 'url('+islands_images[o+1]+')');
+    $('.island').attr("src", islands_images[o+1]);
 
     function refreshIsland(next){
         if(islands_count >= o){
@@ -209,7 +195,7 @@ $(document).ready(function(){
             $('#mob_image').attr("src",  mobs_images[k] );
             $('#mob_name').text(mobs[k]);
             $('#level_name').text(islands[o+1]);
-            $('.island').css('background-image', 'url('+islands_images[o+1]+')');
+            $('.island').attr("src", islands_images[o+1]);
     };
 
     function refreshHTML(){

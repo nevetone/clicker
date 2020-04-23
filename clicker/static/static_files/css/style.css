@@ -15,33 +15,13 @@
 }
 
 
-.island{
-
-    background-repeat:no-repeat;
-    background-position:60% 100%;
-    background-size:500px;
-    z-index:1;
-}
-
-#showmenu{
-    position:absolute;
-    width:10%;
-    right:50%; 
-    height:100%;
-    background:none;
-    border:none;
-    border-left:3px solid white;
-    outline:none;
-    right:0; 
-}
-
 .main{
     max-height: 100vh;
     max-width: 100vw;
 }
 
 .hp-bar{
-    width: 40%;
+    width: 80%;
     position: relative;
     left:50%;
     transform: translateX(-50%); 
@@ -63,31 +43,14 @@
     border: solid #6F2232 3px;
 }
 .click_area{
-    position:fixed;
-    z-index:999;
-    height:30%;
-    width:25%;
+    position: absolute;
+    z-index:0;
+    height:20%;
+    width:30%;
     top:25%;
     left:50%;
     transform: translateX(-50%); 
     
-}
-
-.mob{
-    position:relative; 
-    z-index:999;
-    bottom:-30px; 
-    height:150px; 
-    width:150px;
-    left:50%;
-    transform: translateX(-50%); 
-}
-.text{
-    top: -140%;
-}
-.main_view{
-    position: fixed; 
-    top:20%;
 }
 
 .next_arrow{
@@ -97,23 +60,6 @@
     overflow: hidden;
 }
 
-@media(min-height:901px){
-    .mob{
-        bottom:-150px; 
-    }
-    .text{
-        top: -85%;
-    }
-    .main_view{
-        top:5%;
-    }
-    .click_area{
-        width:40%;
-        height:50%;
-    }
-    
-    
-}
 
 
 /* Scrollbar Styling */

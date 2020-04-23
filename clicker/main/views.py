@@ -22,7 +22,16 @@ def home(request):
 
 def test(request):
     template="test.html"
-    context={
+    try:
+        units = Units.objects.all()
+        islands = Islands.objects.all()
+        mobs = Mobs.objects.all()
+    except:
+        units = None
+        islands = None
+        mobs = None
         
+    context={
+        'units':units, 'islands':islands, 'mobs':mobs,
     }
     return render(request, template, context)
