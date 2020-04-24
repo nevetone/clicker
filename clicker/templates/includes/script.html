@@ -135,17 +135,55 @@ function createParticle (x, y) {
         static skills=[];
         constructor(){
             super();
+            this.isOn=false;
+            this.maxTime=10;
+            this.time=this.maxTime;
+            this.skillType=0;
+        }
+        turnOn(){
+            this.isOn=true;
+        }
+        static useSkill(){
+
+
         }
         static Init(){
-            var upgradeNames = [];
-            var  baseUpgradePrices = [];
-            var  upgradeNames = [];
+            var upgradeNames = [
+            'skill0',
+            'skill1',
+            'skill2',
 
+            ];
+            var  baseUpgradePrices = [
+            1000,
+            10000,
+            30000,
+
+            ];
+        for(var i = 0;i<upgradeNames.length;i++){
+            this.skills[i]=new SkillButton();
+            this.skills[i].price=baseUpgradePrices[i];
+            this.skills[i].nameId="#skill"+i;
+            this.skills[i].nameOfUpgrade=upgradeNames[i];
+            this.skills[i].baseDmg =0;
+         };
+         $('#skill0').click(function(){SkillButton.skills[0].buyUpgrade()});
+         $('#skill1').click(function(){SkillButton.skills[1].buyUpgrade()});
+         $('#skill2').click(function(){SkillButton.skills[2].buyUpgrade()});
 
         }
         static refreshSkills(){
-
-            //console.log("asdas");
+            for(var i = 0;i<this.skills.length;i++){
+            $(this.skills[i].nameId+'_count').text(this.skills[i].boughtUpgrades);
+            $(this.skills[i].nameId+'_cost').text(this.skills[i].price.toFixed(0));
+            }
+            if(this.on){
+                this.time -=0.1;
+                if(this.time>=0){
+                    this.on=false;
+                    this.time=maxTime;
+                }
+            }
         }
    };
 
@@ -156,8 +194,7 @@ function createParticle (x, y) {
             this.checked = false;
         };
         static Init(){
-        var baseUpgradePrices = []; 
-        var numberOfUpgrades = {{ units.count }};
+        var baseUpgradePrices = [];
         var upgradeNames = [];   
         var baseUpgradePrices = [];  
 
@@ -166,7 +203,7 @@ function createParticle (x, y) {
           baseUpgradePrices.push({{ unit.unit_default_cost }}); 
          {% endfor %}
 
-         for(var i = 0;i<numberOfUpgrades;i++){
+         for(var i = 0;i<upgradeNames.length;i++){
             this.buttons[i]=new UpgradeButton();
             this.buttons[i].price=baseUpgradePrices[i];
             this.buttons[i].nameId="#upgrade"+i;
@@ -206,6 +243,7 @@ function createParticle (x, y) {
 
 
     UpgradeButton.Init();
+    SkillButton.Init();
 
             {% comment %} ) {% endcomment %}
 
@@ -306,6 +344,12 @@ function createParticle (x, y) {
 
  setInterval(function(){ 
         current -= UpgradeButton.getAllDmg();
+        for(var i=0;i<SkillButton.skills.length;i++){
+            if(SkillButton.skills[i].isOn){
+                
+            }
+        }
+
 
         if (current <= 0) {
             level++;
