@@ -148,28 +148,27 @@ function createParticle (x, y) {
 
         }
         static Init(){
-            var upgradeNames = [
-            'skill0',
-            'skill1',
-            'skill2',
+            var upgradeNames = [];
+            var baseUpgradePrices = [];
+            
+            {% for skill in skills %}
+            upgradeNames.push('{{ skill.skill_name }}');
+            baseUpgradePrices.push({{ skill.skill_cost }});
+            {% endfor %}
 
-            ];
-            var  baseUpgradePrices = [
-            1000,
-            10000,
-            30000,
 
-            ];
         for(var i = 0;i<upgradeNames.length;i++){
             this.skills[i]=new SkillButton();
             this.skills[i].price=baseUpgradePrices[i];
             this.skills[i].nameId="#skill"+i;
             this.skills[i].nameOfUpgrade=upgradeNames[i];
             this.skills[i].baseDmg =0;
+            
          };
-         $('#skill0').click(function(){SkillButton.skills[0].buyUpgrade()});
-         $('#skill1').click(function(){SkillButton.skills[1].buyUpgrade()});
-         $('#skill2').click(function(){SkillButton.skills[2].buyUpgrade()});
+         
+        {% for skill in skills %}
+        $('#skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].buyUpgrade()});
+        {% endfor %}
 
         }
         static refreshSkills(){
@@ -196,7 +195,6 @@ function createParticle (x, y) {
         static Init(){
         var baseUpgradePrices = [];
         var upgradeNames = [];   
-        var baseUpgradePrices = [];  
 
          {% for unit in units %}
           upgradeNames.push('{{ unit.unit_name }}');

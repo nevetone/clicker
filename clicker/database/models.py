@@ -34,3 +34,16 @@ class Islands(models.Model):
     def __str__(self):
         return self.island_name
     
+    
+class Skills(models.Model):
+    skill_name = models.CharField(max_length=50) 
+    skill_id = models.IntegerField(default=0)
+    skill_cost = models.IntegerField(default=0)
+    skill_count = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['skill_cost']
+    
+    def __str__(self):
+        return self.skill_name
+    

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from database.models import Units, Islands, Mobs
+from database.models import Units, Islands, Mobs, Skills
 
 # Create your views here.
 
@@ -9,13 +9,15 @@ def home(request):
         units = Units.objects.all()
         islands = Islands.objects.all()
         mobs = Mobs.objects.all()
+        skills = Skills.objects.all()
     except:
         units = None
         islands = None
         mobs = None
+        skills = None
         
     context={
-        'units':units, 'islands':islands, 'mobs':mobs,
+        'units':units, 'islands':islands, 'mobs':mobs, 'skills':skills,
     }
     return render(request, template, context)
     
