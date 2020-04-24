@@ -54,9 +54,9 @@ $(document).ready(function(){
         {% endfor %}
         mobs_on_island_count.push({{ island.units.count }});
     {% endfor %}
-         
+
                                                                                                                     {% comment %} ) {% endcomment %}
-/////////////////////// testy
+      /////////////////////// testy
 
 if (document.body.animate) {
   document.querySelector('.click_area').addEventListener('click', pop);
@@ -132,8 +132,20 @@ function createParticle (x, y) {
 
     };
     class SkillButton extends Upgrade {
+        static skills=[];
         constructor(){
             super();
+        }
+        static Init(){
+            var upgradeNames = [];
+            var  baseUpgradePrices = [];
+            var  upgradeNames = [];
+
+
+        }
+        static refreshSkills(){
+
+            //console.log("asdas");
         }
    };
 
@@ -156,7 +168,6 @@ function createParticle (x, y) {
 
          for(var i = 0;i<numberOfUpgrades;i++){
             this.buttons[i]=new UpgradeButton();
-            console.log(this.buttons[0].baseDmg);
             this.buttons[i].price=baseUpgradePrices[i];
             this.buttons[i].nameId="#upgrade"+i;
             this.buttons[i].nameOfUpgrade=upgradeNames[i];
@@ -242,6 +253,8 @@ function createParticle (x, y) {
 
     function refreshHTML(){
             UpgradeButton.refreshButtons();
+            SkillButton.refreshSkills();
+
         
         $('#gold').text(gold.toFixed(0));
         $('#boughtUpgrades').text(clickUpgradesBought-1);
@@ -390,11 +403,11 @@ function createParticle (x, y) {
         clickCount++;
         current -= clickDmg;
         dps+=clickDmg;
-        
+
         $( "#mob_image" ).animate({
             height: "22%",
         }, 50 );
-          $( "#mob_image" ).animate({
+        $( "#mob_image" ).animate({
             height: "20%",
         }, 50 );
     });
