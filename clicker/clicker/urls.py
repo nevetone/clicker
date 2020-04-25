@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from main.views import home, test
+from main.views import home, test, load
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name="home"),
     path('test/', test, name="test"),
+    path('ajax/', load, name="load"),
     
 ]
 

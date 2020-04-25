@@ -74,8 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'clicker.wsgi.application'
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_AGE = 31536000000
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 

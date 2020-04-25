@@ -1,7 +1,33 @@
 <script>
 {% load static %}
+
+function makeCookieId(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+    }
+
+    var firstLogIn = Cookies.get('firstLogin');
+
+    if (firstLogIn){
+
+        console.log(Cookies.get('cookieIds')+" ponowne logowanie");
+    }else{
+        Cookies.set('cookieIds', makeCookieId(12), { path: '' });
+        Cookies.set('firstLogin', 'false', { path: '' });
+        console.log(Cookies.get('cookieIds')+' first time');
+    }
+
+
 $(document).ready(function(){
-    
+
+
+
+
     // zmienne pomocnicze
     var o = -1;
     // zmienne
@@ -33,6 +59,7 @@ $(document).ready(function(){
     $('#dps').text(dps.toFixed(1)+' dmg.');
 
 
+
     // zmienne wysp i mobków z bazy danych
     var islands = [];
     var islands_images = [];
@@ -42,7 +69,37 @@ $(document).ready(function(){
     var mobs_images = [];
     var mobs_on_island_count = [];
 
+// load save ------------------------------------
+// jeszcze nie ma wszystkich danych ale to sa poczatki
+    $('#loadSave').submit(function() {
+        $.ajax({
+            data: $(this).serialize(),
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            success: function(data) {
+                    o = data.var_o;
+                    clickCount = data.click_count;
+                    stage = data.stage_passed;
+                    stagePassed = data.stage_passed;
+                    gold = data.current_gold;
+                    clickUpgradesBought = data.click_upgrades_bought;
+                    clickUpgradePrice = data.clickUpgradePrice;
+                    cost10=clickUpgradePrice*2*10;
+                    cost25=clickUpgradePrice*2*25;
+                    clickDmg = clickUpgradesBought-1;
+                    refreshIsland(false);
+                    refreshHTML();
+                    setHp();
+            }});
+        return false;
+    });
 
+    function load(){
+        $('#loadUser').val(Cookies.get('cookieIds'));
+        $('#loadSave').submit();
+    };
+    load();
+// koniec load save ------------------------------
     
     {% for island in islands %}
         islands.push('{{ island.island_name }}');
@@ -56,8 +113,8 @@ $(document).ready(function(){
     {% endfor %}
 
                                                                                                                     {% comment %} ) {% endcomment %}
-      /////////////////////// testy
-
+ 
+// particle ---------------- na click -------------------------
 if (document.body.animate) {
   document.querySelector('.click_area').addEventListener('click', pop);
 }
@@ -107,7 +164,7 @@ function createParticle (x, y) {
   };
 }
 
-////////////////////////
+////////////////////////---------------------------------
 
 
       class Upgrade{  
@@ -124,7 +181,8 @@ function createParticle (x, y) {
             if(gold >= (this.price*this.discountMultipler)){
                 gold -= this.price*this.discountMultipler;
                 this.boughtUpgrades++;
-                console.log("Kupiłeś upgrade dla "+this.nameOfUpgrade+ " za " +this.price+ " golda!" );
+                $('#pills-console').append('<span>Kupiłeś upgrade dla '+this.nameOfUpgrade+ ' za ' +this.price+ ' golda!</span><br/>');
+                $("#pills-console").animate({ scrollTop: 20000000 }, "slow");
                 this.price *= this.priceMultipler;
             }
         }
@@ -358,27 +416,27 @@ function createParticle (x, y) {
             b_startBossTime=false; time_left=bossTime;
             refreshIsland(true);
 
-             if(level > maxLevel){
-                   if (stagePassed == stage){
-                   stage ++;
+            if(level > maxLevel){
+                if (stagePassed == stage){
+                    stage ++;
                     stagePassed++;
                     setHp();
                     level = 1;
-               }
-            refreshIsland(true);
                 }
+                refreshIsland(true);
+            }
             if(stagePassed>stage && level > maxLevel){
                 level=maxLevel;
             }
-          if( ((stage %10) == 0) && level == maxLevel){
-            setHp();
-            maxhp=maxhp*3;
-            current=maxhp;
-            b_startBossTime=true;
-            b_getBonusgold=1;
-
-            
-         }
+            if( ((stage %10) == 0) && level == maxLevel){
+                setHp();
+                maxhp=maxhp*3;
+                current=maxhp;
+                b_startBossTime=true;
+                b_getBonusgold=1;
+            }
+            $('#pills-logs').append('<span>Dostałeś: '+stage+' Golda</span><br/>');
+            $("#pills-logs").animate({ scrollTop: 20000000 }, "slow");
         }
         if(b_startBossTime){
             time_left -= 0.1;
@@ -484,29 +542,9 @@ function createParticle (x, y) {
 // ale z tego co zdolalem zauważyć pewnie bede musial cookie robic od strony serwera
 // a nie od javy jak chce to miec w bazie danych, bo java jak sie f5 daje to od nowa dane zczytuje
 // i cookie musial by byc na sztywno napisany zeby to dzialalo a ja tak nie chce :(
-function makeCookieId(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-    }
-
-    var firstLogIn = true;
-
-    if (firstLogIn){
-        Cookies.set('cookieId', makeCookieId(12));
-        firstLogIn = false;
-        console.log(Cookies.get('cookieId'));
-    }else{
-
-    }
-    
 
 
-$('#error_div').hide();
+    $('#error_div').hide();
     $('#cookie_form').submit(function() {
         $.ajax({
             data: $(this).serialize(),
@@ -514,9 +552,10 @@ $('#error_div').hide();
             url: $(this).attr('action'),
             success: function(data) {
                 console.log(data);
-                var dt = new Date();
-                var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                var date = new Date();
+                var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
                 $('#error_div').hide().html('<p>'+data.message+' | Current hour: '+time+'</p>').fadeIn(2000).fadeOut(5000);
+                var userCookie = data.userid;
             },
             error: function(data) {
                 $('#error_div').html(data); 
@@ -524,20 +563,38 @@ $('#error_div').hide();
         });
         return false;
     });
-    
-    sendform();
-    function sendform(){
+
+
+
+    save();
+    function save(){
     setTimeout(function() {
-        $('#cookie_id').val(Cookies.get('cookieId'));
-        $('#first_login').val(firstLogIn);
+        Cookies.set('click_count', clickCount );
+        Cookies.set('current_gold', gold);
+        Cookies.set('stage', stage);
+        Cookies.set('stage_passed', stagePassed);
+        Cookies.set('click_upgrades_bought', clickUpgradesBought);
+        Cookies.set('var_o', o);
+        Cookies.set('clickUpgradePrice', clickUpgradePrice);
+        $('#cookie_id').val(Cookies.get('cookieIds'));
+        $('#clickUpgradePrice').val(Cookies.get('clickUpgradePrice'));
+        $('#click_count').val(Cookies.get('click_count'));
+        $('#current_gold').val(Cookies.get('current_gold'));
+        $('#stage').val(Cookies.get('stage'));
+        $('#stage_passed').val(Cookies.get('stage_passed'));
+        $('#click_upgrades_bought').val(Cookies.get('click_upgrades_bought'));
+        $('#var_o').val(Cookies.get('var_o'));
         $('#cookie_form').submit();
-        sendform();
+        save();
     }, 10000);}
-    
+
+
+// load save
+
 
 
 });
-    
+
 
 
 </script>
