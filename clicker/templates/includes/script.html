@@ -477,11 +477,67 @@ function createParticle (x, y) {
         refreshIsland(false);
         }
     });
+
+
+
+// zapisywanie cookis testy --- jeszcze nie skonczone kminie jakby to zrobic :D
+// ale z tego co zdolalem zauważyć pewnie bede musial cookie robic od strony serwera
+// a nie od javy jak chce to miec w bazie danych, bo java jak sie f5 daje to od nowa dane zczytuje
+// i cookie musial by byc na sztywno napisany zeby to dzialalo a ja tak nie chce :(
+function makeCookieId(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+    }
+
+    var firstLogIn = true;
+
+    if (firstLogIn){
+        Cookies.set('cookieId', makeCookieId(12));
+        firstLogIn = false;
+        console.log(Cookies.get('cookieId'));
+    }else{
+
+    }
     
-        
+
+
+$('#error_div').hide();
+    $('#cookie_form').submit(function() {
+        $.ajax({
+            data: $(this).serialize(),
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            success: function(data) {
+                console.log(data);
+                var dt = new Date();
+                var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                $('#error_div').hide().html('<p>'+data.message+' | Current hour: '+time+'</p>').fadeIn(2000).fadeOut(5000);
+            },
+            error: function(data) {
+                $('#error_div').html(data); 
+            }
+        });
+        return false;
+    });
+    
+    sendform();
+    function sendform(){
+    setTimeout(function() {
+        $('#cookie_id').val(Cookies.get('cookieId'));
+        $('#first_login').val(firstLogIn);
+        $('#cookie_form').submit();
+        sendform();
+    }, 10000);}
+    
+
+
 });
-
-
     
+
 
 </script>

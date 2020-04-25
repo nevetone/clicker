@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from database.models import Units, Islands, Mobs, Skills
+import json
+from .forms import Cookies
+from django.shortcuts import Http404, HttpResponseRedirect, HttpResponse
 
 # Create your views here.
 
@@ -15,7 +18,15 @@ def home(request):
         islands = None
         mobs = None
         skills = None
-        
+
+    if request.method == 'POST':
+        cookie = request.POST.get('cookie_id')
+        first_login = request.POST.get('first_login')
+        message = 'Auto Save Complited'
+        return HttpResponse(json.dumps({'message':message}), content_type="application/json")
+    else:
+        message = None
+    
     context={
         'units':units, 'islands':islands, 'mobs':mobs, 'skills':skills,
     }
