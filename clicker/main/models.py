@@ -14,3 +14,12 @@ class Cookies(models.Model):
     
     def __str__(self):
         return self.cookies_id
+
+class UserUnits(models.Model):
+    cookies_id = models.ForeignKey("Cookies", on_delete=models.CASCADE)
+    unit_type = models.CharField(max_length=50, default="X")
+    unit_cost = models.FloatField(default=0)
+    unit_count = models.FloatField(default=0)
+    
+    def __str__(self):
+        return str(self.cookies_id)+' |type| '+self.unit_type

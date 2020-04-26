@@ -86,7 +86,7 @@ $(document).ready(function(){
                     clickUpgradePrice = data.clickUpgradePrice;
                     cost10=clickUpgradePrice*2*10;
                     cost25=clickUpgradePrice*2*25;
-                    clickDmg = clickUpgradesBought-1;
+                    clickDmg = clickUpgradesBought;
                     refreshIsland(false);
                     refreshHTML();
                     setHp();
@@ -165,6 +165,8 @@ function createParticle (x, y) {
 }
 
 ////////////////////////---------------------------------
+var upgradesCount = {{ units.count }};
+var skillsCount = {{ skills.count }};
 
 
       class Upgrade{  
@@ -177,6 +179,8 @@ function createParticle (x, y) {
             this.discountMultipler=1.0;
             this.priceMultipler=1.15;
         }
+
+
         buyUpgrade(){
             if(gold >= (this.price*this.discountMultipler)){
                 gold -= this.price*this.discountMultipler;
@@ -184,6 +188,23 @@ function createParticle (x, y) {
                 $('#pills-console').append('<span>Kupiłeś upgrade dla '+this.nameOfUpgrade+ ' za ' +this.price+ ' golda!</span><br/>');
                 $("#pills-console").animate({ scrollTop: 20000000 }, "slow");
                 this.price *= this.priceMultipler;
+
+            // tworzenie imputow do forma i aktualizowanie
+            for(var i = 0;i<upgradesCount;i++){
+                var price = "price"+i.toString();
+                $('#'+price).remove();
+                Cookies.set(price, UpgradeButton.buttons[i].price );
+                $('#cookie_form').append('<input name='+price+' id='+price+' value='+UpgradeButton.buttons[i].price+' />');
+                var boughtUpgrades = "count"+i.toString();
+                $('#'+boughtUpgrades).remove();
+                Cookies.set(boughtUpgrades, UpgradeButton.buttons[i].boughtUpgrades );
+                $('#cookie_form').append('<input name='+boughtUpgrades+' id='+boughtUpgrades+' value='+UpgradeButton.buttons[i].boughtUpgrades+' />');
+                var nameOfUpgrade = "name"+i.toString();
+                Cookies.set(nameOfUpgrade, UpgradeButton.buttons[i].nameOfUpgrade );
+                $('#'+nameOfUpgrade).remove();
+                $('#cookie_form').append('<input name='+nameOfUpgrade+' id='+nameOfUpgrade+' value='+UpgradeButton.buttons[i].nameOfUpgrade+' />');
+                
+            };
             }
         }
         
@@ -267,6 +288,8 @@ function createParticle (x, y) {
             this.buttons[i].baseDmg +=i;
          };
 
+
+
         {% for unit in units %}
           $('#upgrade{{ unit.unit_id }}').click(function(){UpgradeButton.buttons[{{ unit.unit_id }}].buyUpgrade()});
         {% endfor %}
@@ -294,14 +317,12 @@ function createParticle (x, y) {
             $('#upgrade'+visibleUpgrades.toString()).prop('hidden', false);
             }
         }
-
     };
-
 
     UpgradeButton.Init();
     SkillButton.Init();
 
-            {% comment %} ) {% endcomment %}
+        {% comment %} ) {% endcomment %}
 
 
     // zmienne random dla moba
@@ -584,12 +605,31 @@ function createParticle (x, y) {
         $('#stage_passed').val(Cookies.get('stage_passed'));
         $('#click_upgrades_bought').val(Cookies.get('click_upgrades_bought'));
         $('#var_o').val(Cookies.get('var_o'));
+
+            // tworzenie imputow do forma i aktualizowanie
+        for(var i = 0;i<upgradesCount;i++){
+            var price = "price"+i.toString();
+            $('#'+price).remove();
+            Cookies.set(price, UpgradeButton.buttons[i].price );
+            $('#cookie_form').append('<input name='+price+' id='+price+' value='+UpgradeButton.buttons[i].price+' />');
+            var boughtUpgrades = "count"+i.toString();
+            Cookies.set(boughtUpgrades, UpgradeButton.buttons[i].boughtUpgrades );
+            $('#'+boughtUpgrades).remove();
+            $('#cookie_form').append('<input name='+boughtUpgrades+' id='+boughtUpgrades+' value='+UpgradeButton.buttons[i].boughtUpgrades+' />');
+            var nameOfUpgrade = "name"+i.toString();
+            Cookies.set(nameOfUpgrade, UpgradeButton.buttons[i].nameOfUpgrade );
+            $('#'+nameOfUpgrade).remove();
+            $('#cookie_form').append('<input name='+nameOfUpgrade+' id='+nameOfUpgrade+' value='+UpgradeButton.buttons[i].nameOfUpgrade+' />');
+            
+        };
+
+        
         $('#cookie_form').submit();
         save();
     }, 10000);}
 
 
-// load save
+
 
 
 

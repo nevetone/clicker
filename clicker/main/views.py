@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from database.models import Units, Islands, Mobs, Skills
 import json
-from .forms import Cookies
+from .models import Cookies, UserUnits
 from django.shortcuts import Http404, HttpResponseRedirect, HttpResponse
 from django.core import serializers
 from django.http import JsonResponse
@@ -19,7 +19,13 @@ def home(request):
         islands = None
         mobs = None
         skills = None
-
+    
+    try:
+        unitsCount = Units.objects.all()
+    except:
+        pass
+        
+        # save
     if request.method == 'POST':
         cookie = request.POST.get('cookie_id')
         current_gold = request.POST.get('current_gold')
@@ -29,6 +35,50 @@ def home(request):
         click_upgrades_bought = request.POST.get('click_upgrades_bought')
         var_o =  request.POST.get('var_o')
         clickUpgradePrice = request.POST.get('clickUpgradePrice')
+        price = []
+        count = []
+        name = []
+        pomocnicza = 0
+
+        try:
+            get_user = Cookies.objects.get(cookies_id = cookie)
+            
+        except:
+            pass
+        
+        try:
+            user_units = UserUnits.objects.filter(cookies_id = get_user)
+            user_units_count = UserUnits.objects.filter(cookies_id = get_user).count()
+        except:
+            user_units = None
+            user_units_count = 0
+        
+        if user_units_count == 0:
+            try:
+                for unit in unitsCount:
+                    k = UserUnits(cookies_id = get_user, unit_type=unit.unit_name, unit_cost=unit.unit_default_cost, unit_count=unit.unit_count)
+                    k.save()
+                print('stworzono units')
+            except:
+                pass
+
+        
+        
+        if user_units is not None:
+            for t in user_units:
+                price.append(request.POST.get('price'+str(pomocnicza)))
+                count.append(request.POST.get('count'+str(pomocnicza)))
+                name.append(request.POST.get('name'+str(pomocnicza)))
+                t.unit_type = str(name[pomocnicza])
+                t.unit_cost = float(price[pomocnicza])
+                t.unit_count = float(count[pomocnicza])
+                t.save()
+                pomocnicza = pomocnicza + 1
+
+        name = []
+        price = []
+        count = []
+        
         
         try:
             userid, created = Cookies.objects.get_or_create(cookies_id = cookie)
@@ -42,6 +92,7 @@ def home(request):
                 userid.clickUpgradePrice = 100
                 userid.save()
                 print(str(userid)+' :stworzony nowy')
+                
             
             userid.current_gold = float(current_gold)
             userid.click_count = float(click_count)
@@ -51,6 +102,8 @@ def home(request):
             userid.var_o = float(var_o)
             userid.clickUpgradePrice = float(clickUpgradePrice)
             userid.save()
+
+
             print(str(userid)+' :save udane')
         except:
             pass
@@ -62,8 +115,6 @@ def home(request):
         message = None
         userid = None
     
-    
-
     
     
     
@@ -88,16 +139,29 @@ def load(request):
         except:
             userCookies = None
             pass
-        
-        return JsonResponse({
-            'var_o': userCookies.var_o,
-            'click_count': userCookies.click_count,
-            'stage': userCookies.stage,
-            'stage_passed': userCookies.stage_passed,
-            'current_gold': userCookies.current_gold,
-            'click_upgrades_bought': userCookies.click_upgrades_bought,
-            'clickUpgradePrice':userCookies.clickUpgradePrice,
-            }, status=200)
+        try:
+            print('Wczytywanie')
+            return JsonResponse({
+                'var_o': userCookies.var_o,
+                'click_count': userCookies.click_count,
+                'stage': userCookies.stage,
+                'stage_passed': userCookies.stage_passed,
+                'current_gold': userCookies.current_gold,
+                'click_upgrades_bought': userCookies.click_upgrades_bought,
+                'clickUpgradePrice':userCookies.clickUpgradePrice,
+                }, status=200)
+        except:
+            print('nie ma takiego usera')
+            return JsonResponse({
+                'var_o': -1,
+                'click_count': 0,
+                'stage': 1,
+                'stage_passed': 1,
+                'current_gold': 998999,
+                'click_upgrades_bought': 1,
+                'clickUpgradePrice':100,
+                }, status=200)
+            
     else:
         userCookies = None
         
