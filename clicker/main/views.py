@@ -22,6 +22,7 @@ def home(request):
     
     try:
         unitsCount = Units.objects.all()
+        unitsCount2 = Units.objects.all().count()
     except:
         pass
         
@@ -53,12 +54,15 @@ def home(request):
             user_units = None
             user_units_count = 0
         
-        if user_units_count == 0:
+        ile = 0
+        if user_units_count < unitsCount2:
             try:
+                user_units.delete()
                 for unit in unitsCount:
                     k = UserUnits(cookies_id = get_user, unit_type=unit.unit_name, unit_cost=unit.unit_default_cost, unit_count=unit.unit_count)
                     k.save()
-                print('stworzono units')
+                    ile = ile + 1
+                print('stworzono units x'+str(ile))
             except:
                 pass
 
@@ -133,15 +137,24 @@ def home(request):
 def load(request):
     if request.method == 'POST':
         userCookie = request.POST.get('loadUser')
-        
         try:
             userCookies = Cookies.objects.get(cookies_id = userCookie)
+            unitsCount = Units.objects.all()
         except:
             userCookies = None
+            unitsCount = None
             pass
+        
+        try:
+            user_units_count = UserUnits.objects.filter(cookies_id = userCookies).count()
+            user_units = UserUnits.objects.filter(cookies_id = userCookies)
+        except:
+            pass
+        
+        
         try:
             print('Wczytywanie')
-            return JsonResponse({
+            context = {
                 'var_o': userCookies.var_o,
                 'click_count': userCookies.click_count,
                 'stage': userCookies.stage,
@@ -149,10 +162,28 @@ def load(request):
                 'current_gold': userCookies.current_gold,
                 'click_upgrades_bought': userCookies.click_upgrades_bought,
                 'clickUpgradePrice':userCookies.clickUpgradePrice,
-                }, status=200)
+                }
+            
+            pomocnicza = 0
+            
+            unit_cost = []
+            unit_count = []
+            
+            for unit in user_units:
+                unit_cost.append(unit.unit_cost)
+                unit_count.append(unit.unit_count)
+                
+                context['unit_cost'] = unit_cost
+                context['unit_count'] = unit_count
+                pomocnicza = pomocnicza + 1
+                
+            unit_cost = []
+            unit_count = []
+            return JsonResponse(context, status=200)
         except:
             print('nie ma takiego usera')
-            return JsonResponse({
+
+            context2 = {
                 'var_o': -1,
                 'click_count': 0,
                 'stage': 1,
@@ -160,10 +191,18 @@ def load(request):
                 'current_gold': 998999,
                 'click_upgrades_bought': 1,
                 'clickUpgradePrice':100,
-                }, status=200)
+                }
+            pomocnicza2 = 0
+            for units in unitsCount:
+                unit_cost.append(units.unit_cost)
+                unit_count.append(units.unit_count)
+                pomocnicza2 = pomocnicza2 + 1
+                context2['unit_cost'] = unit_cost
+                context2['unit_count'] = unit_count
+            unit_cost = []
+            unit_count = []
+            return JsonResponse(context2, status=200)
             
-    else:
-        userCookies = None
         
     context={}
     template="index.html"

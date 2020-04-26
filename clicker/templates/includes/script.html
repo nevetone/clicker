@@ -24,9 +24,25 @@ function makeCookieId(length) {
 
 
 $(document).ready(function(){
-
-
-
+// funckje
+        function saveUnits(){
+            // tworzenie imputow do forma i aktualizowanie
+            for(var i = 0;i<upgradesCount;i++){
+                var price = "price"+i.toString();
+                $('#'+price).remove();
+                Cookies.set(price, UpgradeButton.buttons[i].price );
+                $('#cookie_form').append('<input name='+price+' id='+price+' value='+UpgradeButton.buttons[i].price+' />');
+                var boughtUpgrades = "count"+i.toString();
+                Cookies.set(boughtUpgrades, UpgradeButton.buttons[i].boughtUpgrades );
+                $('#'+boughtUpgrades).remove();
+                $('#cookie_form').append('<input name='+boughtUpgrades+' id='+boughtUpgrades+' value='+UpgradeButton.buttons[i].boughtUpgrades+' />');
+                var nameOfUpgrade = "name"+i.toString();
+                Cookies.set(nameOfUpgrade, UpgradeButton.buttons[i].nameOfUpgrade );
+                $('#'+nameOfUpgrade).remove();
+                $('#cookie_form').append('<input name='+nameOfUpgrade+' id='+nameOfUpgrade+' value='+UpgradeButton.buttons[i].nameOfUpgrade+' />');
+            };
+        };
+// koniec funckji
 
     // zmienne pomocnicze
     var o = -1;
@@ -69,37 +85,7 @@ $(document).ready(function(){
     var mobs_images = [];
     var mobs_on_island_count = [];
 
-// load save ------------------------------------
-// jeszcze nie ma wszystkich danych ale to sa poczatki
-    $('#loadSave').submit(function() {
-        $.ajax({
-            data: $(this).serialize(),
-            type: $(this).attr('method'),
-            url: $(this).attr('action'),
-            success: function(data) {
-                    o = data.var_o;
-                    clickCount = data.click_count;
-                    stage = data.stage_passed;
-                    stagePassed = data.stage_passed;
-                    gold = data.current_gold;
-                    clickUpgradesBought = data.click_upgrades_bought;
-                    clickUpgradePrice = data.clickUpgradePrice;
-                    cost10=clickUpgradePrice*2*10;
-                    cost25=clickUpgradePrice*2*25;
-                    clickDmg = clickUpgradesBought;
-                    refreshIsland(false);
-                    refreshHTML();
-                    setHp();
-            }});
-        return false;
-    });
 
-    function load(){
-        $('#loadUser').val(Cookies.get('cookieIds'));
-        $('#loadSave').submit();
-    };
-    load();
-// koniec load save ------------------------------
     
     {% for island in islands %}
         islands.push('{{ island.island_name }}');
@@ -190,21 +176,7 @@ var skillsCount = {{ skills.count }};
                 this.price *= this.priceMultipler;
 
             // tworzenie imputow do forma i aktualizowanie
-            for(var i = 0;i<upgradesCount;i++){
-                var price = "price"+i.toString();
-                $('#'+price).remove();
-                Cookies.set(price, UpgradeButton.buttons[i].price );
-                $('#cookie_form').append('<input name='+price+' id='+price+' value='+UpgradeButton.buttons[i].price+' />');
-                var boughtUpgrades = "count"+i.toString();
-                $('#'+boughtUpgrades).remove();
-                Cookies.set(boughtUpgrades, UpgradeButton.buttons[i].boughtUpgrades );
-                $('#cookie_form').append('<input name='+boughtUpgrades+' id='+boughtUpgrades+' value='+UpgradeButton.buttons[i].boughtUpgrades+' />');
-                var nameOfUpgrade = "name"+i.toString();
-                Cookies.set(nameOfUpgrade, UpgradeButton.buttons[i].nameOfUpgrade );
-                $('#'+nameOfUpgrade).remove();
-                $('#cookie_form').append('<input name='+nameOfUpgrade+' id='+nameOfUpgrade+' value='+UpgradeButton.buttons[i].nameOfUpgrade+' />');
-                
-            };
+                saveUnits();
             }
         }
         
@@ -321,6 +293,43 @@ var skillsCount = {{ skills.count }};
 
     UpgradeButton.Init();
     SkillButton.Init();
+
+// load save ------------------------------------
+// jeszcze nie ma wszystkich danych ale to sa poczatki
+    $('#loadSave').submit(function() {
+        $.ajax({
+            data: $(this).serialize(),
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            success: function(data) {
+                for(var i=0; i<upgradesCount; i++){
+                    UpgradeButton.buttons[i].boughtUpgrades = data.unit_count[i];
+                    UpgradeButton.buttons[i].price = data.unit_cost[i];
+                }
+                    o = data.var_o;
+                    clickCount = data.click_count;
+                    stage = data.stage_passed;
+                    stagePassed = data.stage_passed;
+                    gold = data.current_gold;
+                    clickUpgradesBought = data.click_upgrades_bought;
+                    clickUpgradePrice = data.clickUpgradePrice;
+                    cost10=clickUpgradePrice*2*10;
+                    cost25=clickUpgradePrice*2*25;
+                    clickDmg = clickUpgradesBought;
+                    refreshIsland(false);
+                    refreshHTML();
+                    setHp();
+            }});
+        return false;
+    });
+
+    function load(){
+        $('#loadUser').val(Cookies.get('cookieIds'));
+        $('#loadSave').submit();
+    };
+    load();
+// koniec load save ------------------------------
+
 
         {% comment %} ) {% endcomment %}
 
@@ -586,10 +595,7 @@ var skillsCount = {{ skills.count }};
     });
 
 
-
-    save();
-    function save(){
-    setTimeout(function() {
+function getData(){
         Cookies.set('click_count', clickCount );
         Cookies.set('current_gold', gold);
         Cookies.set('stage', stage);
@@ -605,30 +611,26 @@ var skillsCount = {{ skills.count }};
         $('#stage_passed').val(Cookies.get('stage_passed'));
         $('#click_upgrades_bought').val(Cookies.get('click_upgrades_bought'));
         $('#var_o').val(Cookies.get('var_o'));
-
-            // tworzenie imputow do forma i aktualizowanie
-        for(var i = 0;i<upgradesCount;i++){
-            var price = "price"+i.toString();
-            $('#'+price).remove();
-            Cookies.set(price, UpgradeButton.buttons[i].price );
-            $('#cookie_form').append('<input name='+price+' id='+price+' value='+UpgradeButton.buttons[i].price+' />');
-            var boughtUpgrades = "count"+i.toString();
-            Cookies.set(boughtUpgrades, UpgradeButton.buttons[i].boughtUpgrades );
-            $('#'+boughtUpgrades).remove();
-            $('#cookie_form').append('<input name='+boughtUpgrades+' id='+boughtUpgrades+' value='+UpgradeButton.buttons[i].boughtUpgrades+' />');
-            var nameOfUpgrade = "name"+i.toString();
-            Cookies.set(nameOfUpgrade, UpgradeButton.buttons[i].nameOfUpgrade );
-            $('#'+nameOfUpgrade).remove();
-            $('#cookie_form').append('<input name='+nameOfUpgrade+' id='+nameOfUpgrade+' value='+UpgradeButton.buttons[i].nameOfUpgrade+' />');
-            
-        };
-
-        
+        saveUnits();
         $('#cookie_form').submit();
+}
+
+
+    save();
+    function save(){
+    setTimeout(function() {
+        getData();
         save();
     }, 10000);}
 
-
+// reload aby wczytac save
+    if(document.URL.indexOf("#")==-1){
+        getData();
+        getData();
+        url = document.URL+"#";
+        location = "#";
+        location.reload(true);
+    }
 
 
 
