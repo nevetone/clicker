@@ -41,11 +41,28 @@ $(document).ready(function(){
                 $('#'+nameOfUpgrade).remove();
                 $('#cookie_form').append('<input name='+nameOfUpgrade+' id='+nameOfUpgrade+' value='+UpgradeButton.buttons[i].nameOfUpgrade+' />');
             };
+            for(var i = 0; i<skillsCount;i++){
+                var skill_price = "skill_price"+i.toString();
+                $('#'+skill_price).remove();
+                Cookies.set(skill_price, SkillButton.skills[i].price );
+                $('#cookie_form').append('<input name='+skill_price+' id='+skill_price+' value='+SkillButton.skills[i].price+' />');
+                var skill_count = "skill_count"+i.toString();
+                $('#'+skill_count).remove();
+                Cookies.set(skill_count, SkillButton.skills[i].boughtUpgrades );
+                $('#cookie_form').append('<input name='+skill_count+' id='+skill_count+' value='+SkillButton.skills[i].boughtUpgrades+' />');
+                var skill_nameOfUpgrade = "skill_name"+i.toString();
+                $('#'+skill_nameOfUpgrade).remove();
+                Cookies.set(skill_nameOfUpgrade, SkillButton.skills[i].price );
+                $('#cookie_form').append('<input name='+skill_nameOfUpgrade+' id='+skill_nameOfUpgrade+' value='+SkillButton.skills[i].nameOfUpgrade+' />');
+
+
+            }
         };
 // koniec funckji
 
     // zmienne pomocnicze
     var o = -1;
+    var max_o = -1;
     // zmienne
     var clickCount=0; // ilosc nacisniec
     var stage = 1; // aktualny stage
@@ -306,7 +323,13 @@ var skillsCount = {{ skills.count }};
                     UpgradeButton.buttons[i].boughtUpgrades = data.unit_count[i];
                     UpgradeButton.buttons[i].price = data.unit_cost[i];
                 }
+                for(var i=0; i<skillsCount; i++){
+                    SkillButton.skills[i].boughtUpgrades = data.skill_count[i];
+                    SkillButton.skills[i].price = data.skill_price[i];
+                }
+                    visibleUpgrades = data.visibleUpgrades;
                     o = data.var_o;
+                    max_o = data.var_o;
                     clickCount = data.click_count;
                     stage = data.stage_passed;
                     stagePassed = data.stage_passed;
@@ -346,6 +369,9 @@ var skillsCount = {{ skills.count }};
             if(next == true){
                 if(stage-1 == islands_ends[o+1] ){
                     o++;
+                    if(o > max_o){
+                        max_o = o;
+                    }
                     last_mobs = max;
                     min = max+1;
                     max = max + mobs_on_island_count[o+1];
@@ -440,7 +466,7 @@ var skillsCount = {{ skills.count }};
         if (current <= 0) {
             level++;
             setHp();
-            gold += stage; // trza dodac mnoznik od stageow konkretny
+            gold += stage*200; // trza dodac mnoznik od stageow konkretny
             if(b_getBonusgold) { gold+=stage*10;b_getBonusgold=0; };
             
             b_startBossTime=false; time_left=bossTime;
@@ -465,7 +491,7 @@ var skillsCount = {{ skills.count }};
                 b_startBossTime=true;
                 b_getBonusgold=1;
             }
-            $('#pills-logs').append('<span>Dostałeś: '+stage+' Golda</span><br/>');
+            $('#pills-logs').append('<span>Dostałeś: '+stage*200+' Golda</span><br/>');
             $("#pills-logs").animate({ scrollTop: 20000000 }, "slow");
         }
         if(b_startBossTime){
@@ -567,13 +593,6 @@ var skillsCount = {{ skills.count }};
     });
 
 
-
-// zapisywanie cookis testy --- jeszcze nie skonczone kminie jakby to zrobic :D
-// ale z tego co zdolalem zauważyć pewnie bede musial cookie robic od strony serwera
-// a nie od javy jak chce to miec w bazie danych, bo java jak sie f5 daje to od nowa dane zczytuje
-// i cookie musial by byc na sztywno napisany zeby to dzialalo a ja tak nie chce :(
-
-
     $('#error_div').hide();
     $('#cookie_form').submit(function() {
         $.ajax({
@@ -596,13 +615,15 @@ var skillsCount = {{ skills.count }};
 
 
 function getData(){
+        Cookies.set('visibleUpgrades', visibleUpgrades );
         Cookies.set('click_count', clickCount );
         Cookies.set('current_gold', gold);
         Cookies.set('stage', stage);
         Cookies.set('stage_passed', stagePassed);
         Cookies.set('click_upgrades_bought', clickUpgradesBought);
-        Cookies.set('var_o', o);
+        Cookies.set('var_o', max_o);
         Cookies.set('clickUpgradePrice', clickUpgradePrice);
+        $('#visibleUpgrades').val(Cookies.get('visibleUpgrades'));
         $('#cookie_id').val(Cookies.get('cookieIds'));
         $('#clickUpgradePrice').val(Cookies.get('clickUpgradePrice'));
         $('#click_count').val(Cookies.get('click_count'));
@@ -625,7 +646,6 @@ function getData(){
 
 // reload aby wczytac save
     if(document.URL.indexOf("#")==-1){
-        getData();
         getData();
         url = document.URL+"#";
         location = "#";
