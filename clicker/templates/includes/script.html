@@ -25,6 +25,29 @@ function makeCookieId(length) {
 $(document).ready(function(){
 // funckje
 
+    $('#load_from').submit(function() {
+        $.ajax({
+            data: $(this).serialize(),
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            success: function(data) {
+                if(data.loaded == 'true'){
+                    $('#message').text(data.message).fadeIn(1000).fadeOut(1000);
+                    $('#loadSave').submit();
+                }else{
+                $('#message').text(data.message).fadeIn(1000).fadeOut(1000);
+
+                }
+            },
+        });
+        return false;
+    });
+    $('#send_id').click(function(){
+        $('#current_id').val(Cookies.get('cookieIds'));
+    });
+
+
+
         $('#coppy_data').click(function(){
             var $temp = $("<input>");
             $("body").append($temp);
@@ -407,6 +430,7 @@ var skillsCount = {{ skills.count }};
                     refreshIsland(false);
                     refreshHTML();
                     setHp();
+                    console.log("Wczytano save")
             }});
         return false;
     });
@@ -697,7 +721,6 @@ function getData(){
         $('#cookie_form').submit();
 }
 
-    getData();
     save();
     function save(){
     setTimeout(function() {

@@ -93,25 +93,30 @@
                 <h5>
                     Load save by ID
                 </h5>
-                <form method="POST" action="{% url 'ajax_coppy' %}" style="width:100%;"> {% csrf_token %}
+                <form method="POST" action="{% url 'ajax_coppy' %}" id="load_from" style="width:100%;"> {% csrf_token %}
                 <h4 style="width:100%;">
                     <div class="form__group field" style="position:relative; width:100%;">
-                        <input style="width:50%;" type="input" class="form__field" placeholder="Paste ID here" name="new_id" id='new_id' required />
+                        <input id="current_id" name="current_id" value="" hidden />
+                        <input style="width:50%;" type="input" class="form__field" placeholder="Paste ID here" name="new_id" id='new_id' />
                         <label for="new_id" class="form__label">Paste ID here</label>
-                        <button class="badge badge-pill badge-primary border border-dark" > Load </button>
+                        <button class="badge badge-pill badge-primary border border-dark" id="send_id" > Load </button>
+                        <h5 class="text-warning" id="message">  </h5>
                     </div>
                 </h4>
                 </form>
             </div>
         </div>
-        <div class="upgrade-block border border-primary" style="position: absolute; z-index:0; left:0; top:0; height: 100%; width: 10%;">
+        <div class="upgrade-block border border-primary" style="position: absolute; z-index:0; left:0; top:0; height: 100%; width: 10%; padding:1%;">
 
-            
-            <button id="activate_skill0">trlolo </button>
-            
-            
-        
-        
+
+
+
+
+
+
+
+
+
         </div>
         <div class="text-white back_arrow" style="font-size:40px; position: absolute; z-index:0; left:10%; top:5%; height: 10%; width: 10%;">
             <i class="fas fa-arrow-left" style="position:absolute; right:0;" id="back"></i>

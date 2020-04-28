@@ -50,7 +50,8 @@ def home(request):
         try:
             get_user = Cookies.objects.get(cookies_id = cookie)
         except:
-            pass
+            get_user = Cookies(cookies_id = cookie, current_gold=100, click_count=0, stage=1, stage_passed=1, click_upgrades_bought=1, var_o=-1, clickUpgradePrice=100, visibleUpgrades=-1)
+            get_user.save()
         try:
             user_units = UserUnits.objects.filter(cookies_id = get_user)
             user_units_count = UserUnits.objects.filter(cookies_id = get_user).count()
@@ -65,7 +66,9 @@ def home(request):
                     k = UserUnits(cookies_id = get_user, unit_type=unit.unit_name, unit_cost=unit.unit_default_cost, unit_count=unit.unit_count)
                     k.save()
             except:
-                pass
+                for unit in unitsCount:
+                    k = UserUnits(cookies_id = get_user, unit_type=unit.unit_name, unit_cost=unit.unit_default_cost, unit_count=unit.unit_count)
+                    k.save()
         try:
             user_skills = UserSkills.objects.filter(cookies_id = get_user)
             user_skills_count = UserSkills.objects.filter(cookies_id = get_user).count()
@@ -80,7 +83,14 @@ def home(request):
                     g = UserSkills(cookies_id = get_user, skill_type=skill.skill_name, skill_cost=skill.skill_cost, skill_count=skill.skill_count)
                     g.save()
             except:
-                pass
+                for skill in skillsCount:
+                    g = UserSkills(cookies_id = get_user, skill_type=skill.skill_name, skill_cost=skill.skill_cost, skill_count=skill.skill_count)
+                    g.save()
+        try:
+            user_skills = UserSkills.objects.filter(cookies_id = get_user)
+            user_units = UserUnits.objects.filter(cookies_id = get_user)
+        except:
+            pass
         if user_units is not None:
             for t in user_units:
                 price.append(request.POST.get('price'+str(pomocnicza)))
@@ -110,17 +120,7 @@ def home(request):
         skill_name = []
         pomocnicza = 0
         try:
-            userid, created = Cookies.objects.get_or_create(cookies_id = cookie)
-            if created:
-                userid.visibleUpgrades = -1
-                userid.current_gold = 99999999
-                userid.click_count = 0
-                userid.stage = 1
-                userid.stage_passed = 1
-                userid.click_upgrades_bought = 1
-                userid.var_o = -1
-                userid.clickUpgradePrice = 100
-                userid.save()
+            userid = Cookies.objects.get(cookies_id = cookie)
             userid.visibleUpgrades = float(visibleUpgrades)
             userid.current_gold = float(current_gold)
             userid.click_count = float(click_count)
@@ -143,79 +143,82 @@ def home(request):
     return render(request, template, context)
 
 def load(request):
-    if request.method == 'POST':
-        userCookie = request.POST.get('loadUser')
-        try:
-            userCookies = Cookies.objects.get(cookies_id = userCookie)
-            unitsCount = Units.objects.all()
-            skillsCount = Skills.objects.all()
-        except:
-            userCookies = None
-            unitsCount = None
-            skillsCount = None
-            pass
-        try:
-            user_units = UserUnits.objects.filter(cookies_id = userCookies)
-            user_skills = UserSkills.objects.filter(cookies_id = userCookies)
-        except:
-            pass
-        unit_cost = []
-        unit_count = []
-        skill_price = []
-        skill_count = []
-        try:
-            print('Wczytywanie')
-            context = {
-                'visibleUpgrades' : userCookies.visibleUpgrades,
-                'var_o': userCookies.var_o,
-                'click_count': userCookies.click_count,
-                'stage': userCookies.stage,
-                'stage_passed': userCookies.stage_passed,
-                'current_gold': userCookies.current_gold,
-                'click_upgrades_bought': userCookies.click_upgrades_bought,
-                'clickUpgradePrice':userCookies.clickUpgradePrice,
-                }
-            for unit in user_units:
-                unit_cost.append(unit.unit_cost)
-                unit_count.append(unit.unit_count)
-                context['unit_cost'] = unit_cost
-                context['unit_count'] = unit_count
-            for skill in user_skills:
-                skill_price.append(skill.skill_cost)
-                skill_count.append(skill.skill_count)
-                context['skill_price'] = skill_price
-                context['skill_count'] = skill_count
-            skill_price = []
-            skill_count = []
+    try:
+        if request.method == 'POST':
+            userCookie = request.POST.get('loadUser')
+            try:
+                userCookies = Cookies.objects.get(cookies_id = userCookie)
+                unitsCount = Units.objects.all()
+                skillsCount = Skills.objects.all()
+            except:
+                userCookies = None
+                unitsCount = None
+                skillsCount = None
+                pass
+            try:
+                user_units = UserUnits.objects.filter(cookies_id = userCookies)
+                user_skills = UserSkills.objects.filter(cookies_id = userCookies)
+            except:
+                pass
             unit_cost = []
             unit_count = []
-            return JsonResponse(context, status=200)
-        except:
-            context2 = {
-                'visibleUpgrades' : -1,
-                'var_o': -1,
-                'click_count': 0,
-                'stage': 1,
-                'stage_passed': 1,
-                'current_gold': 998999,
-                'click_upgrades_bought': 1,
-                'clickUpgradePrice':100,
-                }
-            for units in unitsCount:
-                unit_cost.append(units.unit_default_cost)
-                unit_count.append(units.unit_count)
-                context2['unit_cost'] = unit_cost
-                context2['unit_count'] = unit_count
-            for skills in skillsCount:
-                skill_price.append(skills.skill_cost)
-                skill_count.append(skills.skill_count)
-                context2['skill_price'] = skill_price
-                context2['skill_count'] = skill_count
             skill_price = []
             skill_count = []
-            unit_cost = []
-            unit_count = []
-            return JsonResponse(context2, status=200)
+            try:
+                print('Wczytywanie')
+                context = {
+                    'visibleUpgrades' : userCookies.visibleUpgrades,
+                    'var_o': userCookies.var_o,
+                    'click_count': userCookies.click_count,
+                    'stage': userCookies.stage,
+                    'stage_passed': userCookies.stage_passed,
+                    'current_gold': userCookies.current_gold,
+                    'click_upgrades_bought': userCookies.click_upgrades_bought,
+                    'clickUpgradePrice':userCookies.clickUpgradePrice,
+                    }
+                for unit in user_units:
+                    unit_cost.append(unit.unit_cost)
+                    unit_count.append(unit.unit_count)
+                    context['unit_cost'] = unit_cost
+                    context['unit_count'] = unit_count
+                for skill in user_skills:
+                    skill_price.append(skill.skill_cost)
+                    skill_count.append(skill.skill_count)
+                    context['skill_price'] = skill_price
+                    context['skill_count'] = skill_count
+                skill_price = []
+                skill_count = []
+                unit_cost = []
+                unit_count = []
+                return JsonResponse(context, status=200)
+            except:
+                context2 = {
+                    'visibleUpgrades' : -1,
+                    'var_o': -1,
+                    'click_count': 0,
+                    'stage': 1,
+                    'stage_passed': 1,
+                    'current_gold': 998999,
+                    'click_upgrades_bought': 1,
+                    'clickUpgradePrice':100,
+                    }
+                for units in unitsCount:
+                    unit_cost.append(units.unit_default_cost)
+                    unit_count.append(units.unit_count)
+                    context2['unit_cost'] = unit_cost
+                    context2['unit_count'] = unit_count
+                for skills in skillsCount:
+                    skill_price.append(skills.skill_cost)
+                    skill_count.append(skills.skill_count)
+                    context2['skill_price'] = skill_price
+                    context2['skill_count'] = skill_count
+                skill_price = []
+                skill_count = []
+                unit_cost = []
+                unit_count = []
+                return JsonResponse(context2, status=200)
+    except:
+        pass
     context={}
     template="index.html"
     return render(request, template, context)
@@ -223,6 +226,63 @@ def load(request):
 def coppy(request):
     template="index.html"
 
+    
+    if request.method == 'POST':
+        current = request.POST.get('current_id')
+        new = request.POST.get('new_id')
+        try:
+            get_user = Cookies.objects.get(cookies_id = current)
+        except:
+            get_user = None
+        try:
+            get_new_user = Cookies.objects.get(cookies_id = new)
+        except:
+            get_new_user = None
+        try:
+            new_user_skills = UserSkills.objects.filter(cookies_id = get_new_user)
+        except:
+            new_user_skills = None
+        try:
+            new_user_units = UserUnits.objects.filter(cookies_id = get_new_user)
+        except:
+            new_user_units = None
+        if new == '' or current == '':
+            return JsonResponse({'message':'Please enter ID', 'loaded':'false',}, status=200)
+        elif get_user == None or get_new_user == None:
+            return JsonResponse({'message':'Cannot Find ID', 'loaded':'false',}, status=200)
+        elif new_user_skills is not None and new_user_units is not None:
+            user_units = UserUnits.objects.filter(cookies_id = get_user)
+            user_skills = UserSkills.objects.filter(cookies_id = get_user)
+            if new == new_user_units[0].cookies_id.cookies_id and new == new_user_skills[0].cookies_id.cookies_id:
+                get_user.current_gold = get_new_user.current_gold
+                get_user.click_count = get_new_user.click_count
+                get_user.stage = get_new_user.stage
+                get_user.stage_passed = get_new_user.stage_passed
+                get_user.click_upgrades_bought = get_new_user.click_upgrades_bought
+                get_user.var_o = get_new_user.var_o
+                get_user.clickUpgradePrice = get_new_user.clickUpgradePrice
+                get_user.visibleUpgrades = get_new_user.visibleUpgrades
+                get_user.save()
+                pomocnicza = 0
+                for skill in user_skills:
+                    skill.skill_type = new_user_skills[pomocnicza].skill_type
+                    skill.skill_cost = new_user_skills[pomocnicza].skill_cost
+                    skill.skill_count = new_user_skills[pomocnicza].skill_count
+                    skill.save()
+                    pomocnicza = pomocnicza + 1
+                pomocnicza = 0
+                for unit in user_units:
+                    unit.unit_type = new_user_units[pomocnicza].unit_type
+                    unit.unit_cost = new_user_units[pomocnicza].unit_cost
+                    unit.unit_count = new_user_units[pomocnicza].unit_count
+                    unit.save()
+                    pomocnicza = pomocnicza + 1
+                pomocnicza = 0
+                return JsonResponse({'message':'Loading...', 'loaded':'true',}, status=200)
+            else:
+                return JsonResponse({'message':'Cannot find ID', 'loaded':'false',}, status=200)
+        else:
+            return JsonResponse({'message':'Cannot find ID', 'loaded':'false',}, status=200)
         
     context={}
     return render(request, template, context)
