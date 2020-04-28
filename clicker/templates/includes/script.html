@@ -231,7 +231,7 @@ var skillsCount = {{ skills.count }};
             if(gold >= (this.price*this.discountMultipler)){
                 gold -= this.price*this.discountMultipler;
                 this.boughtUpgrades++;
-                $('#pills-console').append('<span>Kupiłeś upgrade dla '+this.nameOfUpgrade+ ' za ' +this.price+ ' golda!</span><br/>');
+                $('#pills-console').append('<span>Kupiłeś upgrade dla '+this.nameId+ ' za ' +this.price+ ' golda!</span><br/>');
                 $("#pills-console").animate({ scrollTop: 20000000 }, "slow");
                 this.price *= this.priceMultipler;
 
@@ -249,9 +249,10 @@ var skillsCount = {{ skills.count }};
             this.isOn=false;
             this.maxTime=10;
             this.time=this.maxTime;
-            this.cooldown=10;
+            this.cooldown=0;
         }
         turnOn(){
+            console.log(this.nameId+' wlaczony');
             if(this.cooldown <=0 && this.boughtUpgrades >0){
             this.isOn=true;
             }
@@ -260,11 +261,11 @@ var skillsCount = {{ skills.count }};
             for(var i=0;i<this.skills.length;i++){
                 if(this.skills[i].isOn && this.skills[i].boughtUpgrades > 0 ){
                 switch(this.skills[i].nameId){
-                case 'skill0':
+                case '#skill0':
                     current -= (UpgradeButton.getAllDmg() * this.skills[i].boughtUpgrades );
                     console.log('skill0 uzyty');
                 break;
-                case 'skill1':
+                case '#skill1':
                     console.log('skill1 uzyty');
                 break;
                 }
