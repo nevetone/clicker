@@ -109,6 +109,11 @@
         <div class="upgrade-block border border-primary" style="position: absolute; z-index:0; left:0; top:0; height: 100%; width: 10%; padding:1%;">
 
 
+            {% for skill in skills %}
+            <button class="btn btn-dark border text-light" style="position:relative; width:99%; margin-bottom:10%; " id="activate_skill{{ skill.skill_id }}">{{ skill.skill_name }}<br />
+            <span id="time" class="text-success" >czas</span> 
+            </button>
+            {% endfor %}
 
 
 
@@ -116,7 +121,28 @@
 
 
 
+<<<<<<< HEAD
+=======
+            
+            <button  id="activate_skill0">skill0 </button>
+            <p style="color:red;">time: </p>
+            <span style="color:red;" id="skill0_active"> </span>
+            <p style="color:red;" >cooldown: </p>
+            <span style="color:red;" id="skill0_cooldown"> </span>
 
+            <button  id="activate_skill1">skill1</button>
+            <p style="color:red;">time: </p>
+            <span style="color:red;" id="skill1_active"> </span>
+            <p style="color:red;" >cooldown: </p>
+            <span style="color:red;" id="skill1_cooldown"> </span>
+
+
+
+            
+            
+        
+        
+>>>>>>> 932425300475607e649bcfd0d697cf921c3bb1cf
         </div>
         <div class="text-white back_arrow" style="font-size:40px; position: absolute; z-index:0; left:10%; top:5%; height: 10%; width: 10%;">
             <i class="fas fa-arrow-left" style="position:absolute; right:0;" id="back"></i>

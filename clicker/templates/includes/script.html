@@ -251,6 +251,9 @@ var skillsCount = {{ skills.count }};
 
 
         buyUpgrade(){
+            if(this.nameId.indexOf('skill')==1 && this.boughtUpgrades == 5){
+                return;
+            }
             if(gold >= (this.price*this.discountMultipler)){
                 gold -= this.price*this.discountMultipler;
                 this.boughtUpgrades++;
@@ -321,9 +324,12 @@ var skillsCount = {{ skills.count }};
 
         }
         static refreshSkills(){
+            
             for(var i = 0;i<this.skills.length;i++){
-            $(this.skills[i].nameId+'_count').text(this.skills[i].boughtUpgrades);
-            $(this.skills[i].nameId+'_cost').text(this.skills[i].price.toFixed(0));
+             $(this.skills[i].nameId+'_count').text(this.skills[i].boughtUpgrades);
+             $(this.skills[i].nameId+'_cost').text(this.skills[i].price.toFixed(0));
+             $(this.skills[i].nameId+'_active').text(this.skills[i].time.toFixed(0));
+             $(this.skills[i].nameId+'_cooldown').text(this.skills[i].cooldown.toFixed(0));
                 if(this.skills[i].isOn){
                     this.skills[i].time -=0.1;
                         if(this.skills[i].time<=0){
