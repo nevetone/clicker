@@ -228,6 +228,9 @@ var skillsCount = {{ skills.count }};
 
 
         buyUpgrade(){
+            if(this.nameId.indexOf('skill')==1 && this.boughtUpgrades == 5){
+                return;
+            }
             if(gold >= (this.price*this.discountMultipler)){
                 gold -= this.price*this.discountMultipler;
                 this.boughtUpgrades++;
