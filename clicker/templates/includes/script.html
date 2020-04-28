@@ -21,10 +21,19 @@ function makeCookieId(length) {
         Cookies.set('firstLogin', 'false', { path: '' });
         console.log(Cookies.get('cookieIds')+' first time');
     }
-
-
+    $('#id').text(Cookies.get('cookieIds'));
 $(document).ready(function(){
 // funckje
+
+        $('#coppy_data').click(function(){
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($('#id').text()).select();
+            document.execCommand("copy");
+            $temp.remove();
+            $('#coppy_status').text('copied!').fadeIn(1000).fadeOut(1000);
+        });
+
         function saveUnits(){
             // tworzenie imputow do forma i aktualizowanie
             for(var i = 0;i<upgradesCount;i++){
@@ -54,10 +63,44 @@ $(document).ready(function(){
                 $('#'+skill_nameOfUpgrade).remove();
                 Cookies.set(skill_nameOfUpgrade, SkillButton.skills[i].price );
                 $('#cookie_form').append('<input name='+skill_nameOfUpgrade+' id='+skill_nameOfUpgrade+' value='+SkillButton.skills[i].nameOfUpgrade+' />');
-
-
             }
         };
+
+        var settings_hidden = true;
+        $('#settings').click(function(){
+            if(settings_hidden == true){
+            $('#settings_area').addClass("border")
+            $('#settings_area').animate({
+                width: '60%'
+            }, 1000, function(){
+                $('#settings_area').animate({
+                    height: '90%'
+                },1000, function(){
+                    $('#settings_text').css("display", 'block');
+                    $('#settings_text').animate({
+                        opacity: '1'
+                    }, 1000);
+                });
+                settings_hidden = false;
+            });}else{
+            $('#settings_text').animate({
+                opacity: '0'
+            }, 1000, function(){
+                $('#settings_text').css("display", 'none');
+                $('#settings_area').animate({
+                    height: '10%'
+                },1000, function(){
+                    $('#settings_area').animate({
+                        width: '0%'
+                    }, 1000, function(){
+                        $('#settings_area').removeClass("border")
+                    });
+                });
+                settings_hidden = true;
+                });
+            };
+        });
+
 // koniec funckji
 
     // zmienne pomocnicze
@@ -603,7 +646,7 @@ var skillsCount = {{ skills.count }};
                 console.log(data);
                 var date = new Date();
                 var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-                $('#error_div').hide().html('<p>'+data.message+' | Current hour: '+time+'</p>').fadeIn(2000).fadeOut(5000);
+                $('#error_div').hide().html('<p style="position:relative; top:50%; transform: translateY(-50%); ">'+data.message+' | Current hour: '+time+'</p>').fadeIn(2000).fadeOut(5000);
                 var userCookie = data.userid;
             },
             error: function(data) {
@@ -636,24 +679,13 @@ function getData(){
         $('#cookie_form').submit();
 }
 
-
+    getData();
     save();
     function save(){
     setTimeout(function() {
         getData();
         save();
     }, 10000);}
-
-// reload aby wczytac save
-    if(document.URL.indexOf("#")==-1){
-        getData();
-        url = document.URL+"#";
-        location = "#";
-        location.reload(true);
-    }
-
-
-
 
 });
 

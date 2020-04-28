@@ -80,7 +80,30 @@
             </div>
         </div>
     </div>
-    <div class="block-clicker border" style="position: absolute; width: 60vw; left: 20vw; height: 90%;">
+    <div class="block-clicker border" style="position: absolute; width: 60vw; left: 20vw; height: 90%; z-index:9997;">
+        <div class="text-light bg-dark2 border-light" id="settings_area" style="position:fixed; top:5%; left:20%; width:0%; height:10%; z-index:9999;" >
+            <div class="p-5" id="settings_text" style="display:none; opacity:0; width:100%;">
+                <h2> Settings </h2>
+                <h5> 
+                    <span>Your Save ID: </span>
+                    <span class="text-warning" id="id"></span>
+                    <button class="badge badge-pill badge-light" id="coppy_data" >Coppy</button>
+                    <span class="text-success" id="coppy_status"></span>
+                </h5><br />
+                <h5>
+                    Load save by ID
+                </h5>
+                <form method="POST" action="{% url 'ajax_coppy' %}" style="width:100%;"> {% csrf_token %}
+                <h4 style="width:100%;">
+                    <div class="form__group field" style="position:relative; width:100%;">
+                        <input style="width:50%;" type="input" class="form__field" placeholder="Paste ID here" name="new_id" id='new_id' required />
+                        <label for="new_id" class="form__label">Paste ID here</label>
+                        <button class="badge badge-pill badge-primary border border-dark" > Load </button>
+                    </div>
+                </h4>
+                </form>
+            </div>
+        </div>
         <div class="upgrade-block border border-primary" style="position: absolute; z-index:0; left:0; top:0; height: 100%; width: 10%;">
 
             {% comment %} ten div jest do usuniecia jak cos {% endcomment %}
@@ -116,7 +139,7 @@
             </div>
             <div class="text-center text-light text" id="boss_time" style="font-size: 25px; position: relative;" hidden >0.00</div>
             </div>
-            <div class="click_area" >
+            <div class="click_area" style="z-index:9998;">
             </div>
         </div>
     <div class="block-stats border" style="position: absolute; width: 20vw; left: 80vw; height: 90%;">
@@ -172,7 +195,7 @@
             </div>
         </div>
     </div>
-    <div id="error_div" class="border border-success text-white text-center" style="width:100vw; height:3%; position:fixed; bottom:0; ">
+    <div id="error_div" class="border border-success text-white text-center" style="width:100vw; height:5%; position:fixed; bottom:0; font-size:20px;">
 
     </div>
 </div>

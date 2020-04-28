@@ -19,7 +19,6 @@ def home(request):
         islands = None
         mobs = None
         skills = None
-    
     try:
         unitsCount = Units.objects.all()
         unitsCount2 = Units.objects.all().count()
@@ -30,7 +29,6 @@ def home(request):
         skillsCount2 = Skills.objects.all().count()
     except:
         pass
-        
         # save
     if request.method == 'POST':
         cookie = request.POST.get('cookie_id')
@@ -49,13 +47,10 @@ def home(request):
         skill_count = []
         skill_name = []
         pomocnicza = 0
-
         try:
             get_user = Cookies.objects.get(cookies_id = cookie)
-            
         except:
             pass
-        
         try:
             user_units = UserUnits.objects.filter(cookies_id = get_user)
             user_units_count = UserUnits.objects.filter(cookies_id = get_user).count()
@@ -86,7 +81,6 @@ def home(request):
                     g.save()
             except:
                 pass
-        
         if user_units is not None:
             for t in user_units:
                 price.append(request.POST.get('price'+str(pomocnicza)))
@@ -97,13 +91,10 @@ def home(request):
                 t.unit_count = float(count[pomocnicza])
                 t.save()
                 pomocnicza = pomocnicza + 1
-
         name = []
         price = []
         count = []
         pomocnicza = 0
-        
-        
         if user_skills is not None:
             for i in user_skills:
                 skill_price.append(request.POST.get('skill_price'+str(pomocnicza)))
@@ -114,13 +105,10 @@ def home(request):
                 i.skill_count = float(skill_count[pomocnicza])
                 i.save()
                 pomocnicza = pomocnicza + 1
-        
-        
         skill_price = []
         skill_count = []
         skill_name = []
         pomocnicza = 0
-        
         try:
             userid, created = Cookies.objects.get_or_create(cookies_id = cookie)
             if created:
@@ -133,7 +121,6 @@ def home(request):
                 userid.var_o = -1
                 userid.clickUpgradePrice = 100
                 userid.save()
-                
             userid.visibleUpgrades = float(visibleUpgrades)
             userid.current_gold = float(current_gold)
             userid.click_count = float(click_count)
@@ -143,32 +130,17 @@ def home(request):
             userid.var_o = float(var_o)
             userid.clickUpgradePrice = float(clickUpgradePrice)
             userid.save()
-
-
         except:
             pass
-        
-
         message = 'Auto Save Complited'
         return HttpResponse(json.dumps({'message':message}), content_type="application/json")
     else:
         message = None
         userid = None
-    
-    
-    
-    
     context={
         'units':units, 'islands':islands, 'mobs':mobs, 'skills':skills, 'userid':userid,
     }
     return render(request, template, context)
-
-
-
-
-
-
-
 
 def load(request):
     if request.method == 'POST':
@@ -182,20 +154,15 @@ def load(request):
             unitsCount = None
             skillsCount = None
             pass
-        
         try:
             user_units = UserUnits.objects.filter(cookies_id = userCookies)
             user_skills = UserSkills.objects.filter(cookies_id = userCookies)
         except:
             pass
-        
-        
         unit_cost = []
         unit_count = []
         skill_price = []
         skill_count = []
-        
-        
         try:
             print('Wczytywanie')
             context = {
@@ -208,24 +175,16 @@ def load(request):
                 'click_upgrades_bought': userCookies.click_upgrades_bought,
                 'clickUpgradePrice':userCookies.clickUpgradePrice,
                 }
-            
-            
             for unit in user_units:
                 unit_cost.append(unit.unit_cost)
                 unit_count.append(unit.unit_count)
-                
                 context['unit_cost'] = unit_cost
                 context['unit_count'] = unit_count
-                
-            
             for skill in user_skills:
                 skill_price.append(skill.skill_cost)
                 skill_count.append(skill.skill_count)
-                
                 context['skill_price'] = skill_price
                 context['skill_count'] = skill_count
-            
-            
             skill_price = []
             skill_count = []
             unit_cost = []
@@ -242,56 +201,28 @@ def load(request):
                 'click_upgrades_bought': 1,
                 'clickUpgradePrice':100,
                 }
-
             for units in unitsCount:
                 unit_cost.append(units.unit_default_cost)
                 unit_count.append(units.unit_count)
-                
                 context2['unit_cost'] = unit_cost
                 context2['unit_count'] = unit_count
-                
-                
-            
             for skills in skillsCount:
                 skill_price.append(skills.skill_cost)
                 skill_count.append(skills.skill_count)
-                
                 context2['skill_price'] = skill_price
                 context2['skill_count'] = skill_count
-            
-            
             skill_price = []
             skill_count = []
             unit_cost = []
             unit_count = []
             return JsonResponse(context2, status=200)
-            
-        
     context={}
     template="index.html"
     return render(request, template, context)
 
+def coppy(request):
+    template="index.html"
 
-
-
-
-
-
-
-
-
-def test(request):
-    template="test.html"
-    try:
-        units = Units.objects.all()
-        islands = Islands.objects.all()
-        mobs = Mobs.objects.all()
-    except:
-        units = None
-        islands = None
-        mobs = None
         
-    context={
-        'units':units, 'islands':islands, 'mobs':mobs,
-    }
+    context={}
     return render(request, template, context)
