@@ -206,15 +206,28 @@ var skillsCount = {{ skills.count }};
             this.isOn=false;
             this.maxTime=10;
             this.time=this.maxTime;
-            this.skillType=0;
+            this.cooldown=10;
         }
         turnOn(){
+            if(this.cooldown <=0 && this.boughtUpgrades >0){
             this.isOn=true;
+            }
         }
         static useSkill(){
-
-
+            for(var i=0;i<this.skills.length;i++){
+                if(this.skills[i].isOn && this.skills[i].boughtUpgrades > 0 ){
+                switch(this.skills[i].nameId){
+                case 'skill0':
+                    current -= (UpgradeButton.getAllDmg() * this.skills[i].boughtUpgrades );
+                    console.log('skill0 uzyty');
+                break;
+                case 'skill1':
+                    console.log('skill1 uzyty');
+                break;
+                }
+            }
         }
+        };
         static Init(){
             var upgradeNames = [];
             var baseUpgradePrices = [];
@@ -236,6 +249,7 @@ var skillsCount = {{ skills.count }};
          
         {% for skill in skills %}
         $('#skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].buyUpgrade()});
+        $('#activate_skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].turnOn()});
         {% endfor %}
 
         }
@@ -243,13 +257,20 @@ var skillsCount = {{ skills.count }};
             for(var i = 0;i<this.skills.length;i++){
             $(this.skills[i].nameId+'_count').text(this.skills[i].boughtUpgrades);
             $(this.skills[i].nameId+'_cost').text(this.skills[i].price.toFixed(0));
-            }
-            if(this.on){
-                this.time -=0.1;
-                if(this.time>=0){
-                    this.on=false;
-                    this.time=maxTime;
+                if(this.skills[i].isOn){
+                    this.skills[i].time -=0.1;
+                        if(this.skills[i].time<=0){
+                          this.skills[i].isOn=false;
+                          this.skills[i].time=this.skills[i].maxTime;
+                          this.skills[i].cooldown=10;
                 }
+
+
+                }else{
+                    this.skills[i].cooldown -= 0.1;
+                    if(this.skills[i].cooldown < 0 ){this.skills[i].cooldown =0;};
+                }
+            
             }
         }
    };
