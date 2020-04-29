@@ -124,6 +124,41 @@ $(document).ready(function(){
             };
         });
 
+        var prestige_hidden = true;
+        $('#prestige_menu').click(function(){
+            if(prestige_hidden == true){
+            $('#prestige_area').addClass("border")
+            $('#prestige_area').animate({
+                width: '60%'
+            }, 1000, function(){
+                $('#prestige_area').animate({
+                    height: '90%'
+                },1000, function(){
+                    $('#prestige_text').css("display", 'block');
+                    $('#prestige_text').animate({
+                        opacity: '1'
+                    }, 1000);
+                });
+                prestige_hidden = false;
+            });}else{
+            $('#prestige_text').animate({
+                opacity: '0'
+            }, 1000, function(){
+                $('#prestige_text').css("display", 'none');
+                $('#prestige_area').animate({
+                    height: '10%'
+                },1000, function(){
+                    $('#prestige_area').animate({
+                        width: '0%'
+                    }, 1000, function(){
+                        $('#prestige_area').removeClass("border")
+                    });
+                });
+                prestige_hidden = true;
+                });
+            };
+        });
+
 // koniec funckji
 
     // zmienne pomocnicze
@@ -140,16 +175,16 @@ $(document).ready(function(){
     var maxhp = 10; // pierwsze hp mobka
     var current = maxhp; // aktualne hp
     var hpbar =  current/maxhp*100; // aktualny hp bar w %%
-    var hpMultipler = 1.12; // huj wi cos wojtek napisal xd
+    var hpMultipler = 1.12; // mnoznik hp co poziom
 
     var clickUpgradesBought = 1; // ile kupionych click upgradow
-    var clickUpgradePrice=100;
+    var clickUpgradePrice=100; // podstawowy koszt upgrade
 
     var visibleUpgrades = -1; // obecnie pokazane upgrade
-    var bossTime=30;
-    var time_left =bossTime;
-    var b_startBossTime=false;
-    var b_getBonusgold=false;
+    var bossTime=30; // czas bossa
+    var time_left = bossTime; // pozostaly czas na zabicie bossa
+    var b_startBossTime=false; // rozpoczecie licznika
+    var b_getBonusgold=false; // dodatkowy gold za zabicie bossa
 
     var dpsMeter=1.0;
     var dps=0;
@@ -191,8 +226,8 @@ if (document.body.animate) {
 function pop (e) {
   if (e.clientX === 0 && e.clientY === 0) {
     const bbox = document.querySelector('#button').getBoundingClientRect();
-    const x = bbox.left + bbox.width / 6;
-    const y = bbox.top + bbox.height / 6;
+    const x = bbox.left + bbox.width / 3;
+    const y = bbox.top + bbox.height / 3;
     for (let i = 0; i < 30; i++) {
       createParticle(x, y);
     }
@@ -207,13 +242,13 @@ function createParticle (x, y) {
   const particle = document.createElement('particle');
   document.body.appendChild(particle);
   
-  const size = Math.floor(Math.random() * 15 + 4);
+  const size = Math.floor(Math.random() * 25 + 8);
   particle.style.width = `${size}px`;
   particle.style.height = `${size}px`;
   particle.style.background = `hsl(${Math.random() * 90 + 180}, 70%, 60%)`;
   
-  const destinationX = x + (Math.random() - 0.5) * 2 * 35;
-  const destinationY = y + (Math.random() - 0.5) * 2 * 35;
+  const destinationX = x + (Math.random() - 0.5) * 4 * 45;
+  const destinationY = y + (Math.random() - 0.5) * 4 * 45;
   const animation = particle.animate([
     {
       transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
@@ -276,6 +311,7 @@ var skillsCount = {{ skills.count }};
             this.maxTime=10;
             this.time=this.maxTime;
             this.cooldown=0;
+            this.StaticCooldown = 0;
         }
         turnOn(){
             console.log(this.nameId+' wlaczony');
@@ -306,8 +342,7 @@ var skillsCount = {{ skills.count }};
             upgradeNames.push('{{ skill.skill_name }}');
             baseUpgradePrices.push({{ skill.skill_cost }});
             {% endfor %}
-
-
+            
         for(var i = 0;i<upgradeNames.length;i++){
             this.skills[i]=new SkillButton();
             this.skills[i].price=baseUpgradePrices[i];
@@ -316,32 +351,74 @@ var skillsCount = {{ skills.count }};
             this.skills[i].baseDmg =0;
             
          };
-         
+        SkillButton.skills[0].StaticCooldown = 30;
+        SkillButton.skills[0].cooldown = 30;
+        SkillButton.skills[1].StaticCooldown = 30;
+        SkillButton.skills[1].cooldown = 30;
+        
         {% for skill in skills %}
         $('#skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].buyUpgrade()});
         $('#activate_skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].turnOn()});
         {% endfor %}
-
+        
         }
         static refreshSkills(){
-            
+            {% comment %} background-color:rgba(240, 52, 52, 0.2); {% endcomment %}
             for(var i = 0;i<this.skills.length;i++){
              $(this.skills[i].nameId+'_count').text(this.skills[i].boughtUpgrades);
              $(this.skills[i].nameId+'_cost').text(this.skills[i].price.toFixed(0));
-             $(this.skills[i].nameId+'_active').text(this.skills[i].time.toFixed(0));
-             $(this.skills[i].nameId+'_cooldown').text(this.skills[i].cooldown.toFixed(0));
+             $(this.skills[i].nameId+'_active').html('Time: <span class="text-warning">'+this.skills[i].time.toFixed(0)+'</span>');
+             $(this.skills[i].nameId+'_cooldown').html('CD: <span class="text-danger">'+this.skills[i].cooldown.toFixed(0)+'</span>');
+             $(this.skills[i].nameId+'_cooldown').hide();
+             $('#skill_status'+[i]).css('background-color', 'rgba(240, 240, 214, 0.1)'); 
                 if(this.skills[i].isOn){
+                    $('#skill_status'+[i]).addClass('border-success');
+                    $('#skill_status'+[i]).prop("disabled", true);
+                    $('#skill_status'+[i]).css('background-color', 'rgba(46, 204, 113, 0.2)');  
+                    $('#skill_status'+[i]).animate({
+                        height: '-=1%',
+                    }, 100);
+                    $(this.skills[i].nameId+'_cooldown').hide();
+                    // koniec styli
+
                     this.skills[i].time -=0.1;
                         if(this.skills[i].time<=0){
+                        $('#skill_status'+[i]).animate({
+                            height: '100%',
+                        }, 100);
+                        // koniec styli
+
                           this.skills[i].isOn=false;
                           this.skills[i].time=this.skills[i].maxTime;
-                          this.skills[i].cooldown=10;
-                }
+                          this.skills[i].cooldown=30;
+                          this.skills[i].StaticCooldown = 30;
+                        }
+                }else if(this.skills[i].cooldown > 0){
+                    $('#skill_status'+[i]).removeClass('border-success');
+                    $('#skill_status'+[i]).css('background-color', 'rgba(240, 52, 52, 0.2)');   
+                    $('#skill_status'+[i]).addClass('border-danger');
+                        $('#skill_status'+[i]).animate({
+                            height: '-='+this.skills[i].StaticCooldown/100+'%', // troche matematyka mnie zawodzi i nie wiem jak obliczyc te % do konca xd 
+                        }, 100);
+                    $(this.skills[i].nameId+'_cooldown').show();
+                    $(this.skills[i].nameId+'_active').hide();
+                    // koniec styli
 
-
-                }else{
                     this.skills[i].cooldown -= 0.1;
-                    if(this.skills[i].cooldown < 0 ){this.skills[i].cooldown =0;};
+                    if(this.skills[i].cooldown < 0 ){
+                        this.skills[i].cooldown = 0;
+                        
+
+                        // koniec styli
+                        $('#skill_status'+[i]).animate({
+                            height: '100%',
+                        }, 100);
+                        $(this.skills[i].nameId+'_active').show();
+                        $(this.skills[i].nameId+'_cooldown').hide();
+                        $('#skill_status'+[i]).removeClass('border-danger');
+                        $('#skill_status'+[i]).prop("disabled", false);
+                        $('#skill_status'+[i]).css('background-color', 'rgba(240, 240, 214, 0.1)');  
+                    };
                 }
             
             }

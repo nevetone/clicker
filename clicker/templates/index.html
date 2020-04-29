@@ -106,13 +106,16 @@
                 </form>
             </div>
         </div>
-        <div class="upgrade-block border border-primary" style="position: absolute; z-index:0; left:0; top:0; height: 100%; width: 10%; padding:1%;">
+        <div class="upgrade-block border border-primary" style="position: absolute; z-index:9997; left:0; top:0; height: 100%; width: 10%; padding:1%;">
 
 
             {% for skill in skills %}
-            <button class="btn btn-dark border text-light" style="position:relative; width:99%; margin-bottom:10%; " id="activate_skill{{ skill.skill_id }}">{{ skill.skill_name }}<br />
-            <span>Time:</span><span class="text-warning" id="skill{{ skill.skill_id }}_active"> </span>
-            <span>Cd: :</span><span class="text-warning" id="skill{{ skill.skill_id }}_cooldown"> </span>
+            <button class="btn btn-dark border text-light" style="position:relative; width:99%; height:auto; margin-bottom:10%; " id="activate_skill{{ skill.skill_id }}">{{ skill.skill_name }}<br />
+            <div class="border" id="skill_status{{ skill.skill_id }}" style="position:absolute; bottom:0; left:0; width:100%; height:100%;">
+            
+            </div>
+            <span id="skill{{ skill.skill_id }}_active"> </span>
+            <span id="skill{{ skill.skill_id }}_cooldown"> </span>
             </button>
             {% endfor %}
 
@@ -120,10 +123,10 @@
 
 
         </div>
-        <div class="text-white back_arrow" style="font-size:40px; position: absolute; z-index:0; left:10%; top:5%; height: 10%; width: 10%;">
-            <i class="fas fa-arrow-left" style="position:absolute; right:0;" id="back"></i>
+        <div class="text-white back_arrow" style="cursor:pointer; font-size:40px; position: absolute; z-index:0; left:20%; top:5%; height: auto%; width: auto%;">
+            <i class="fas fa-arrow-left" style="position:absolute; right:0;" id="back" ></i>
         </div>
-        <div class="text-white next_arrow" style="font-size:40px; position: absolute; z-index:0; right:10%; top:5%; height: 10%; width: 10%;">
+        <div class="text-white next_arrow" style="cursor:pointer; font-size:40px; position: absolute; z-index:0; right:20%; top:5%; height: auto; width: auto;">
             <i class="fas fa-arrow-right" id="next" style="position:absolute; left:0;"></i>
         </div>
         <div class="islands-mobs" style="position: absolute; height: 80%; width:100%; left:50%; transform:translateX(-50%); top:20%;">
@@ -153,7 +156,10 @@
             </div>
         </div>
     <div class="block-stats border" style="position: absolute; width: 20vw; left: 80vw; height: 90%;">
-        <button id="prestige" class="btn btn-dark border text-center" style="position:relative; width:100%; height:8%;" disabled>
+        <button id="prestige_menu" class="text-light btn btn-dark border" style="position:relative; width:10%; height:8%; top:0;"> 
+        <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="prestige" class="btn btn-dark border text-center" style="position:absolute;top:0; width:90%; height:8%; right:0;" disabled>
             <span style="font-size:20px;">Prestige</span><br/>
             <span id="prestige_rules" style="font-size:20px;">Prestige rules</span>
         </button>
@@ -207,6 +213,15 @@
     </div>
     <div id="error_div" class="border border-success text-white text-center" style="width:100vw; height:5%; position:fixed; bottom:0; font-size:20px;">
 
+    </div>
+    <div class="text-light bg-dark2 border-light" id="prestige_area" style="position:fixed; top:5%; right:20%; width:0%; height:10%; z-index:9999;" >
+    <div class="p-5" id="prestige_text" style="display:none; opacity:0; width:100%;">
+    
+        {% comment %} drzewko passywek {% endcomment %}
+        Prestige Passives:
+
+
+    </div>
     </div>
 </div>
 <form method="POST" action="{% url 'home' %}" id="cookie_form" style="position:fixed; top:0%; display:none;" hidden>
