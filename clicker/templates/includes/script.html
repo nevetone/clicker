@@ -303,7 +303,6 @@ var skillsCount = {{ skills.count }};
                     return;
                     break;
                     case('#skill1'):
-                    this.baseDmg++;
                     return;
                     break;
                 }
@@ -335,11 +334,14 @@ var skillsCount = {{ skills.count }};
                 if(this.skills[i].isOn && this.skills[i].boughtUpgrades > 0 ){
                 switch(this.skills[i].nameId){
                 case '#skill0':
+                //skill do  dpsow
                     current -= (UpgradeButton.getAllDmg() * this.skills[i].boughtUpgrades );
-                    console.log('skill0 uzyty');
                 break;
                 case '#skill1':
-                    console.log('skill1 uzyty');
+                //skill do clickDmg
+                break;
+                case 'skill2':
+                //skill do golda
                 break;
                 }
             }
@@ -599,7 +601,7 @@ var skillsCount = {{ skills.count }};
         $('.current_hp').text(current.toFixed(0));
         $('#clickDmg').text(clickDmg.toFixed(2));
         if(SkillButton.skills[1].isOn){
-            var temp = clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].baseDmg)* clickDmg);
+            var temp = clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
             $('#clickDmg').text(temp.toFixed(2));
         }
         hpbar =  current/maxhp*100;
@@ -649,7 +651,7 @@ var skillsCount = {{ skills.count }};
         if (current <= 0) {
             level++;
             setHp();
-            gold += stage*200; // trza dodac mnoznik od stageow konkretny
+            gold += stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage); // trza dodac mnoznik od stageow konkretny
             if(b_getBonusgold) { gold+=stage*10;b_getBonusgold=0; };
             
             b_startBossTime=false; time_left=bossTime;
@@ -674,7 +676,7 @@ var skillsCount = {{ skills.count }};
                 b_startBossTime=true;
                 b_getBonusgold=1;
             }
-            $('#pills-logs').append('<span>Dostałeś: '+stage*200+' Golda</span><br/>');
+            $('#pills-logs').append('<span>Dostałeś: '+ (stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage))+' Golda</span><br/>');
             $("#pills-logs").animate({ scrollTop: 20000000 }, "slow");
         }
         if(b_startBossTime){
@@ -740,8 +742,8 @@ var skillsCount = {{ skills.count }};
     // zadawanie obrażen
    $('.click_area').click(function(){
         clickCount++;
-        current -= clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].baseDmg)* clickDmg);
-        dps += clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].baseDmg ) * clickDmg);
+        current -= clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
+        dps += clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades ) * clickDmg);
 
         $( "#mob_image" ).animate({
             height: "22%",
