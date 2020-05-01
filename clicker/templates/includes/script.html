@@ -192,6 +192,9 @@ $(document).ready(function(){
     var cost25=clickUpgradePrice*2*25;
     $('#dps').text(dps.toFixed(1)+' dmg.');
 
+    var b_goldSkill=false;
+    //var b_clickDmgSkill=false;
+
 
 
     // zmienne wysp i mobków z bazy danych
@@ -286,7 +289,7 @@ var skillsCount = {{ skills.count }};
 
 
         buyUpgrade(){
-            if(this.nameId.indexOf('skill')==1 && this.boughtUpgrades == 5){
+            if(this.nameId.indexOf('skill') == 1 && this.boughtUpgrades == 5){
                 return;
             }
             if(gold >= (this.price*this.discountMultipler)){
@@ -295,7 +298,14 @@ var skillsCount = {{ skills.count }};
                 $('#pills-console').append('<span>Kupiłeś upgrade dla '+this.nameId+ ' za ' +this.price+ ' golda!</span><br/>');
                 $("#pills-console").animate({ scrollTop: 20000000 }, "slow");
                 this.price *= this.priceMultipler;
-
+                switch(this.nameId){
+                    case('#skill0'):
+                    return;
+                    break;
+                    case('#skill1'):
+                    return;
+                    break;
+                }
             // tworzenie imputow do forma i aktualizowanie
                 saveUnits();
             }
@@ -324,11 +334,14 @@ var skillsCount = {{ skills.count }};
                 if(this.skills[i].isOn && this.skills[i].boughtUpgrades > 0 ){
                 switch(this.skills[i].nameId){
                 case '#skill0':
+                //skill do  dpsow
                     current -= (UpgradeButton.getAllDmg() * this.skills[i].boughtUpgrades );
-                    console.log('skill0 uzyty');
                 break;
                 case '#skill1':
-                    console.log('skill1 uzyty');
+                //skill do clickDmg
+                break;
+                case 'skill2':
+                //skill do golda
                 break;
                 }
             }
@@ -351,11 +364,11 @@ var skillsCount = {{ skills.count }};
             this.skills[i].baseDmg =0;
             
          };
+         
         SkillButton.skills[0].StaticCooldown = 10;
         SkillButton.skills[1].StaticCooldown = 15;
         SkillButton.skills[2].StaticCooldown = 20;
 
-        
         {% for skill in skills %}
         $('#skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].buyUpgrade()});
         $('#activate_skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].turnOn()});
@@ -587,6 +600,10 @@ var skillsCount = {{ skills.count }};
         $('#max_hp').text(maxhp.toFixed(0));
         $('.current_hp').text(current.toFixed(0));
         $('#clickDmg').text(clickDmg.toFixed(2));
+        if(SkillButton.skills[1].isOn){
+            var temp = clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
+            $('#clickDmg').text(temp.toFixed(2));
+        }
         hpbar =  current/maxhp*100;
         $('.progress-bar').css('width', hpbar.toFixed(2)+'%');
         $('#clickCount').text(clickCount);
@@ -634,7 +651,7 @@ var skillsCount = {{ skills.count }};
         if (current <= 0) {
             level++;
             setHp();
-            gold += stage*200; // trza dodac mnoznik od stageow konkretny
+            gold += stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage); // trza dodac mnoznik od stageow konkretny
             if(b_getBonusgold) { gold+=stage*10;b_getBonusgold=0; };
             
             b_startBossTime=false; time_left=bossTime;
@@ -659,7 +676,7 @@ var skillsCount = {{ skills.count }};
                 b_startBossTime=true;
                 b_getBonusgold=1;
             }
-            $('#pills-logs').append('<span>Dostałeś: '+stage*200+' Golda</span><br/>');
+            $('#pills-logs').append('<span>Dostałeś: '+ (stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage))+' Golda</span><br/>');
             $("#pills-logs").animate({ scrollTop: 20000000 }, "slow");
         }
         if(b_startBossTime){
@@ -725,8 +742,8 @@ var skillsCount = {{ skills.count }};
     // zadawanie obrażen
    $('.click_area').click(function(){
         clickCount++;
-        current -= clickDmg;
-        dps+=clickDmg;
+        current -= clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
+        dps += clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades ) * clickDmg);
 
         $( "#mob_image" ).animate({
             height: "22%",
