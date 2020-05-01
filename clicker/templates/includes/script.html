@@ -335,7 +335,7 @@ var skillsCount = {{ skills.count }};
                 switch(this.skills[i].nameId){
                 case '#skill0':
                 //skill do  dpsow
-                    current -= (UpgradeButton.getAllDmg() * this.skills[i].boughtUpgrades );
+                    
                 break;
                 case '#skill1':
                 //skill do clickDmg
@@ -616,11 +616,8 @@ var skillsCount = {{ skills.count }};
         
         
 
-        var ALLdps = 0;
-        for(var l = 0;l<UpgradeButton.buttons.length;l++){
-        ALLdps = ALLdps + UpgradeButton.buttons[l].baseDmg * UpgradeButton.buttons[l].boughtUpgrades;
-        }
-        $('#dmg_s').text(ALLdps);
+        var ALLdps = 10 * (UpgradeButton.getAllDmg() + ((SkillButton.skills[0].isOn * SkillButton.skills[0].boughtUpgrades) * UpgradeButton.getAllDmg() ));
+        $('#dmg_s').text(ALLdps.toFixed(1));
 
 
         $('.back_arrow').prop('hidden', ( stage==1 ) ? true:false );
@@ -645,7 +642,7 @@ var skillsCount = {{ skills.count }};
 
  setInterval(function(){ 
         SkillButton.useSkill();
-        current -= UpgradeButton.getAllDmg();
+        current -= UpgradeButton.getAllDmg() + ((SkillButton.skills[0].isOn * SkillButton.skills[0].boughtUpgrades) * UpgradeButton.getAllDmg() );
 
 
         if (current <= 0) {
