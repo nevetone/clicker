@@ -32,7 +32,7 @@
     background-color: #4E4E50;
 }
 
-.progress-bar{
+.progress-bar-hp{
     width: 0%;
 }
 
@@ -67,9 +67,30 @@ particle{
     opacity: 0;
 	text-align: center;
     clip-path: polygon(48% 16%, 0% 100%, 100% 100%);
-  }
+}
 
-
+dmgNumber{
+    position: fixed;
+    left: 0;
+    font-size:30px;
+    color:white;
+    top: 0;
+    pointer-events: none;
+    opacity: 0;
+    text-align: center;
+}
+goldNumber{
+    height: 50px;
+    width: 50px;
+    position: fixed;
+    left: 0;
+    font-size:20px;
+    color:white;
+    top: 0;
+    pointer-events: none;
+    opacity: 0;
+    text-align: center;
+}
 
 
 ::-webkit-scrollbar {

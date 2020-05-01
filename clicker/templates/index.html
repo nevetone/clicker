@@ -4,7 +4,7 @@
 {% load humanize %}
 <div class="container-fluid" style="position: fixed; height: 100vh; width: 100vw; margin:0; padding:0;">
     {% include 'includes/menu.html' %}
-    <div class="block-upgrades border" style="position: absolute; width: 20vw; height: 90%;">
+    <div class="block-upgrades" style="position: absolute; width: 20vw; height: 90%;">
         <div style="position: relative; height: auto; width: 100%;">
             <button class="btn btn-dark border" id="clickUpgrade" style="width: 70%;">
                 <span style="color:gold;">
@@ -23,7 +23,7 @@
                 <span class="text-warning"><i class="fas fa-coins"></i></span>
             </button>
         </div>
-        <div class="show-menu border border-warning text-white" style="position:relative; width:100%; height:90%; ">
+        <div class="show-menu text-white" style="position:relative; width:100%; height:90%; ">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" style="width: 50%; text-align: center;">
                     <a class="nav-link active btn btn-primary border" id="units-tab" data-toggle="tab" href="#units" role="tab" aria-controls="units" aria-selected="true">Units</a>
@@ -80,8 +80,8 @@
             </div>
         </div>
     </div>
-    <div class="block-clicker border" style="position: absolute; width: 60vw; left: 20vw; height: 90%; z-index:9997;">
-        <div class="text-light bg-dark2 border-light" id="settings_area" style="position:fixed; top:5%; left:20%; width:0%; height:10%; z-index:9999;" >
+    <div class="block-clicker" style="position: absolute; width: 60vw; left: 20vw; height: 90%; z-index:9997;">
+        <div class="text-light bg-dark2" id="settings_area" style="position:fixed; top:5%; left:20%; width:0%; height:10%; z-index:9999;" >
             <div class="p-5" id="settings_text" style="display:none; opacity:0; width:100%;">
                 <h2> Settings </h2>
                 <h5> 
@@ -106,23 +106,28 @@
                 </form>
             </div>
         </div>
-        <div class="upgrade-block border border-primary" style="position: absolute; z-index:9997; left:0; top:0; height: 100%; width: 10%; padding:1%;">
 
-
-            {% for skill in skills %}
-            <button class="btn btn-dark border text-light" style="position:relative; width:99%; height:auto; margin-bottom:10%; " id="activate_skill{{ skill.skill_id }}">{{ skill.skill_name }}<br />
-            <div class="border" id="skill_status{{ skill.skill_id }}" style="position:absolute; bottom:0; left:0; width:100%; height:100%;">
-            
+            <div class="upgrade-block" style="position: absolute; z-index:9997; left:0; bottom:0; height: 10%; width: 100%; padding:1%;">
+                <div class="progress border border-primary" style="width:70%; transform:translateX(25%);">
+                <div class="progress-bar bg-info progress-bar-mana" id="progress-bar-mana" role="progressbar" style="width: 100%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div style="color:black; position: absolute; left:50%; transform: translateX(-50%); ">
+                        <span id="current_mana">100</span>
+                            /
+                        <span id="max_mana">100</span>
+                    </div>
+                </div>
+                </div>
+                {% for skill in skills %}
+                <button class="btn btn-dark border text-light" style="position:relative; width:15%; height:auto; margin-bottom:10%; left:50; transform:translateX(200%); " id="activate_skill{{ skill.skill_id }}">{{ skill.skill_name }}<br />
+                <div class="border" id="skill_status{{ skill.skill_id }}" style="position:absolute; bottom:0; left:0; width:100%; height:100%;">
+                
+                </div>
+                <span id="skill{{ skill.skill_id }}_active"> </span>
+                <span id="skill{{ skill.skill_id }}_cooldown"> </span>
+                </button>
+                {% endfor %}
             </div>
-            <span id="skill{{ skill.skill_id }}_active"> </span>
-            <span id="skill{{ skill.skill_id }}_cooldown"> </span>
-            </button>
-            {% endfor %}
 
-
-
-
-        </div>
         <div class="text-white back_arrow" style="cursor:pointer; font-size:40px; position: absolute; z-index:0; left:20%; top:5%; height: auto%; width: auto%;">
             <i class="fas fa-arrow-left" style="position:absolute; right:0;" id="back" ></i>
         </div>
@@ -143,7 +148,7 @@
                 Slime
             </div>
             <div class="progress hp-bar" style="position:relative;" >  
-                <div class="progress-bar" style="background-color: rgb(104, 0, 14);" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar progress-bar-hp" style="background-color: rgb(104, 0, 14);" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
                 <div style="position: absolute; left:50%;transform: translateX(-50%); ">
                     <span class="current_hp"></span>
                         /
@@ -155,7 +160,7 @@
             <div class="click_area" style="z-index:9998;">
             </div>
         </div>
-    <div class="block-stats border" style="position: absolute; width: 20vw; left: 80vw; height: 90%;">
+    <div class="block-stats" style="position: absolute; width: 20vw; left: 80vw; height: 90%;">
         <button id="prestige_menu" class="text-light btn btn-dark border" style="position:relative; width:10%; height:8%; top:0; text-align:center;"> 
         <i class="fas fa-chevron-left"></i>
         </button>
@@ -192,7 +197,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="text-white border border-danger" style="position:absolute; bottom:0; height:30%; max-height:30%; width:100%;">
+        <div class="text-white" style="position:absolute; bottom:0; height:30%; max-height:30%; width:100%;">
             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="width:100%; padding:0; height:10%;">
             <li class="nav-item" style="width:50%;">
                 <a class="nav-link active btn btn-dark border" id="pills-logs-tab" data-toggle="pill" href="#pills-logs" role="tab" aria-controls="pills-logs" aria-selected="true" style="width:100%">Logs</a>
@@ -211,10 +216,10 @@
             </div>
         </div>
     </div>
-    <div id="error_div" class="border border-success text-white text-center" style="width:100vw; height:5%; position:fixed; bottom:0; font-size:20px;">
+    <div id="error_div" class=" text-white text-center" style="width:100vw; height:5%; position:fixed; bottom:0; font-size:20px;">
 
     </div>
-    <div class="text-light bg-dark2 border-light" id="prestige_area" style="position:fixed; top:5%; right:20%; width:0%; height:10%; z-index:9999;" >
+    <div class="text-light bg-dark2" id="prestige_area" style="position:fixed; top:5%; right:20%; width:0%; height:10%; z-index:9999;" >
         <div class="p-5" id="prestige_text" style="display:none; opacity:0; width:100%; height:100%;">
     
             {% comment %} drzewko passywek {% endcomment %}
