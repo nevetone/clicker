@@ -351,10 +351,10 @@ var skillsCount = {{ skills.count }};
             this.skills[i].baseDmg =0;
             
          };
-        SkillButton.skills[0].StaticCooldown = 30;
-        SkillButton.skills[0].cooldown = 30;
-        SkillButton.skills[1].StaticCooldown = 30;
-        SkillButton.skills[1].cooldown = 30;
+        SkillButton.skills[0].StaticCooldown = 10;
+        SkillButton.skills[1].StaticCooldown = 15;
+        SkillButton.skills[2].StaticCooldown = 20;
+
         
         {% for skill in skills %}
         $('#skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].buyUpgrade()});
@@ -390,15 +390,15 @@ var skillsCount = {{ skills.count }};
 
                           this.skills[i].isOn=false;
                           this.skills[i].time=this.skills[i].maxTime;
-                          this.skills[i].cooldown=30;
-                          this.skills[i].StaticCooldown = 30;
+                          this.skills[i].cooldown=SkillButton.skills[i].StaticCooldown;
+
                         }
                 }else if(this.skills[i].cooldown > 0){
                     $('#skill_status'+[i]).removeClass('border-success');
                     $('#skill_status'+[i]).css('background-color', 'rgba(240, 52, 52, 0.2)');   
                     $('#skill_status'+[i]).addClass('border-danger');
                         $('#skill_status'+[i]).animate({
-                            height: '-='+this.skills[i].StaticCooldown/100+'%', // troche matematyka mnie zawodzi i nie wiem jak obliczyc te % do konca xd 
+                            height: '-='+(1/SkillButton.skills[i].StaticCooldown)*10+'%',  
                         }, 100);
                     $(this.skills[i].nameId+'_cooldown').show();
                     $(this.skills[i].nameId+'_active').hide();
