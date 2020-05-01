@@ -133,7 +133,7 @@ def home(request):
         except:
             pass
         message = 'Auto Save Complited'
-        return HttpResponse(json.dumps({'message':message}), content_type="application/json")
+        return JsonResponse({'message':message}, status=200)
     else:
         message = None
         userid = None
@@ -192,6 +192,7 @@ def load(request):
                 unit_count = []
                 return JsonResponse(context, status=200)
             except:
+                print('first time')
                 context2 = {
                     'visibleUpgrades' : -1,
                     'var_o': -1,

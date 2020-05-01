@@ -67,6 +67,7 @@ particle{
     opacity: 0;
 	text-align: center;
     clip-path: polygon(48% 16%, 0% 100%, 100% 100%);
+    z-index: 1;
 }
 
 dmgNumber{
@@ -78,6 +79,7 @@ dmgNumber{
     pointer-events: none;
     opacity: 0;
     text-align: center;
+    z-index: 1;
 }
 goldNumber{
     height: 50px;
@@ -90,6 +92,7 @@ goldNumber{
     pointer-events: none;
     opacity: 0;
     text-align: center;
+    z-index: 1;
 }
 
 

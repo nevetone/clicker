@@ -1,39 +1,40 @@
 <script>
 {% load static %}
-
-function makeCookieId(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-    }
-
+    // tworzenei unikatowego id
+    function makeCookieId(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+            for ( var i = 0; i < length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+    };
+    // spawdzanie ponownego loginu
     var firstLogIn = Cookies.get('firstLogin');
-
+    
     if (firstLogIn){
-
         console.log(Cookies.get('cookieIds')+" ponowne logowanie");
     }else{
         Cookies.set('cookieIds', makeCookieId(12), { path: '' });
         Cookies.set('firstLogin', 'false', { path: '' });
         console.log(Cookies.get('cookieIds')+' first time');
     }
+    // dodawanie do cookie id
     $('#id').text(Cookies.get('cookieIds'));
+// głowna funckja .ready
 $(document).ready(function(){
 // funckje
-
+    // funkcja odliczania czasu skilli
     function time(cooldown){
         var date = new Date(cooldown*1000);
         var time = date.getMinutes() + ":" + date.getSeconds();
-        if(date.getSeconds() < 10){
-            var time = date.getMinutes() + ":0" + date.getSeconds();
-        }
-        return time;
-    }
-
+            if(date.getSeconds() < 10){
+                var time = date.getMinutes() + ":0" + date.getSeconds();
+            }
+     return time;
+    };
+    // funkcja wczytywania usera po id
     $('#load_from').submit(function() {
         $.ajax({
             data: $(this).serialize(),
@@ -44,132 +45,125 @@ $(document).ready(function(){
                     $('#message').text(data.message).fadeIn(1000).fadeOut(1000);
                     $('#loadSave').submit();
                 }else{
-                $('#message').text(data.message).fadeIn(1000).fadeOut(1000);
-
-                }
+                    $('#message').text(data.message).fadeIn(1000).fadeOut(1000);
+                };
             },
         });
         return false;
     });
+    // funkcja wysyłania id na serwer
     $('#send_id').click(function(){
         $('#current_id').val(Cookies.get('cookieIds'));
     });
-
-
-
-        $('#coppy_data').click(function(){
-            var $temp = $("<input>");
-            $("body").append($temp);
-            $temp.val($('#id').text()).select();
-            document.execCommand("copy");
-            $temp.remove();
-            $('#coppy_status').text('copied!').fadeIn(1000).fadeOut(1000);
-        });
-
-        function saveUnits(){
-            // tworzenie imputow do forma i aktualizowanie
-            for(var i = 0;i<upgradesCount;i++){
-                var price = "price"+i.toString();
-                $('#'+price).remove();
-                Cookies.set(price, UpgradeButton.buttons[i].price );
-                $('#cookie_form').append('<input name='+price+' id='+price+' value='+UpgradeButton.buttons[i].price+' />');
-                var boughtUpgrades = "count"+i.toString();
-                Cookies.set(boughtUpgrades, UpgradeButton.buttons[i].boughtUpgrades );
-                $('#'+boughtUpgrades).remove();
-                $('#cookie_form').append('<input name='+boughtUpgrades+' id='+boughtUpgrades+' value='+UpgradeButton.buttons[i].boughtUpgrades+' />');
-                var nameOfUpgrade = "name"+i.toString();
-                Cookies.set(nameOfUpgrade, UpgradeButton.buttons[i].nameOfUpgrade );
-                $('#'+nameOfUpgrade).remove();
-                $('#cookie_form').append('<input name='+nameOfUpgrade+' id='+nameOfUpgrade+' value='+UpgradeButton.buttons[i].nameOfUpgrade+' />');
-            };
-            for(var i = 0; i<skillsCount;i++){
-                var skill_price = "skill_price"+i.toString();
-                $('#'+skill_price).remove();
-                Cookies.set(skill_price, SkillButton.skills[i].price );
-                $('#cookie_form').append('<input name='+skill_price+' id='+skill_price+' value='+SkillButton.skills[i].price+' />');
-                var skill_count = "skill_count"+i.toString();
-                $('#'+skill_count).remove();
-                Cookies.set(skill_count, SkillButton.skills[i].boughtUpgrades );
-                $('#cookie_form').append('<input name='+skill_count+' id='+skill_count+' value='+SkillButton.skills[i].boughtUpgrades+' />');
-                var skill_nameOfUpgrade = "skill_name"+i.toString();
-                $('#'+skill_nameOfUpgrade).remove();
-                Cookies.set(skill_nameOfUpgrade, SkillButton.skills[i].price );
-                $('#cookie_form').append('<input name='+skill_nameOfUpgrade+' id='+skill_nameOfUpgrade+' value='+SkillButton.skills[i].nameOfUpgrade+' />');
-            }
+    // funkcja kpiowania swojego id
+    $('#coppy_data').click(function(){
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($('#id').text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+        $('#coppy_status').text('copied!').fadeIn(1000).fadeOut(1000);
+    });
+    // tworzenie imputow do forma i aktualizowanie
+    function saveUnits(){
+        for(var i = 0;i<upgradesCount;i++){
+            var price = "price"+i.toString();
+            $('#'+price).remove();
+            Cookies.set(price, UpgradeButton.buttons[i].price );
+            $('#cookie_form').append('<input name='+price+' id='+price+' value='+UpgradeButton.buttons[i].price+' />');
+            var boughtUpgrades = "count"+i.toString();
+            Cookies.set(boughtUpgrades, UpgradeButton.buttons[i].boughtUpgrades );
+            $('#'+boughtUpgrades).remove();
+            $('#cookie_form').append('<input name='+boughtUpgrades+' id='+boughtUpgrades+' value='+UpgradeButton.buttons[i].boughtUpgrades+' />');
+            var nameOfUpgrade = "name"+i.toString();
+            Cookies.set(nameOfUpgrade, UpgradeButton.buttons[i].nameOfUpgrade );
+            $('#'+nameOfUpgrade).remove();
+            $('#cookie_form').append('<input name='+nameOfUpgrade+' id='+nameOfUpgrade+' value='+UpgradeButton.buttons[i].nameOfUpgrade+' />');
         };
-
-        var settings_hidden = true;
-        $('#settings').click(function(){
-            if(settings_hidden == true){
-            $('#settings_area').addClass("border")
+        for(var i = 0; i<skillsCount;i++){
+            var skill_price = "skill_price"+i.toString();
+            $('#'+skill_price).remove();
+            Cookies.set(skill_price, SkillButton.skills[i].price );
+            $('#cookie_form').append('<input name='+skill_price+' id='+skill_price+' value='+SkillButton.skills[i].price+' />');
+            var skill_count = "skill_count"+i.toString();
+            $('#'+skill_count).remove();
+            Cookies.set(skill_count, SkillButton.skills[i].boughtUpgrades );
+            $('#cookie_form').append('<input name='+skill_count+' id='+skill_count+' value='+SkillButton.skills[i].boughtUpgrades+' />');
+            var skill_nameOfUpgrade = "skill_name"+i.toString();
+            $('#'+skill_nameOfUpgrade).remove();
+            Cookies.set(skill_nameOfUpgrade, SkillButton.skills[i].price );
+            $('#cookie_form').append('<input name='+skill_nameOfUpgrade+' id='+skill_nameOfUpgrade+' value='+SkillButton.skills[i].nameOfUpgrade+' />');
+        }
+    };
+    // animacje prestige i settings
+    var settings_hidden = true;
+    $('#settings').click(function(){
+        if(settings_hidden == true){
+        $('#settings_area').addClass("border")
+        $('#settings_area').animate({
+            width: '60%'
+        }, 1000, function(){
             $('#settings_area').animate({
-                width: '60%'
-            }, 1000, function(){
+                height: '90%'
+            },1000, function(){
+                $('#settings_text').css("display", 'block');
+                $('#settings_text').animate({
+                    opacity: '1'
+                }, 1000);
+            });
+            settings_hidden = false;
+        });}else{
+        $('#settings_text').animate({
+            opacity: '0'
+        }, 1000, function(){
+            $('#settings_text').css("display", 'none');
+            $('#settings_area').animate({
+                height: '10%'
+            },1000, function(){
                 $('#settings_area').animate({
-                    height: '90%'
-                },1000, function(){
-                    $('#settings_text').css("display", 'block');
-                    $('#settings_text').animate({
-                        opacity: '1'
-                    }, 1000);
+                    width: '0%'
+                }, 1000, function(){
+                    $('#settings_area').removeClass("border")
                 });
-                settings_hidden = false;
-            });}else{
-            $('#settings_text').animate({
-                opacity: '0'
-            }, 1000, function(){
-                $('#settings_text').css("display", 'none');
-                $('#settings_area').animate({
-                    height: '10%'
-                },1000, function(){
-                    $('#settings_area').animate({
-                        width: '0%'
-                    }, 1000, function(){
-                        $('#settings_area').removeClass("border")
-                    });
-                });
-                settings_hidden = true;
-                });
-            };
-        });
-
-        var prestige_hidden = true;
-        $('#prestige_menu').click(function(){
-            if(prestige_hidden == true){
-            $('#prestige_area').addClass("border")
+            });
+            settings_hidden = true;
+            });
+        };
+    });
+    var prestige_hidden = true;
+    $('#prestige_menu').click(function(){
+        if(prestige_hidden == true){
+        $('#prestige_area').addClass("border")
+        $('#prestige_area').animate({
+            width: '60%'
+        }, 1000, function(){
             $('#prestige_area').animate({
-                width: '60%'
-            }, 1000, function(){
+                height: '90%'
+            },1000, function(){
+                $('#prestige_text').css("display", 'block');
+                $('#prestige_text').animate({
+                    opacity: '1'
+                }, 1000);
+            });
+            prestige_hidden = false;
+        });}else{
+        $('#prestige_text').animate({
+            opacity: '0'
+        }, 1000, function(){
+            $('#prestige_text').css("display", 'none');
+            $('#prestige_area').animate({
+                height: '10%'
+            },1000, function(){
                 $('#prestige_area').animate({
-                    height: '90%'
-                },1000, function(){
-                    $('#prestige_text').css("display", 'block');
-                    $('#prestige_text').animate({
-                        opacity: '1'
-                    }, 1000);
+                    width: '0%'
+                }, 1000, function(){
+                    $('#prestige_area').removeClass("border")
                 });
-                prestige_hidden = false;
-            });}else{
-            $('#prestige_text').animate({
-                opacity: '0'
-            }, 1000, function(){
-                $('#prestige_text').css("display", 'none');
-                $('#prestige_area').animate({
-                    height: '10%'
-                },1000, function(){
-                    $('#prestige_area').animate({
-                        width: '0%'
-                    }, 1000, function(){
-                        $('#prestige_area').removeClass("border")
-                    });
-                });
-                prestige_hidden = true;
-                });
-            };
-        });
-
-// koniec funckji
-
+            });
+            prestige_hidden = true;
+            });
+        };
+    });
     // zmienne pomocnicze
     var o = -1;
     var max_o = -1;
@@ -185,38 +179,28 @@ $(document).ready(function(){
     var current = maxhp; // aktualne hp
     var hpbar =  current/maxhp*100; // aktualny hp bar w %%
     var hpMultipler = 1.12; // mnoznik hp co poziom
-
     var clickUpgradesBought = 1; // ile kupionych click upgradow
     var clickUpgradePrice=100; // podstawowy koszt upgrade
-
     var visibleUpgrades = -1; // obecnie pokazane upgrade
     var bossTime=30; // czas bossa
     var time_left = bossTime; // pozostaly czas na zabicie bossa
     var b_startBossTime=false; // rozpoczecie licznika
     var b_getBonusgold=false; // dodatkowy gold za zabicie bossa
-
     var dpsMeter=1.0;
     var dps=0;
     var cost10=clickUpgradePrice*2*10;
     var cost25=clickUpgradePrice*2*25;
-    $('#dps').text(dps.toFixed(1)+' dmg.');
-
     var b_goldSkill=false;
-    //var b_clickDmgSkill=false;
-
-
-
-    // zmienne wysp i mobków z bazy danych
+    // zmienne wysp i mobków z bazy danych \/
     var islands = [];
     var islands_images = [];
     var islands_ends = [];
-
     var mobs = [];
     var mobs_images = [];
     var mobs_on_island_count = [];
 
+    $('#dps').text(dps.toFixed(1)+' dmg.');
 
-    
     {% for island in islands %}
         islands.push('{{ island.island_name }}');
         islands_images.push('{{ island.island_image.url }}');
@@ -227,126 +211,121 @@ $(document).ready(function(){
         {% endfor %}
         mobs_on_island_count.push({{ island.units.count }});
     {% endfor %}
-
                                                                                                                     {% comment %} ) {% endcomment %}
- 
-// particle ---------------- na click -------------------------
-if (document.body.animate) {
-  document.querySelector('.click_area').addEventListener('click', pop);
-  document.querySelector('.click_area').addEventListener('click', dmg);
-}
-function dmg (e) {
-    var temp = clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
-    createDmg(e.clientX, e.clientY, temp);
-}
-function createDmg(x, y, dmg){
-    const dmgNumber = document.createElement('dmgNumber');
-    document.body.appendChild(dmgNumber);
-    dmgNumber.innerHTML=dmg;
-    const destinationX = x;
-    const destinationY = y;
+    // particle onClick
+    if (document.body.animate) {
+        document.querySelector('.click_area').addEventListener('click', pop);
+        document.querySelector('.click_area').addEventListener('click', dmg);
+    };
 
-
-const animation = dmgNumber.animate([
-    {
-      transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,   //transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
-      opacity: 1
-    },
-    {
-      transform: `translate(${destinationX}px, ${destinationY-100}px)`,
-      opacity: 0
+    // pozycja klikniecia
+    function dmg (e) {
+        var temp = clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
+        createDmg(e.clientX, e.clientY, temp);
     }
-  ], {
-    duration: 2000,
-    easing: 'cubic-bezier(0, 0, 0, 1)'
-  });
-  animation.onfinish = () => {
-    dmgNumber.remove();
-  };
-}
+    // stwórz liczbę na pozycji x y
+    function createDmg(x, y, dmg){
+        const dmgNumber = document.createElement('dmgNumber');
+        document.body.appendChild(dmgNumber);
+        dmgNumber.innerHTML=dmg;
+        const destinationX = x;
+        const destinationY = y;
+            const animation = dmgNumber.animate([
+                {
+                    transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,   //transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
+                    opacity: 1
+                },
+                {
+                    transform: `translate(${destinationX}px, ${destinationY-100}px)`,
+                    opacity: 0
+                }
+                ], {
+                    duration: 2000,
+                    easing: 'cubic-bezier(0, 0, 0, 1)'
+                }
+            );
+        
+        animation.onfinish = () => {
+            dmgNumber.remove();
+        };
+    };
+    // pozycja areny
+    function coin (e) {
+        clientX = $('.click_area').height();
+        clientY = $('.click_area').width();
+        goldTemp = stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage);
+        createCoin(goldTemp);
+    };
+    // stwórz coina na pozycji x y
+    function createCoin(gold){
+        const goldNumber = document.createElement('goldNumber');
+        document.body.appendChild(goldNumber);
+        goldNumber.innerHTML= "<span class=\"text-warning\"><i class=\"fas fa-coins\"></i>+"+gold+"</span>" ;
+        $('goldNumber').css('left', '50%');
+        $('goldNumber').css('top', '40%');
+        min1 = Math.ceil(-50);
+        max1 = Math.floor(50);
+            const animation = goldNumber.animate([
+                {
+                    transform: `translate(${Math.floor(Math.random() * (max1 - min1)) + min}px, 0)`,
+                    opacity: 1
+                },
+                {
+                    transform: `translate(${Math.floor(Math.random() * (max1 - min1)) + min}px, ${-200}px)`,
+                    opacity: 0
+                }
+                ], {
+                    duration: 5000,
+                    easing: 'cubic-bezier(0, .9, .57, 1)'
+                }
+            );
 
-function coin (e) {
-    clientX = $('.click_area').height();
-    clientY = $('.click_area').width();
-    goldTemp = stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage);
-    createCoin(goldTemp);
-}
+        animation.onfinish = () => {
+            goldNumber.remove();
+        };
+    };
+    // pozycja myszki
+    function pop (e) {
+        for (let i = 0; i < 3; i++) {
+            createParticle(e.clientX, e.clientY);
+        };
+    };
+    // stwórz particle na x y
+    function createParticle (x, y) {
+        const particle = document.createElement('particle');
+        document.body.appendChild(particle);
+        const size = Math.floor(Math.random() * 25 + 8);
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.background = `hsl(${Math.random() * 90 + 180}, 70%, 60%)`;
+        const destinationX = x + (Math.random() - 0.5) * 4 * 45;
+        const destinationY = y + (Math.random() - 0.5) * 4 * 45;
+            const animation = particle.animate([
+                {
+                    transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
+                    opacity: 1
+                },
+                    {
+                    transform: `translate(${destinationX}px, ${destinationY}px)`,
+                    opacity: 0
+                }
+                ], {
+                    duration: Math.random() * 1000 + 500,
+                    easing: 'cubic-bezier(0, .9, .57, 1)',
+                    delay: Math.random() * 200
+                }
+            );
 
-function createCoin(gold){
-    const goldNumber = document.createElement('goldNumber');
-    document.body.appendChild(goldNumber);
-    goldNumber.innerHTML= "<span class=\"text-warning\"><i class=\"fas fa-coins\"></i>+"+gold+"</span>" ;
-    $('goldNumber').css('left', '50%');
-    $('goldNumber').css('top', '40%');
+        animation.onfinish = () => {
+            particle.remove();
+        };
+    };
 
-    min = Math.ceil(-50);
-    max = Math.floor(50);
+    var upgradesCount = {{ units.count }}; // ilosc unitsów
+    var skillsCount = {{ skills.count }}; // ilosc skilli
 
-const animation = goldNumber.animate([
-    {
-      transform: `translate(${Math.floor(Math.random() * (max - min)) + min}px, 0)`,
-      opacity: 1
-    },
-    {
-      transform: `translate(${Math.floor(Math.random() * (max - min)) + min}px, ${-200}px)`,
-      opacity: 0
-    }
-  ], {
-    duration: 5000,
-    easing: 'cubic-bezier(0, .9, .57, 1)'
-  });
-  animation.onfinish = () => {
-    goldNumber.remove();
-  };
-}
-
-
-function pop (e) {
-    for (let i = 0; i < 3; i++) {
-      createParticle(e.clientX, e.clientY);
-    }
-}
-
-
-function createParticle (x, y) {
-  const particle = document.createElement('particle');
-  document.body.appendChild(particle);
-  
-  const size = Math.floor(Math.random() * 25 + 8);
-  particle.style.width = `${size}px`;
-  particle.style.height = `${size}px`;
-  particle.style.background = `hsl(${Math.random() * 90 + 180}, 70%, 60%)`;
-  
-  const destinationX = x + (Math.random() - 0.5) * 4 * 45;
-  const destinationY = y + (Math.random() - 0.5) * 4 * 45;
-  const animation = particle.animate([
-    {
-      transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
-      opacity: 1
-    },
-    {
-      transform: `translate(${destinationX}px, ${destinationY}px)`,
-      opacity: 0
-    }
-  ], {
-    duration: Math.random() * 1000 + 500,
-    easing: 'cubic-bezier(0, .9, .57, 1)',
-    delay: Math.random() * 200
-  });
-  animation.onfinish = () => {
-    particle.remove();
-  };
-}
-
-
-
-
-////////////////////////---------------------------------
-var upgradesCount = {{ units.count }};
-var skillsCount = {{ skills.count }};
-
-
-      class Upgrade{  
+// class units i skills
+    class Upgrade{  
         constructor(){
             this.nameId='';
             this.nameOfUpgrade='';
@@ -355,33 +334,30 @@ var skillsCount = {{ skills.count }};
             this.price=0;
             this.discountMultipler=1.0;
             this.priceMultipler=1.15;
-        }
-
+        };
 
         buyUpgrade(){
             if(this.nameId.indexOf('skill') == 1 && this.boughtUpgrades == 5){
-                return;
-            }
+            return;
+        };
             if(gold >= (this.price*this.discountMultipler)){
-                gold -= this.price*this.discountMultipler;
-                this.boughtUpgrades++;
-                $('#pills-console').append('<span>Kupiłeś upgrade dla '+this.nameId+ ' za ' +this.price+ ' golda!</span><br/>');
-                $("#pills-console").animate({ scrollTop: 20000000 }, "slow");
-                this.price *= this.priceMultipler;
+                    gold -= this.price*this.discountMultipler;
+                    this.boughtUpgrades++;
+                    $('#pills-console').append('<span>Kupiłeś upgrade dla '+this.nameId+ ' za ' +this.price+ ' golda!</span><br/>');
+                    $("#pills-console").animate({ scrollTop: 20000000 }, "slow");
+                    this.price *= this.priceMultipler;
                 switch(this.nameId){
-                    case('#skill0'):
+                case('#skill0'):
                     return;
                     break;
-                    case('#skill1'):
+                case('#skill1'):
                     return;
                     break;
-                }
-            // tworzenie imputow do forma i aktualizowanie
+                };
+                // tworzenie imputow do forma i aktualizowanie
                 saveUnits();
-            }
-        }
-        
-
+            };
+        };
     };
     class SkillButton extends Upgrade {
         static skills=[];
@@ -392,181 +368,162 @@ var skillsCount = {{ skills.count }};
             this.time=this.maxTime;
             this.cooldown=0;
             this.maxCooldown = 0;
-        }
+        };
+
         turnOn(){
-            console.log(this.nameId+' wlaczony');
             if(this.cooldown <=0 && this.boughtUpgrades >0){
-            this.isOn=true;
-            }
-        }
+                this.isOn=true;
+            };
+        };
+
         static useSkill(){
             for(var i=0;i<this.skills.length;i++){
                 if(this.skills[i].isOn && this.skills[i].boughtUpgrades > 0 ){
-                switch(this.skills[i].nameId){
-                case '#skill0':
-                //skill do  dpsow
-                    
-                break;
-                case '#skill1':
-                //skill do clickDmg
-                break;
-                case 'skill2':
-                //skill do golda
-                break;
-                }
-            }
-        }
+                    switch(this.skills[i].nameId){
+                    case '#skill0':
+                    //skill do  dpsow
+                        break;
+                    case '#skill1':
+                    //skill do clickDmg
+                        break;
+                    case 'skill2':
+                    //skill do golda
+                        break;
+                    };
+                };
+            };
         };
+
         static Init(){
             var upgradeNames = [];
             var baseUpgradePrices = [];
-            
-            {% for skill in skills %}
-            upgradeNames.push('{{ skill.skill_name }}');
-            baseUpgradePrices.push({{ skill.skill_cost }});
-            {% endfor %}
-            
-        for(var i = 0;i<upgradeNames.length;i++){
-            this.skills[i]=new SkillButton();
-            this.skills[i].price=baseUpgradePrices[i];
-            this.skills[i].nameId="#skill"+i;
-            this.skills[i].nameOfUpgrade=upgradeNames[i];
-            this.skills[i].baseDmg =0;
-            
-         };
-         
-        SkillButton.skills[0].maxCooldown = 600; 
-        SkillButton.skills[1].maxCooldown = 900;
-        SkillButton.skills[2].maxCooldown = 1200;
 
-        {% for skill in skills %}
-        $('#skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].buyUpgrade()});
-        $('#activate_skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].turnOn()});
-        {% endfor %}
-        
-        }
+                {% for skill in skills %}
+                upgradeNames.push('{{ skill.skill_name }}');
+                baseUpgradePrices.push({{ skill.skill_cost }});
+                {% endfor %}
+
+            for(var i = 0;i<upgradeNames.length;i++){
+                this.skills[i]=new SkillButton();
+                this.skills[i].price=baseUpgradePrices[i];
+                this.skills[i].nameId="#skill"+i;
+                this.skills[i].nameOfUpgrade=upgradeNames[i];
+                this.skills[i].baseDmg =0;
+            };
+
+            SkillButton.skills[0].maxCooldown = 600; 
+            SkillButton.skills[1].maxCooldown = 900;
+            SkillButton.skills[2].maxCooldown = 1200;
+
+                {% for skill in skills %}
+                $('#skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].buyUpgrade()});
+                $('#activate_skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].turnOn()});
+                {% endfor %}
+        };
+
         static refreshSkills(){
-            {% comment %} background-color:rgba(240, 52, 52, 0.2); {% endcomment %}
             for(var i = 0;i<this.skills.length;i++){
-             $(this.skills[i].nameId+'_count').text(this.skills[i].boughtUpgrades);
-             $(this.skills[i].nameId+'_cost').text(this.skills[i].price.toFixed(0));
-             $(this.skills[i].nameId+'_active').html('Time: <span class="text-warning">'+this.skills[i].time.toFixed(0)+'</span>');
-             $(this.skills[i].nameId+'_cooldown').html('CD: <span class="text-danger">'+time(this.skills[i].cooldown)+'</span>');
-             $(this.skills[i].nameId+'_cooldown').hide();
-             $('#skill_status'+[i]).css('background-color', 'rgba(240, 240, 214, 0.1)'); 
+                    $(this.skills[i].nameId+'_count').text(this.skills[i].boughtUpgrades);
+                    $(this.skills[i].nameId+'_cost').text(this.skills[i].price.toFixed(0));
+                    $(this.skills[i].nameId+'_active').html('Time: <span class="text-warning">'+this.skills[i].time.toFixed(0)+'</span>');
+                    $(this.skills[i].nameId+'_cooldown').html('CD: <span class="text-danger">'+time(this.skills[i].cooldown)+'</span>');
+                    $(this.skills[i].nameId+'_cooldown').hide();
+                    $('#skill_status'+[i]).css('background-color', 'rgba(240, 240, 214, 0.1)'); 
+                
                 if(this.skills[i].isOn){
                     $('#skill_status'+[i]).addClass('border-success');
                     $('#skill_status'+[i]).prop("disabled", true);
                     $('#skill_status'+[i]).css('background-color', 'rgba(46, 204, 113, 0.2)');  
-                    $('#skill_status'+[i]).animate({
-                        height: '-=1%',
-                    }, 100);
+                    $('#skill_status'+[i]).animate({height: '-=1%',}, 100);
                     $(this.skills[i].nameId+'_cooldown').hide();
-                    // koniec styli
-
                     this.skills[i].time -=0.1;
-                        if(this.skills[i].time<=0){
-                        $('#skill_status'+[i]).animate({
-                            height: '100%',
-                        }, 100);
-                        // koniec styli
 
-                          this.skills[i].isOn=false;
-                          this.skills[i].time=this.skills[i].maxTime;
-                          this.skills[i].cooldown=SkillButton.skills[i].maxCooldown;
-
-                        }
+                    if(this.skills[i].time<=0){
+                        $('#skill_status'+[i]).animate({height: '100%',}, 100);
+                        this.skills[i].isOn=false;
+                        this.skills[i].time=this.skills[i].maxTime;
+                        this.skills[i].cooldown=SkillButton.skills[i].maxCooldown;
+                    };
                 }else if(this.skills[i].cooldown > 0){
                     $('#skill_status'+[i]).removeClass('border-success');
                     $('#skill_status'+[i]).css('background-color', 'rgba(240, 52, 52, 0.2)');   
                     $('#skill_status'+[i]).addClass('border-danger');
-                        $('#skill_status'+[i]).animate({
-                            height: '-='+(1/SkillButton.skills[i].maxCooldown)*10+'%',  
-                        }, 100);
+                    $('#skill_status'+[i]).animate({height: '-='+(1/SkillButton.skills[i].maxCooldown)*10+'%',  }, 100);
                     $(this.skills[i].nameId+'_cooldown').show();
                     $(this.skills[i].nameId+'_active').hide();
-                    // koniec styli
-
                     this.skills[i].cooldown -= 0.1;
+
                     if(this.skills[i].cooldown < 0 ){
                         this.skills[i].cooldown = 0;
-                        
-
-                        // koniec styli
-                        $('#skill_status'+[i]).animate({
-                            height: '100%',
-                        }, 100);
+                        $('#skill_status'+[i]).animate({height: '100%',}, 100);
                         $(this.skills[i].nameId+'_active').show();
                         $(this.skills[i].nameId+'_cooldown').hide();
                         $('#skill_status'+[i]).removeClass('border-danger');
                         $('#skill_status'+[i]).prop("disabled", false);
                         $('#skill_status'+[i]).css('background-color', 'rgba(240, 240, 214, 0.1)');  
                     };
-                }
-            
-            }
-        }
-   };
-
+                };
+            };
+        };
+    };
     class UpgradeButton extends Upgrade {
         static buttons=[];
-        constructor(){
-            super();
-            this.checked = false;
-        };
-        static Init(){
-        var baseUpgradePrices = [];
-        var upgradeNames = [];   
+            constructor(){
+                super();
+                this.checked = false;
+            };
 
-         {% for unit in units %}
-          upgradeNames.push('{{ unit.unit_name }}');
-          baseUpgradePrices.push({{ unit.unit_default_cost }}); 
-         {% endfor %}
+            static Init(){
+                var baseUpgradePrices = [];
+                var upgradeNames = []; 
 
-         for(var i = 0;i<upgradeNames.length;i++){
-            this.buttons[i]=new UpgradeButton();
-            this.buttons[i].price=baseUpgradePrices[i];
-            this.buttons[i].nameId="#upgrade"+i;
-            this.buttons[i].nameOfUpgrade=upgradeNames[i];
-            this.buttons[i].baseDmg +=i;
-         };
+                    {% for unit in units %}
+                    upgradeNames.push('{{ unit.unit_name }}');
+                    baseUpgradePrices.push({{ unit.unit_default_cost }}); 
+                    {% endfor %}
 
+                for(var i = 0;i<upgradeNames.length;i++){
+                    this.buttons[i]=new UpgradeButton();
+                    this.buttons[i].price=baseUpgradePrices[i];
+                    this.buttons[i].nameId="#upgrade"+i;
+                    this.buttons[i].nameOfUpgrade=upgradeNames[i];
+                    this.buttons[i].baseDmg +=i;
+                };
 
-
-        {% for unit in units %}
-          $('#upgrade{{ unit.unit_id }}').click(function(){UpgradeButton.buttons[{{ unit.unit_id }}].buyUpgrade()});
-        {% endfor %}
-
-
-
-        }
+                    {% for unit in units %}
+                    $('#upgrade{{ unit.unit_id }}').click(function(){UpgradeButton.buttons[{{ unit.unit_id }}].buyUpgrade()});
+                    {% endfor %}
+            };
 
         static getAllDmg(){
             var dmg=0;
+
             for(var i = 0;i<this.buttons.length;i++){
-            dmg += this.buttons[i].baseDmg*this.buttons[i].boughtUpgrades/10;
-            }
-            return dmg;
-        }
+                dmg += this.buttons[i].baseDmg*this.buttons[i].boughtUpgrades/10;
+            };
+        return dmg;
+        };
+
         static refreshButtons(){
             for(var i = 0;i<this.buttons.length;i++){
-            $(this.buttons[i].nameId+'_count').text(this.buttons[i].boughtUpgrades);
-            $(this.buttons[i].nameId+'_cost').text(this.buttons[i].price.toFixed(0));
-            $(''+this.buttons[i].nameId+'').prop('disabled', ((gold < this.buttons[i].price*this.buttons[i].discountMultipler)?true:false));
-            if(gold >= this.buttons[i].price && !this.buttons[i].checked  && visibleUpgrades < this.buttons.length){
+                $(this.buttons[i].nameId+'_count').text(this.buttons[i].boughtUpgrades);
+                $(this.buttons[i].nameId+'_cost').text(this.buttons[i].price.toFixed(0));
+                $(''+this.buttons[i].nameId+'').prop('disabled', ((gold < this.buttons[i].price*this.buttons[i].discountMultipler)?true:false));
+                    
+                if(gold >= this.buttons[i].price && !this.buttons[i].checked  && visibleUpgrades < this.buttons.length){
                     this.buttons[i].checked = true;
                     visibleUpgrades++;
-                    }
-            $('#upgrade'+visibleUpgrades.toString()).prop('hidden', false);
-            }
-        }
+                };
+
+                $('#upgrade'+visibleUpgrades.toString()).prop('hidden', false);
+            };
+        };
     };
 
     UpgradeButton.Init();
     SkillButton.Init();
 
 // load save ------------------------------------
-// jeszcze nie ma wszystkich danych ale to sa poczatki
     $('#loadSave').submit(function() {
         $.ajax({
             data: $(this).serialize(),
@@ -576,27 +533,41 @@ var skillsCount = {{ skills.count }};
                 for(var i=0; i<upgradesCount; i++){
                     UpgradeButton.buttons[i].boughtUpgrades = data.unit_count[i];
                     UpgradeButton.buttons[i].price = data.unit_cost[i];
-                }
+                };
+
                 for(var i=0; i<skillsCount; i++){
                     SkillButton.skills[i].boughtUpgrades = data.skill_count[i];
                     SkillButton.skills[i].price = data.skill_price[i];
-                }
-                    visibleUpgrades = data.visibleUpgrades;
-                    o = data.var_o;
-                    max_o = data.var_o;
-                    clickCount = data.click_count;
-                    stage = data.stage_passed;
-                    stagePassed = data.stage_passed;
-                    gold = data.current_gold;
-                    clickUpgradesBought = data.click_upgrades_bought;
-                    clickUpgradePrice = data.clickUpgradePrice;
-                    cost10=clickUpgradePrice*2*10;
-                    cost25=clickUpgradePrice*2*25;
-                    clickDmg = clickUpgradesBought;
-                    refreshIsland(false);
-                    refreshHTML();
-                    setHp();
-                    console.log("Wczytano save")
+                };
+
+                visibleUpgrades = data.visibleUpgrades;
+                o = data.var_o;
+                max_o = data.var_o;
+                clickCount = data.click_count;
+                stage = data.stage_passed;
+                stagePassed = data.stage_passed;
+                gold = data.current_gold;
+                clickUpgradesBought = data.click_upgrades_bought;
+                clickUpgradePrice = data.clickUpgradePrice;
+                cost10=clickUpgradePrice*2*10;
+                cost25=clickUpgradePrice*2*25;
+                clickDmg = clickUpgradesBought;
+                last_mobs = 0;
+
+                if(o == -1){
+                    last_mobs = 0;
+                }else{
+                    for(var i=0; i <= o; i++){
+                        last_mobs += mobs_on_island_count[i];
+                    };
+                            
+                };
+
+                min = last_mobs;
+                max = last_mobs + mobs_on_island_count[o+1] - 1;
+                refreshIsland(false);
+                refreshHTML();
+                setHp();
             }});
         return false;
     });
@@ -605,20 +576,17 @@ var skillsCount = {{ skills.count }};
         $('#loadUser').val(Cookies.get('cookieIds'));
         $('#loadSave').submit();
     };
+
     load();
 // koniec load save ------------------------------
 
-
+// zmienne random dla moba
         {% comment %} ) {% endcomment %}
-
-
-    // zmienne random dla moba
     var last_mobs = 0;
     var min = last_mobs;
     var max = last_mobs + mobs_on_island_count[o+1] - 1;
     var islands_count = {{ islands.count }};
     $('.island').attr("src", islands_images[o+1]);
-
     function refreshIsland(next){
         if(islands_count >= o){
             if(next == true){
@@ -645,22 +613,21 @@ var skillsCount = {{ skills.count }};
                     };};
                 };
             };
-            minV = Math.ceil(min);
-            maxV = Math.floor(max);
-            k = Math.floor(Math.random() * (max - min + 1)) + min;
 
+        minV = Math.ceil(min);
+        maxV = Math.floor(max);
+        k = Math.floor(Math.random() * (max - min + 1)) + min;
+        $('#mob_image').attr("src",  mobs_images[k] );
+        $('#mob_name').text(mobs[k]);
+        $('#level_name').text(islands[o+1]);
+        $('.island').attr("src", islands_images[o+1]);
 
-            $('#mob_image').attr("src",  mobs_images[k] );
-            $('#mob_name').text(mobs[k]);
-            $('#level_name').text(islands[o+1]);
-            $('.island').attr("src", islands_images[o+1]);
     };
 
     function refreshHTML(){
-            UpgradeButton.refreshButtons();
-            SkillButton.refreshSkills();
+        UpgradeButton.refreshButtons();
+        SkillButton.refreshSkills();
 
-        
         $('#gold').text(gold.toFixed(0));
         $('#boughtUpgrades').text(clickUpgradesBought-1);
         $('#goldPrice').text(clickUpgradePrice);
@@ -670,10 +637,12 @@ var skillsCount = {{ skills.count }};
         $('#max_hp').text(maxhp.toFixed(0));
         $('.current_hp').text(current.toFixed(0));
         $('#clickDmg').text(clickDmg.toFixed(2));
+
         if(SkillButton.skills[1].isOn){
             var temp = clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
             $('#clickDmg').text(temp.toFixed(2));
-        }
+        };
+
         hpbar =  current/maxhp*100;
         $('.progress-bar-hp').css('width', hpbar.toFixed(2)+'%');
         $('#clickCount').text(clickCount);
@@ -681,47 +650,35 @@ var skillsCount = {{ skills.count }};
         $('#cost10').text(cost10);
         $('#boss_time').prop('hidden', !b_startBossTime);
         $('#boss_time').text(time_left.toFixed(1)+'s.');
-
-
-        
-        
-
         var ALLdps = 10 * (UpgradeButton.getAllDmg() + ((SkillButton.skills[0].isOn * SkillButton.skills[0].boughtUpgrades) * UpgradeButton.getAllDmg() ));
         $('#dmg_s').text(ALLdps.toFixed(1));
-
-
         $('.back_arrow').prop('hidden', ( stage==1 ) ? true:false );
         $('.next_arrow').prop('hidden', ( stagePassed==stage ) ? true:false );
 
     };
+
     refreshHTML();
-    refreshIsland(true);
-
-    
-
-
-
 
     function setHp(){
         maxhp = 10;
         for(var i=0;i<(stage-1);i++){
             maxhp=maxhp*(hpMultipler);
-        }
+        };
         current=maxhp;
-    }
+    };
 
- setInterval(function(){ 
+    setInterval(function(){ 
         SkillButton.useSkill();
         current -= UpgradeButton.getAllDmg() + ((SkillButton.skills[0].isOn * SkillButton.skills[0].boughtUpgrades) * UpgradeButton.getAllDmg() );
-
-
         if (current <= 0) {
             level++;
             setHp();
             gold += stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage); // trza dodac mnoznik od stageow konkretny
-            coin(current <= 0);
-            if(b_getBonusgold) { gold+=stage*10;b_getBonusgold=0; };
             
+            if(prestige_hidden == true){
+                coin(current <= 0);
+            };
+            if(b_getBonusgold) { gold+=stage*10;b_getBonusgold=0; };
             b_startBossTime=false; time_left=bossTime;
             refreshIsland(true);
 
@@ -731,22 +688,24 @@ var skillsCount = {{ skills.count }};
                     stagePassed++;
                     setHp();
                     level = 1;
-                }
+                };
                 refreshIsland(true);
-            }
+            };
             if(stagePassed>stage && level > maxLevel){
                 level=maxLevel;
-            }
+            };
             if( ((stage %10) == 0) && level == maxLevel){
                 setHp();
                 maxhp=maxhp*3;
                 current=maxhp;
                 b_startBossTime=true;
                 b_getBonusgold=1;
-            }
+            };
+
             $('#pills-logs').append('<span>Dostałeś: '+ (stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage))+' Golda</span><br/>');
             $("#pills-logs").animate({ scrollTop: 20000000 }, "slow");
-        }
+        };
+
         if(b_startBossTime){
             time_left -= 0.1;
             if(time_left < 0){
@@ -754,21 +713,19 @@ var skillsCount = {{ skills.count }};
                 maxhp=maxhp*3;
                 current=maxhp;
                 time_left=bossTime;
-            }
+            };
+        };
 
-        }
         dpsMeter -=0.1;
         dps += UpgradeButton.getAllDmg();
+
         if(dpsMeter <= 0){
             dpsMeter=1.0;
             $('#dps').text(dps.toFixed(1)+' dmg.');
             dps=0;
-        }
-
-
+        };
         refreshHTML();
-
-        }, 100);
+    }, 100);
 
     //  ulepszanie podstawowego click powera
     $('#clickUpgrade').click(function(){
@@ -779,9 +736,8 @@ var skillsCount = {{ skills.count }};
             clickUpgradesBought++;
             cost10 = clickUpgradePrice*(2*10) ;
             cost25 = clickUpgradePrice*(2*25) ;
-            }
+            };
         });
-
     $('#buy10').click(function(){
         if(gold>=cost10){
             gold -= cost10;
@@ -791,9 +747,8 @@ var skillsCount = {{ skills.count }};
             cost10 = clickUpgradePrice*(2*10) ;
             cost25 = clickUpgradePrice*(2*25) ;
             refreshHTML();
-        }
+        };
     });
-
     $('#buy25').click(function(){
         if(gold>=cost25){
             gold -= cost25;
@@ -803,16 +758,13 @@ var skillsCount = {{ skills.count }};
             cost10 = clickUpgradePrice*(2*10) ;
             cost25 = clickUpgradePrice*(2*25) ;
             refreshHTML();
-        }
+        };
     });
-
-    
     // zadawanie obrażen
-   $('.click_area').click(function(){
+    $('.click_area').click(function(){
         clickCount++;
         current -= clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
         dps += clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades ) * clickDmg);
-
         $( "#mob_image" ).animate({
             height: "22%",
         }, 50 );
@@ -820,8 +772,6 @@ var skillsCount = {{ skills.count }};
             height: "20%",
         }, 50 );
     });
-
-
     $('.next_arrow').click(function(){
         stage++;
         setHp();
@@ -830,9 +780,7 @@ var skillsCount = {{ skills.count }};
         time_left=bossTime;
         refreshHTML();
         refreshIsland(true);
-
     });
-
     $('.back_arrow').click(function(){
         if(stage > 1){
             stage--;
@@ -845,8 +793,8 @@ var skillsCount = {{ skills.count }};
         }
     });
 
-
     $('#error_div').hide();
+
     $('#cookie_form').submit(function() {
         $.ajax({
             data: $(this).serialize(),
@@ -865,29 +813,20 @@ var skillsCount = {{ skills.count }};
         });
         return false;
     });
-
-
-function getData(){
-        Cookies.set('visibleUpgrades', visibleUpgrades );
-        Cookies.set('click_count', clickCount );
-        Cookies.set('current_gold', gold);
-        Cookies.set('stage', stage);
-        Cookies.set('stage_passed', stagePassed);
-        Cookies.set('click_upgrades_bought', clickUpgradesBought);
-        Cookies.set('var_o', max_o);
-        Cookies.set('clickUpgradePrice', clickUpgradePrice);
-        $('#visibleUpgrades').val(Cookies.get('visibleUpgrades'));
+    
+    function getData(){
+        $('#visibleUpgrades').val(visibleUpgrades);
         $('#cookie_id').val(Cookies.get('cookieIds'));
-        $('#clickUpgradePrice').val(Cookies.get('clickUpgradePrice'));
-        $('#click_count').val(Cookies.get('click_count'));
-        $('#current_gold').val(Cookies.get('current_gold'));
-        $('#stage').val(Cookies.get('stage'));
-        $('#stage_passed').val(Cookies.get('stage_passed'));
-        $('#click_upgrades_bought').val(Cookies.get('click_upgrades_bought'));
-        $('#var_o').val(Cookies.get('var_o'));
+        $('#clickUpgradePrice').val(clickUpgradePrice);
+        $('#click_count').val(clickCount);
+        $('#current_gold').val(gold);
+        $('#stage').val(stage);
+        $('#stage_passed').val(stagePassed);
+        $('#click_upgrades_bought').val(clickUpgradesBought);
+        $('#var_o').val(max_o);
         saveUnits();
         $('#cookie_form').submit();
-}
+    }
 
     save();
     function save(){
@@ -897,7 +836,4 @@ function getData(){
     }, 10000);}
 
 });
-
-
-
 </script>
