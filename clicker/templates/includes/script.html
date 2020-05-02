@@ -193,6 +193,7 @@ $(document).ready(function(){
     var cost10=clickUpgradePrice*2*10;
     var cost25=clickUpgradePrice*2*25;
     var b_goldSkill=false;
+    var prestigePoints = 1000;
     // zmienne wysp i mobków z bazy danych \/
     var islands = [];
     var islands_images = [];
@@ -201,6 +202,11 @@ $(document).ready(function(){
     var mobs_images = [];
     var mobs_on_island_count = [];
 
+    // zmienne dla passives 
+        var passiveClickDmg = 1;
+
+
+    $("#prestige_points").text(prestigePoints);
     $('#dps').text(dps.toFixed(1)+' dmg.');
 
     {% for island in islands %}
@@ -222,14 +228,14 @@ $(document).ready(function(){
 
     // pozycja klikniecia
     function dmg (e) {
-        var temp = clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
+        var temp = clickDmg*passiveClickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
         createDmg(e.clientX, e.clientY, temp);
     }
     // stwórz liczbę na pozycji x y
     function createDmg(x, y, dmg){
         const dmgNumber = document.createElement('dmgNumber');
         document.body.appendChild(dmgNumber);
-        dmgNumber.innerHTML=dmg;
+        dmgNumber.innerHTML=dmg.toFixed(2);
         const destinationX = x;
         const destinationY = y;
             const animation = dmgNumber.animate([
@@ -326,6 +332,115 @@ $(document).ready(function(){
     var upgradesCount = {{ units.count }}; // ilosc unitsów
     var skillsCount = {{ skills.count }}; // ilosc skilli
 
+// class prestige // no i trza dodac system aby zdobywac prestigePoints <- tak sie nazywa zemienna
+    class Prestige{
+        static passives=[];
+        constructor(){
+            this.passiveId = '';
+            this.passiveName = '';
+            this.passiveTitles = '';
+            this.passiveCost = 0;
+            this.passiveCount = 0;
+        };
+
+        buyPassive(){
+            if(prestigePoints >= this.passiveCost){
+                prestigePoints -= this.passiveCost;
+                this.passiveCount++;
+                $("#prestige_points").text(prestigePoints);
+                switch(this.passiveId){
+                    case('passive0'): // przykladowa passive - jeszcze sie nie zapisuje w bazie
+                    passiveClickDmg += 0.1;
+                    this.passiveCost++;
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive1'):
+                    return;
+                    break;
+                    case('passive2'):
+                    return;
+                    break;
+                    case('passive3'):
+                    return;
+                    break;
+                    case('passive4'):
+                    return;
+                    break;
+                    case('passive5'):
+                    return;
+                    break;
+                    case('passive6'):
+                    return;
+                    break;
+                    case('passive7'):
+                    return;
+                    break;
+                    case('passive8'):
+                    return;
+                    break;
+                    case('passive9'):
+                    return;
+                    break;
+                    case('passive10'):
+                    return;
+                    break;
+                };
+            }else{
+                console.log('You have not enough PP');
+            };
+        };
+
+        static Init(){
+            var passiveCosts = [1,2,2,2,3,3,4,4,5,6];
+            var passiveNames = [
+                'Passive 1',
+                'Passive 2',
+                'Passive 3',
+                'Passive 4',
+                'Passive 5',
+                'Passive 6',
+                'Passive 7',
+                'Passive 8',
+                'Passive 9',
+                'Passive 10',
+            ];
+            var passiveTitles = [
+                'Multiply your ClickDMG by *1.1 for each upgrade',
+                'Passive 2 title',
+                'Passive 3 title',
+                'Passive 4 title',
+                'Passive 5 title',
+                'Passive 6 title',
+                'Passive 7 title',
+                'Passive 8 title',
+                'Passive 9 title',
+                'Passive 10 title',
+            ];
+
+            for(var i = 0; i<10 ;i++){
+                this.passives[i]= new Prestige();
+                this.passives[i].passiveId = "passive"+i;
+                this.passives[i].passiveName = passiveNames[i];
+                this.passives[i].passiveCost =  passiveCosts[i];
+                this.passives[i].passiveTitles = passiveTitles[i];
+                this.passives[i].passiveCount = 0;
+                
+                $('#'+Prestige.passives[i].passiveId+'_name').text(Prestige.passives[i].passiveName);
+                $('#'+Prestige.passives[i].passiveId+'_cost').text(Prestige.passives[i].passiveCost);
+                $('#'+Prestige.passives[i].passiveId+'_title').prop('title', Prestige.passives[i].passiveTitles);
+            };
+            {% for i in '0123456789'|make_list %}
+                $('#'+Prestige.passives[{{ forloop.counter }}-1].passiveId).click(function(){
+                    Prestige.passives[{{ forloop.counter }}-1].buyPassive();
+                });
+            {% endfor %}
+        };
+    };
+
+
+    Prestige.Init();
+
 // class units i skills
     class Upgrade{  
         constructor(){
@@ -339,14 +454,12 @@ $(document).ready(function(){
         };
 
         buyUpgrade(){
-            if(this.nameId.indexOf('skill') == 1 && this.boughtUpgrades == 5){
+        if(this.nameId.indexOf('skill') == 1 && this.boughtUpgrades == 5){
             return;
         };
             if(gold >= (this.price*this.discountMultipler)){
                     gold -= this.price*this.discountMultipler;
                     this.boughtUpgrades++;
-                    $('#pills-console').append('<span>Kupiłeś upgrade dla '+this.nameId+ ' za ' +this.price+ ' golda!</span><br/>');
-                    $("#pills-console").animate({ scrollTop: 20000000 }, "slow");
                     this.price *= this.priceMultipler;
                 switch(this.nameId){
                 case('#skill0'):
@@ -413,9 +526,9 @@ $(document).ready(function(){
                 this.skills[i].baseDmg =0;
             };
 
-            SkillButton.skills[0].maxCooldown = 600; 
-            SkillButton.skills[1].maxCooldown = 900;
-            SkillButton.skills[2].maxCooldown = 1200;
+            SkillButton.skills[0].maxCooldown = 20; 
+            SkillButton.skills[1].maxCooldown = 40;
+            SkillButton.skills[2].maxCooldown = 60;
 
                 {% for skill in skills %}
                 $('#skill{{ skill.skill_id }}').click(function(){SkillButton.skills[{{ skill.skill_id }}].buyUpgrade()});
@@ -554,7 +667,7 @@ $(document).ready(function(){
                 clickUpgradePrice = data.clickUpgradePrice;
                 cost10=clickUpgradePrice*2*10;
                 cost25=clickUpgradePrice*2*25;
-                clickDmg = clickUpgradesBought;
+                clickDmg = clickUpgradesBought*passiveClickDmg;
                 last_mobs = 0;
 
                 if(o == -1){
@@ -639,10 +752,10 @@ $(document).ready(function(){
         $('#stage').text(stage);
         $('#max_hp').text(maxhp.toFixed(0));
         $('.current_hp').text(current.toFixed(0));
-        $('#clickDmg').text(clickDmg.toFixed(2));
+        $('#clickDmg').text((clickDmg*passiveClickDmg).toFixed(2));
 
         if(SkillButton.skills[1].isOn){
-            var temp = clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
+            var temp = clickDmg*passiveClickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
             $('#clickDmg').text(temp.toFixed(2));
         };
 
@@ -705,8 +818,6 @@ $(document).ready(function(){
                 b_getBonusgold=1;
             };
 
-            $('#pills-logs').append('<span>Dostałeś: '+ (stage +((SkillButton.skills[2].isOn * SkillButton.skills[2].boughtUpgrades) * stage))+' Golda</span><br/>');
-            $("#pills-logs").animate({ scrollTop: 20000000 }, "slow");
         };
 
         if(b_startBossTime){
@@ -744,7 +855,7 @@ $(document).ready(function(){
     $('#buy10').click(function(){
         if(gold>=cost10){
             gold -= cost10;
-            clickDmg +=1*10;
+            clickDmg +=1*10*passiveClickDmg;
             clickUpgradesBought += 10;
             clickUpgradePrice *=2*10;
             cost10 = clickUpgradePrice*(2*10) ;
@@ -755,7 +866,7 @@ $(document).ready(function(){
     $('#buy25').click(function(){
         if(gold>=cost25){
             gold -= cost25;
-            clickDmg +=1*25;
+            clickDmg +=1*25*passiveClickDmg;
             clickUpgradesBought += 25;
             clickUpgradePrice *=2*25;
             cost10 = clickUpgradePrice*(2*10) ;
@@ -766,8 +877,8 @@ $(document).ready(function(){
     // zadawanie obrażen
     $('.click_area').click(function(){
         clickCount++;
-        current -= clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
-        dps += clickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades ) * clickDmg);
+        current -= clickDmg*passiveClickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
+        dps += clickDmg*passiveClickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades ) * clickDmg);
         $( "#mob_image" ).animate({
             height: "22%",
         }, 50 );

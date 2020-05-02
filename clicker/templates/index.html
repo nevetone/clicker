@@ -166,7 +166,7 @@
         </button>
         <button id="prestige" class="btn btn-dark border text-center" style="position:absolute;top:0; width:90%; height:8%; right:0;" disabled>
             <span style="font-size:20px;">Prestige</span><br/>
-            <span id="prestige_rules" style="font-size:20px;">Prestige rules</span>
+            <span id="prestige_rules" style="font-size:20px;">Reach 50 stage to unloock</span>
         </button>
         <div class="text-light text-center" style="position: relative; left:0; top:0; width: 100%; height:auto;"> 
             <table class="table table-borderless table-dark border" style="position: relative; left: 50%; transform: translateX(-50%); width:100%; ">
@@ -197,23 +197,6 @@
                 </tbody>
             </table>
         </div>
-        <div class="text-white" style="position:absolute; bottom:0; height:30%; max-height:30%; width:100%;">
-            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="width:100%; padding:0; height:10%;">
-            <li class="nav-item" style="width:50%;">
-                <a class="nav-link active btn btn-dark border" id="pills-logs-tab" data-toggle="pill" href="#pills-logs" role="tab" aria-controls="pills-logs" aria-selected="true" style="width:100%">Logs</a>
-            </li>
-            <li class="nav-item" style="width:50%;">
-                <a class="nav-link btn btn-dark border" id="pills-console-tab" data-toggle="pill" href="#pills-console" role="tab" aria-controls="pills-console" aria-selected="false" style="width:100%">Console Logs</a>
-            </li>
-            </ul>
-            <div class="tab-content" id="pills-tabContent" style="height:80%; padding:0;">
-            <div class="tab-pane fade show active" id="pills-logs" role="tabpanel" aria-labelledby="pills-logs-tab" style="max-height:100%; overflow:auto; padding:2%;">
-
-            </div>
-            <div class="tab-pane fade" id="pills-console" role="tabpanel" aria-labelledby="pills-console-tab" style="max-height:100%; overflow:auto; padding:2%;">
-            
-            </div>
-            </div>
         </div>
     </div>
     <div id="error_div" class=" text-white text-center" style="width:100vw; height:5%; position:fixed; bottom:0; font-size:20px;">
@@ -221,43 +204,104 @@
     </div>
     <div class="text-light bg-dark2" id="prestige_area" style="position:fixed; top:5%; right:20%; width:0%; height:10%; z-index:9999;" >
         <div class="p-5" id="prestige_text" style="display:none; opacity:0; width:100%; height:100%;">
-    
-            {% comment %} drzewko passywek {% endcomment %}
             <h3 style="width:100%; height:10%;">Your Points: <span id="prestige_points">0</span></h3>
             <h5 style="width:100%; height:10%;">Prestige Passives:</h5>
-            <div style="position:relative; height:80%; width:100%; left:50%; transform:translateX(-50%); ">
+            <div style="position:relative; height:auto; width:100%; left:50%; transform:translateX(-50%); ">
                 
-
-                {% comment %} menu sie jeszcze pewnie zmieni ale id zostana takie same {% endcomment %}
-                <div style="position:relative; height:10%; width:50%; left:50%; transform:translateX(-50%); ">
-                    <button class="btn btn-dark border" id="passive0" style="position:relative; height:100%; left:50%; transform:translateX(-50%);"> passive0 </button>
+            <div class="btn btn-dark border" id="passive0" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive0_name">Passive Name</div>
+                <div>Cost: <span id="passive0_cost">1</span>PP
+                    <button id="passive0_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
                 </div>
-                <div class="border-top border-warning" style="position:relative; height:10%; width:50%; left:50%; transform:translateX(-50%);">
-                    <button class="btn btn-dark border" id="passive1" style="position:absolute; left:0; height:100%;"> passive1 </button>
-                    <button class="btn btn-dark border" id="passive2" style="position:absolute; height:100%; left:100%; transform:translateX(-100%); "> passive2 </button>
-                </div>
-                <div class="border-top border-warning" style="position:relative; height:10%; width:75%; left:50%; transform:translateX(-50%);">
-                    <button class="btn btn-dark border" id="passive3" style="position:absolute; height:100%; left:0; "> passive3 </button>
-                    <button class="btn btn-dark border" id="passive4" style="position:absolute; height:100%; left:50%; transform:translateX(-50%); "> passive4 </button>
-                    <button class="btn btn-dark border" id="passive5" style="position:absolute; height:100%; left:100%; transform:translateX(-100%); "> passive5 </button>
-                </div>
-                <div class="border-top border-warning" style="position:relative; height:10%; width:75%; left:50%; transform:translateX(-50%);">
-                    <button class="btn btn-dark border" id="passive6" style="position:absolute; height:100%; left:25%; transform:translateX(-25%); "> passive6 </button>
-                    <button class="btn btn-dark border" id="passive7" style="position:absolute; height:100%; left:75%; transform:translateX(-75%); "> passive7 </button>
-                </div>
-                <div class="border-top border-warning" style="position:relative; height:10%; width:41%; left:50%; transform:translateX(-50%);">
-                    <button class="btn btn-dark border" id="passive8" style="position:absolute; height:100%; left:28%; transform:translateX(-28%); "> passive8 </button>
-                    <button class="btn btn-dark border" id="passive9" style="position:absolute; height:100%; left:72%; transform:translateX(-72%); "> passive9 </button>
-                </div>
-                <div class="border-top border-warning" style="position:relative; height:10%; width:22%; left:50%; transform:translateX(-50%); ">
-                    <button class="btn btn-dark border" id="passive10" style="position:relative; height:100%; left:50%; transform:translateX(-50%); "> passive10 </button>
-                </div>
-            
-            
             </div>
+
+            <div class="btn btn-dark border" id="passive1" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive1_name">Passive Name</div>
+                <div>Cost: <span id="passive1_cost">1</span>PP
+                    <button id="passive1_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="btn btn-dark border" id="passive2" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive2_name">Passive Name</div>
+                <div>Cost: <span id="passive2_cost">1</span>PP
+                    <button id="passive2_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="btn btn-dark border" id="passive3" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive3_name">Passive Name</div>
+                <div>Cost: <span id="passive3_cost">1</span>PP
+                    <button id="passive3_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="btn btn-dark border" id="passive4" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive4_name">Passive Name</div>
+                <div>Cost: <span id="passive4_cost">1</span>PP
+                    <button id="passive4_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="btn btn-dark border" id="passive5" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive5_name">Passive Name</div>
+                <div>Cost: <span id="passive5_cost">1</span>PP
+                    <button id="passive5_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="btn btn-dark border" id="passive6" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive6_name">Passive Name</div>
+                <div>Cost: <span id="passive6_cost">1</span>PP
+                    <button id="passive6_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="btn btn-dark border" id="passive7" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive7_name">Passive Name</div>
+                <div>Cost: <span id="passive7_cost">1</span>PP
+                    <button id="passive7_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="btn btn-dark border" id="passive8" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive8_name">Passive Name</div>
+                <div>Cost: <span id="passive8_cost">1</span>PP
+                    <button id="passive8_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="btn btn-dark border" id="passive9" style="position: relative; width: auto; height: auto; margin:1%;">
+                <div id="passive9_name">Passive Name</div>
+                <div>Cost: <span id="passive9_cost">1</span>PP
+                    <button id="passive9_title" style="padding:0; margin: 0; border: none; background: none;" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Passive title">
+                        <i class="far fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>
+
 <form method="POST" action="{% url 'home' %}" id="cookie_form" style="position:fixed; top:0%; display:none;" hidden>
 {% csrf_token %}
 <input type="text" name="cookie_id" id="cookie_id" value="xyz"  />
