@@ -274,5 +274,7 @@
 <form method="POST" action="{% url 'load' %}" id="loadSave" style="position:fixed; top:0%; display:none;" hidden>
 {% csrf_token %}
 <input type="text" name="loadUser" id="loadUser"  value="" />
+<input type="text" name="firstLogin1" id="firstLogin1"  value="" />
+
 </form>
 {% endblock content %}

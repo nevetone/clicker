@@ -7,29 +7,26 @@ from django.core import serializers
 from django.http import JsonResponse
 # Create your views here.
 
+
 def home(request):
     template="index.html"
     try:
         units = Units.objects.all()
-        islands = Islands.objects.all()
-        mobs = Mobs.objects.all()
-        skills = Skills.objects.all()
     except:
         units = None
+    try:
+        islands = Islands.objects.all()
+    except:
         islands = None
+    try:
+        mobs = Mobs.objects.all()
+    except:
         mobs = None
+    try:
+        skills = Skills.objects.all()
+    except:
         skills = None
-    try:
-        unitsCount = Units.objects.all()
-        unitsCount2 = Units.objects.all().count()
-    except:
-        pass
-    try:
-        skillsCount = Skills.objects.all()
-        skillsCount2 = Skills.objects.all().count()
-    except:
-        pass
-        # save
+        
     if request.method == 'POST':
         cookie = request.POST.get('cookie_id')
         visibleUpgrades = request.POST.get('visibleUpgrades')
@@ -47,124 +44,144 @@ def home(request):
         skill_count = []
         skill_name = []
         pomocnicza = 0
+        
         try:
-            get_user = Cookies.objects.get(cookies_id = cookie)
+            cookie_user =  Cookies.objects.get(cookies_id = cookie)
         except:
-            get_user = Cookies(cookies_id = cookie, current_gold=100, click_count=0, stage=1, stage_passed=1, click_upgrades_bought=1, var_o=-1, clickUpgradePrice=100, visibleUpgrades=-1)
-            get_user.save()
+            cookie_user = None
         try:
-            user_units = UserUnits.objects.filter(cookies_id = get_user)
-            user_units_count = UserUnits.objects.filter(cookies_id = get_user).count()
+            user_units = UserUnits.objects.filter(cookies_id = cookie_user)
+            if not user_units:
+                user_units = None
         except:
             user_units = None
-            user_units_count = 0
-        # units
-        if user_units_count < unitsCount2:
-            try:
-                user_units.delete()
-                for unit in unitsCount:
-                    k = UserUnits(cookies_id = get_user, unit_type=unit.unit_name, unit_cost=unit.unit_default_cost, unit_count=unit.unit_count)
-                    k.save()
-            except:
-                for unit in unitsCount:
-                    k = UserUnits(cookies_id = get_user, unit_type=unit.unit_name, unit_cost=unit.unit_default_cost, unit_count=unit.unit_count)
-                    k.save()
         try:
-            user_skills = UserSkills.objects.filter(cookies_id = get_user)
-            user_skills_count = UserSkills.objects.filter(cookies_id = get_user).count()
+            user_skills = UserSkills.objects.filter(cookies_id = cookie_user)
+            if not user_skills:
+                user_skills = None
         except:
             user_skills = None
-            user_skills_count = 0
-        # skills
-        if user_skills_count < skillsCount2:
+        
+        
+        if cookie_user is None:
             try:
-                user_skills.delete()
-                for skill in skillsCount:
-                    g = UserSkills(cookies_id = get_user, skill_type=skill.skill_name, skill_cost=skill.skill_cost, skill_count=skill.skill_count)
-                    g.save()
+                cookie_user = Cookies(cookies_id = cookie, current_gold = 999999, click_count=0, stage=1, stage_passed=1, click_upgrades_bought=1, var_o=-1, clickUpgradePrice=100, visibleUpgrades=-1)
+                cookie_user.save()
+                print('tworzenie usera przy save')
             except:
-                for skill in skillsCount:
-                    g = UserSkills(cookies_id = get_user, skill_type=skill.skill_name, skill_cost=skill.skill_cost, skill_count=skill.skill_count)
-                    g.save()
-        try:
-            user_skills = UserSkills.objects.filter(cookies_id = get_user)
-            user_units = UserUnits.objects.filter(cookies_id = get_user)
-        except:
-            pass
-        if user_units is not None:
-            for t in user_units:
-                price.append(request.POST.get('price'+str(pomocnicza)))
-                count.append(request.POST.get('count'+str(pomocnicza)))
-                name.append(request.POST.get('name'+str(pomocnicza)))
-                t.unit_type = str(name[pomocnicza])
-                t.unit_cost = float(price[pomocnicza])
-                t.unit_count = float(count[pomocnicza])
-                t.save()
-                pomocnicza = pomocnicza + 1
-        name = []
-        price = []
-        count = []
-        pomocnicza = 0
-        if user_skills is not None:
-            for i in user_skills:
-                skill_price.append(request.POST.get('skill_price'+str(pomocnicza)))
-                skill_count.append(request.POST.get('skill_count'+str(pomocnicza)))
-                skill_name.append(request.POST.get('skill_name'+str(pomocnicza)))
-                i.skill_type = str(skill_name[pomocnicza])
-                i.skill_cost = float(skill_price[pomocnicza])
-                i.skill_count = float(skill_count[pomocnicza])
-                i.save()
-                pomocnicza = pomocnicza + 1
-        skill_price = []
-        skill_count = []
-        skill_name = []
-        pomocnicza = 0
-        try:
-            userid = Cookies.objects.get(cookies_id = cookie)
-            userid.visibleUpgrades = float(visibleUpgrades)
-            userid.current_gold = float(current_gold)
-            userid.click_count = float(click_count)
-            userid.stage = float(stage)
-            userid.stage_passed = float(stage_passed)
-            userid.click_upgrades_bought = float(click_upgrades_bought)
-            userid.var_o = float(var_o)
-            userid.clickUpgradePrice = float(clickUpgradePrice)
-            userid.save()
-        except:
-            pass
-        message = 'Auto Save Complited'
-        return JsonResponse({'message':message}, status=200)
-    else:
-        message = None
-        userid = None
-    context={
-        'units':units, 'islands':islands, 'mobs':mobs, 'skills':skills, 'userid':userid,
-    }
+                pass
+            try:
+                cookie_user =  Cookies.objects.get(cookies_id = cookie)
+                print('sprawdzanie usera przy save')
+            except:
+                cookie_user = None
+                message = "cannot find user" 
+                return JsonResponse({'message':message, 'saved':'false'}, status=200)
+        if user_units is None:
+            for unit in units:
+                user_units = UserUnits(cookies_id=cookie_user, unit_type = unit.unit_name, unit_cost = unit.unit_default_cost, unit_count = unit.unit_count)
+                user_units.save()
+            print('tworzenie units przy save')
+            try:
+                user_units = UserUnits.objects.filter(cookies_id = cookie_user)
+            except:
+                user_units = None
+                message = "cannot find user units" 
+                return JsonResponse({'message':message, 'saved':'false'}, status=200)
+        if user_skills is None:
+            for skill in skills:
+                user_skills = UserSkills(cookies_id=cookie_user, skill_type = skill.skill_name, skill_cost = skill.skill_cost, skill_count = skill.skill_count)
+                user_skills.save()
+            print('tworzenie skills przy save')
+            try:
+                user_skills = UserSkills.objects.filter(cookies_id = cookie_user)
+            except:
+                user_skills = None
+                message = "cannot find user skills" 
+                return JsonResponse({'message':message, 'saved':'false'}, status=200)
+        if user_units is not None and user_skills is not None and cookie_user is not None:
+            if user_units is not None:
+                for t in user_units:
+                    price.append(request.POST.get('price'+str(pomocnicza)))
+                    count.append(request.POST.get('count'+str(pomocnicza)))
+                    name.append(request.POST.get('name'+str(pomocnicza)))
+                    t.unit_type = str(name[pomocnicza])
+                    t.unit_cost = float(price[pomocnicza])
+                    t.unit_count = float(count[pomocnicza])
+                    t.save()
+                    pomocnicza = pomocnicza + 1
+            name = []
+            price = []
+            count = []
+            pomocnicza = 0
+            if user_skills is not None:
+                for i in user_skills:
+                    skill_price.append(request.POST.get('skill_price'+str(pomocnicza)))
+                    skill_count.append(request.POST.get('skill_count'+str(pomocnicza)))
+                    skill_name.append(request.POST.get('skill_name'+str(pomocnicza)))
+                    i.skill_type = str(skill_name[pomocnicza])
+                    i.skill_cost = float(skill_price[pomocnicza])
+                    i.skill_count = float(skill_count[pomocnicza])
+                    i.save()
+                    pomocnicza = pomocnicza + 1
+            skill_price = []
+            skill_count = []
+            skill_name = []
+            pomocnicza = 0
+            
+            cookie_user = Cookies.objects.get(cookies_id = cookie)
+            cookie_user.visibleUpgrades = float(visibleUpgrades)
+            cookie_user.current_gold = float(current_gold)
+            cookie_user.click_count = float(click_count)
+            cookie_user.stage = float(stage)
+            cookie_user.stage_passed = float(stage_passed)
+            cookie_user.click_upgrades_bought = float(click_upgrades_bought)
+            cookie_user.var_o = float(var_o)
+            cookie_user.clickUpgradePrice = float(clickUpgradePrice)
+            cookie_user.save()
+            message = 'Auto Save Complited'
+            print('zapisywanie')
+            return JsonResponse({'message':message, 'saved':'true'}, status=200)
+        else:
+            message = "cannot save - error" 
+            return JsonResponse({'message':message, 'saved':'false'}, status=200)
+    
+    cookie_user = None
+    context={'units':units, 'islands':islands, 'mobs':mobs, 'skills':skills, 'userid':cookie_user,}
     return render(request, template, context)
 
 def load(request):
     try:
         if request.method == 'POST':
             userCookie = request.POST.get('loadUser')
+            firstLogIn = request.POST.get('firstLogin1')
+            print(firstLogIn)
             try:
                 userCookies = Cookies.objects.get(cookies_id = userCookie)
-                unitsCount = Units.objects.all()
-                skillsCount = Skills.objects.all()
             except:
                 userCookies = None
+            try:
+                unitsCount = Units.objects.all()
+            except:
                 unitsCount = None
+            try:
+                skillsCount = Skills.objects.all()
+            except:
                 skillsCount = None
-                pass
             try:
                 user_units = UserUnits.objects.filter(cookies_id = userCookies)
+                if not user_units:
+                    user_units = None
                 user_skills = UserSkills.objects.filter(cookies_id = userCookies)
+                if not user_skills:
+                    user_skills = None
             except:
                 pass
             unit_cost = []
             unit_count = []
             skill_price = []
             skill_count = []
-            try:
+            if firstLogIn == "False":
                 print('Wczytywanie')
                 context = {
                     'visibleUpgrades' : userCookies.visibleUpgrades,
@@ -191,33 +208,66 @@ def load(request):
                 unit_cost = []
                 unit_count = []
                 return JsonResponse(context, status=200)
-            except:
-                print('first time')
-                context2 = {
-                    'visibleUpgrades' : -1,
-                    'var_o': -1,
-                    'click_count': 0,
-                    'stage': 1,
-                    'stage_passed': 1,
-                    'current_gold': 998999,
-                    'click_upgrades_bought': 1,
-                    'clickUpgradePrice':100,
+            else:
+                print('Pierwsze logowanie : Load')
+                if userCookies is None:
+                    try:
+                        cookie_user = Cookies(cookies_id = userCookie, current_gold = 999999, click_count=0, stage=1, stage_passed=1, click_upgrades_bought=1, var_o=-1, clickUpgradePrice=100, visibleUpgrades=-1)
+                        cookie_user.save()
+                        print('tworzenie usera przy load')
+                    except:
+                        pass
+                    try:
+                        cookie_user =  Cookies.objects.get(cookies_id = userCookie)
+                        print('sprawdzanie usera przy load')
+                    except:
+                        cookie_user = None
+                if user_units is None:
+                    for unit in unitsCount:
+                        user_units = UserUnits(cookies_id=cookie_user, unit_type = unit.unit_name, unit_cost = unit.unit_default_cost, unit_count = unit.unit_count)
+                        user_units.save()
+                    print('tworzenie units przy load')
+                    try:
+                        user_units = UserUnits.objects.filter(cookies_id = cookie_user)
+                    except:
+                        user_units = None
+                if user_skills is None:
+                    for skill in skillsCount:
+                        user_skills = UserSkills(cookies_id=cookie_user, skill_type = skill.skill_name, skill_cost = skill.skill_cost, skill_count = skill.skill_count)
+                        user_skills.save()
+                    print('tworzenie skills przy load')
+                    try:
+                        user_skills = UserSkills.objects.filter(cookies_id = cookie_user)
+                    except:
+                        user_skills = None
+                
+                print('Wczytywanie')
+                context = {
+                    'visibleUpgrades' : cookie_user.visibleUpgrades,
+                    'var_o': cookie_user.var_o,
+                    'click_count': cookie_user.click_count,
+                    'stage': cookie_user.stage,
+                    'stage_passed': cookie_user.stage_passed,
+                    'current_gold': cookie_user.current_gold,
+                    'click_upgrades_bought': cookie_user.click_upgrades_bought,
+                    'clickUpgradePrice':cookie_user.clickUpgradePrice,
                     }
-                for units in unitsCount:
-                    unit_cost.append(units.unit_default_cost)
-                    unit_count.append(units.unit_count)
-                    context2['unit_cost'] = unit_cost
-                    context2['unit_count'] = unit_count
-                for skills in skillsCount:
-                    skill_price.append(skills.skill_cost)
-                    skill_count.append(skills.skill_count)
-                    context2['skill_price'] = skill_price
-                    context2['skill_count'] = skill_count
+                for unit in user_units:
+                    unit_cost.append(unit.unit_cost)
+                    unit_count.append(unit.unit_count)
+                    context['unit_cost'] = unit_cost
+                    context['unit_count'] = unit_count
+                for skill in user_skills:
+                    skill_price.append(skill.skill_cost)
+                    skill_count.append(skill.skill_count)
+                    context['skill_price'] = skill_price
+                    context['skill_count'] = skill_count
                 skill_price = []
                 skill_count = []
                 unit_cost = []
                 unit_count = []
-                return JsonResponse(context2, status=200)
+                
+                return JsonResponse(context, status=200)
     except:
         pass
     context={}
@@ -227,7 +277,6 @@ def load(request):
 def coppy(request):
     template="index.html"
 
-    
     if request.method == 'POST':
         current = request.POST.get('current_id')
         new = request.POST.get('new_id')

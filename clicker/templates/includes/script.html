@@ -15,7 +15,9 @@
     
     if (firstLogIn){
         console.log(Cookies.get('cookieIds')+" ponowne logowanie");
+        $('#firstLogin1').val('False');
     }else{
+        $('#firstLogin1').val('True');
         Cookies.set('cookieIds', makeCookieId(12), { path: '' });
         Cookies.set('firstLogin', 'false', { path: '' });
         console.log(Cookies.get('cookieIds')+' first time');
@@ -530,6 +532,7 @@ $(document).ready(function(){
             type: $(this).attr('method'),
             url: $(this).attr('action'),
             success: function(data) {
+
                 for(var i=0; i<upgradesCount; i++){
                     UpgradeButton.buttons[i].boughtUpgrades = data.unit_count[i];
                     UpgradeButton.buttons[i].price = data.unit_cost[i];
@@ -813,7 +816,7 @@ $(document).ready(function(){
         });
         return false;
     });
-    
+
     function getData(){
         $('#visibleUpgrades').val(visibleUpgrades);
         $('#cookie_id').val(Cookies.get('cookieIds'));
