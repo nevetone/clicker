@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from database.models import Units, Islands, Mobs, Skills
 import json
-from .models import Cookies, UserUnits, UserSkills
+from .models import Cookies, UserUnits, UserSkills, UserPassives
 from django.shortcuts import Http404, HttpResponseRedirect, HttpResponse
 from django.core import serializers
 from django.http import JsonResponse
@@ -37,12 +37,18 @@ def home(request):
         click_upgrades_bought = request.POST.get('click_upgrades_bought')
         var_o =  request.POST.get('var_o')
         clickUpgradePrice = request.POST.get('clickUpgradePrice')
+        current_passive_points = request.POST.get('current_passive_points')
+        current_mana = request.POST.get('current_mana')
+        max_mana = request.POST.get('max_mana')
         price = []
         count = []
         name = []
         skill_price = []
         skill_count = []
         skill_name = []
+        passive_id = []
+        passive_cost = []
+        passive_count = []
         pomocnicza = 0
         
         try:
@@ -56,6 +62,13 @@ def home(request):
         except:
             user_units = None
         try:
+            user_passives = UserPassives.objects.filter(cookies_id = cookie_user)
+            if not user_passives:
+                user_passives = None
+        except:
+            user_passives = None
+            
+        try:
             user_skills = UserSkills.objects.filter(cookies_id = cookie_user)
             if not user_skills:
                 user_skills = None
@@ -65,7 +78,7 @@ def home(request):
         
         if cookie_user is None:
             try:
-                cookie_user = Cookies(cookies_id = cookie, current_gold = 999999, click_count=0, stage=1, stage_passed=1, click_upgrades_bought=1, var_o=-1, clickUpgradePrice=100, visibleUpgrades=-1)
+                cookie_user = Cookies(cookies_id = cookie, current_gold = 999999, click_count=0, stage=1, stage_passed=1, click_upgrades_bought=1, var_o=-1, clickUpgradePrice=100, visibleUpgrades=-1, current_passive_points=0, current_mana=100, max_mana=100 )
                 cookie_user.save()
                 print('tworzenie usera przy save')
             except:
@@ -99,6 +112,17 @@ def home(request):
                 user_skills = None
                 message = "cannot find user skills" 
                 return JsonResponse({'message':message, 'saved':'false'}, status=200)
+        if user_passives is None:
+            for x in range(0,10):
+                user_passives = UserPassives(cookies_id = cookie_user, passive_id="passive"+str(x), passive_count = 0, passive_cost = 0)
+                user_passives.save()
+            print('tworzenie passives przy save')
+            try:
+                user_passives = UserPassives.objects.filter(cookies_id = cookie_user)
+            except:
+                user_passives = None
+                message = "cannot find user passives" 
+                return JsonResponse({'message':message, 'saved':'false'}, status=200)
         if user_units is not None and user_skills is not None and cookie_user is not None:
             if user_units is not None:
                 for t in user_units:
@@ -110,6 +134,7 @@ def home(request):
                     t.unit_count = float(count[pomocnicza])
                     t.save()
                     pomocnicza = pomocnicza + 1
+                print("Zapisano units")
             name = []
             price = []
             count = []
@@ -124,23 +149,43 @@ def home(request):
                     i.skill_count = float(skill_count[pomocnicza])
                     i.save()
                     pomocnicza = pomocnicza + 1
+                print("Zapisano skills")
             skill_price = []
             skill_count = []
             skill_name = []
             pomocnicza = 0
             
+            if user_passives is not None:
+                for x in user_passives:
+                    passive_id.append(request.POST.get("passives"+str(pomocnicza)))
+                    passive_cost.append(request.POST.get("passives"+str(pomocnicza)+"_cost"))
+                    passive_count.append(request.POST.get("passives"+str(pomocnicza)+"_count"))
+                    x.passive_id = str(passive_id[pomocnicza])
+                    x.passive_count = float(passive_count[pomocnicza])
+                    x.passive_cost = float(passive_cost[pomocnicza])
+                    x.save()
+                    pomocnicza = pomocnicza + 1
+                print("Zapisano passives")
+            passive_id = []
+            passive_cost = []
+            passive_count = []
+            pomocnicza = 0
+                
             cookie_user = Cookies.objects.get(cookies_id = cookie)
             cookie_user.visibleUpgrades = float(visibleUpgrades)
             cookie_user.current_gold = float(current_gold)
             cookie_user.click_count = float(click_count)
             cookie_user.stage = float(stage)
+            cookie_user.max_mana = float(max_mana)
             cookie_user.stage_passed = float(stage_passed)
             cookie_user.click_upgrades_bought = float(click_upgrades_bought)
             cookie_user.var_o = float(var_o)
+            cookie_user.current_mana = float(current_mana)
+            cookie_user.current_passive_points = float(current_passive_points)
             cookie_user.clickUpgradePrice = float(clickUpgradePrice)
             cookie_user.save()
             message = 'Auto Save Complited'
-            print('zapisywanie')
+            print('Zapisano Usera')
             return JsonResponse({'message':message, 'saved':'true'}, status=200)
         else:
             message = "cannot save - error" 
@@ -177,10 +222,18 @@ def load(request):
                     user_skills = None
             except:
                 pass
+            try:
+                user_passives = UserPassives.objects.filter(cookies_id = userCookies)
+                if not user_passives:
+                    user_passives = None
+            except:
+                user_passives = None
             unit_cost = []
             unit_count = []
             skill_price = []
             skill_count = []
+            passive_cost = []
+            passive_count = []
             if firstLogIn == "False":
                 print('Wczytywanie')
                 context = {
@@ -191,28 +244,42 @@ def load(request):
                     'stage_passed': userCookies.stage_passed,
                     'current_gold': userCookies.current_gold,
                     'click_upgrades_bought': userCookies.click_upgrades_bought,
-                    'clickUpgradePrice':userCookies.clickUpgradePrice,
+                    'clickUpgradePrice': userCookies.clickUpgradePrice,
+                    'current_passive_points': userCookies.current_passive_points,
+                    'current_mana': userCookies.current_mana,
+                    'max_mana': userCookies.max_mana,
                     }
+                print("Wczytanie Usera")
                 for unit in user_units:
                     unit_cost.append(unit.unit_cost)
                     unit_count.append(unit.unit_count)
                     context['unit_cost'] = unit_cost
                     context['unit_count'] = unit_count
+                print("Wczytanie Units")
                 for skill in user_skills:
                     skill_price.append(skill.skill_cost)
                     skill_count.append(skill.skill_count)
                     context['skill_price'] = skill_price
                     context['skill_count'] = skill_count
+                print("Wczytanie Skills")
+                for passive in user_passives:
+                    passive_cost.append(passive.passive_cost)
+                    passive_count.append(passive.passive_count)
+                    context['passive_cost'] = passive_cost
+                    context['passive_count'] = passive_count
+                print("Wczytanie passives")
                 skill_price = []
                 skill_count = []
                 unit_cost = []
                 unit_count = []
+                passive_cost = []
+                passive_count = []
                 return JsonResponse(context, status=200)
             else:
                 print('Pierwsze logowanie : Load')
                 if userCookies is None:
                     try:
-                        cookie_user = Cookies(cookies_id = userCookie, current_gold = 999999, click_count=0, stage=1, stage_passed=1, click_upgrades_bought=1, var_o=-1, clickUpgradePrice=100, visibleUpgrades=-1)
+                        cookie_user = Cookies(cookies_id = userCookie, current_gold = 999999, click_count=0, stage=1, stage_passed=1, click_upgrades_bought=1, var_o=-1, clickUpgradePrice=100, visibleUpgrades=-1, current_passive_points=0, current_mana=100,max_mana=100 )
                         cookie_user.save()
                         print('tworzenie usera przy load')
                     except:
@@ -240,8 +307,15 @@ def load(request):
                         user_skills = UserSkills.objects.filter(cookies_id = cookie_user)
                     except:
                         user_skills = None
-                
-                print('Wczytywanie')
+                if user_passives is None:
+                    for x in range(0,10):
+                        user_passives = UserPassives(cookies_id = cookie_user, passive_id="passive"+str(x), passive_count = 0, passive_cost = 0)
+                        user_passives.save()
+                    print('tworzenie passives przy load')
+                    try:
+                        user_passives = UserPassives.objects.filter(cookies_id = cookie_user)
+                    except:
+                        user_passives = None
                 context = {
                     'visibleUpgrades' : cookie_user.visibleUpgrades,
                     'var_o': cookie_user.var_o,
@@ -251,22 +325,35 @@ def load(request):
                     'current_gold': cookie_user.current_gold,
                     'click_upgrades_bought': cookie_user.click_upgrades_bought,
                     'clickUpgradePrice':cookie_user.clickUpgradePrice,
+                    'current_passive_points':cookie_user.current_passive_points,
+                    'current_mana':cookie_user.current_mana,
+                    'max_mana':cookie_user.max_mana
                     }
+                print("Wczytanie Usera")
                 for unit in user_units:
                     unit_cost.append(unit.unit_cost)
                     unit_count.append(unit.unit_count)
                     context['unit_cost'] = unit_cost
                     context['unit_count'] = unit_count
+                print("Wczytanie Units")
                 for skill in user_skills:
                     skill_price.append(skill.skill_cost)
                     skill_count.append(skill.skill_count)
                     context['skill_price'] = skill_price
                     context['skill_count'] = skill_count
+                print("Wczytanie Skills")
+                for passive in user_passives:
+                    passive_cost.append(passive.passive_cost)
+                    passive_count.append(passive.passive_count)
+                    context['passive_cost'] = passive_cost
+                    context['passive_count'] = passive_count
+                print("Wczytanie passives")
                 skill_price = []
                 skill_count = []
                 unit_cost = []
                 unit_count = []
-                
+                passive_cost = []
+                passive_count = []
                 return JsonResponse(context, status=200)
     except:
         pass
@@ -293,18 +380,27 @@ def coppy(request):
         except:
             new_user_skills = None
         try:
+            new_user_passives = UserPassives.objects.filter(cookies_id = get_new_user)
+        except:
+            new_user_passives = None
+        try:
             new_user_units = UserUnits.objects.filter(cookies_id = get_new_user)
         except:
             new_user_units = None
+            
         if new == '' or current == '':
             return JsonResponse({'message':'Please enter ID', 'loaded':'false',}, status=200)
         elif get_user == None or get_new_user == None:
             return JsonResponse({'message':'Cannot Find ID', 'loaded':'false',}, status=200)
-        elif new_user_skills is not None and new_user_units is not None:
+        elif new_user_skills is not None and new_user_units is not None and new_user_passives is not None:
             user_units = UserUnits.objects.filter(cookies_id = get_user)
             user_skills = UserSkills.objects.filter(cookies_id = get_user)
+            user_passives = UserPassives.objects.filter(cookies_id = get_user)
             if new == new_user_units[0].cookies_id.cookies_id and new == new_user_skills[0].cookies_id.cookies_id:
                 get_user.current_gold = get_new_user.current_gold
+                get_user.max_mana = get_new_user.max_mana
+                get_user.current_mana = get_new_user.current_mana
+                get_user.current_passive_points =  get_new_user.current_passive_points
                 get_user.click_count = get_new_user.click_count
                 get_user.stage = get_new_user.stage
                 get_user.stage_passed = get_new_user.stage_passed
@@ -328,6 +424,14 @@ def coppy(request):
                     unit.save()
                     pomocnicza = pomocnicza + 1
                 pomocnicza = 0
+                for passive in user_passives:
+                    passive.passive_id = new_user_passives[pomocnicza].passive_id
+                    passive.passive_count = new_user_passives[pomocnicza].passive_count
+                    passive.passive_cost =  new_user_passives[pomocnicza].passive_cost
+                    passive.save()
+                    pomocnicza = pomocnicza + 1
+                pomocnicza = 0
+                    
                 return JsonResponse({'message':'Loading...', 'loaded':'true',}, status=200)
             else:
                 return JsonResponse({'message':'Cannot find ID', 'loaded':'false',}, status=200)

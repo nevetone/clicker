@@ -10,6 +10,9 @@ class Cookies(models.Model):
     stage_passed = models.FloatField(default=1)
     click_upgrades_bought = models.FloatField(default=1)
     var_o = models.FloatField(default=-1)
+    current_mana = models.FloatField(default=100)
+    max_mana = models.FloatField(default=100)
+    current_passive_points = models.FloatField(default=0)
     clickUpgradePrice = models.FloatField(default=100)
     visibleUpgrades = models.FloatField(default=-1)
     
@@ -33,3 +36,12 @@ class UserSkills(models.Model):
     
     def __str__(self):
         return str(self.cookies_id)+' |type| '+self.skill_type
+
+class UserPassives(models.Model):
+    cookies_id = models.ForeignKey("Cookies", on_delete=models.CASCADE)
+    passive_id = models.CharField(max_length=50, default="X")
+    passive_count = models.FloatField(default=0)
+    passive_cost = models.FloatField(default=0)
+    
+    def __str__(self):
+        return str(self.cookies_id)+' |passive| '+self.passive_id
