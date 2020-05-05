@@ -217,8 +217,6 @@ $(document).ready(function(){
         var passiveClickDmg = 1;
         var passiveGold = 1;
 
-    $("#max_mana").text(maxMana);
-    $("#current_mana").text(currentMana);
     $("#prestige_points").text(prestigePoints);
     $('#dps').text(dps.toFixed(1)+' dmg.');
 
@@ -574,9 +572,9 @@ $(document).ready(function(){
     };
     class SkillButton extends Upgrade {
         static skills=[];
-        static mana;
         static maxMana=100;
-        static manaRegen=1;
+        static mana;
+        static manaRegen=0.1;
         constructor(){
             super();
             this.isOn=false;
@@ -587,7 +585,9 @@ $(document).ready(function(){
         };
 
         turnOn(){
-            if(this.cooldown <=0 && this.boughtUpgrades >0){
+            var manaCost=60;
+            if(this.cooldown <=0 && this.boughtUpgrades >0 && SkillButton.mana >= manaCost ){
+                SkillButton.mana -= manaCost;
                 this.isOn=true;
             };
         };
@@ -613,6 +613,7 @@ $(document).ready(function(){
         static Init(){
             var upgradeNames = [];
             var baseUpgradePrices = [];
+            SkillButton.mana = SkillButton.maxMana;
 
                 {% for skill in skills %}
                 upgradeNames.push('{{ skill.skill_name }}');
@@ -638,6 +639,10 @@ $(document).ready(function(){
         };
 
         static refreshSkills(){
+            if(SkillButton.mana < SkillButton.maxMana){
+                 SkillButton.mana += SkillButton.manaRegen;
+            }
+
             for(var i = 0;i<this.skills.length;i++){
                     $(this.skills[i].nameId+'_count').text(this.skills[i].boughtUpgrades);
                     $(this.skills[i].nameId+'_cost').text(this.skills[i].price.toFixed(0));
@@ -768,8 +773,8 @@ $(document).ready(function(){
                 visibleUpgrades = data.visibleUpgrades;
                 o = data.var_o;
                 max_o = data.var_o;
-                currentMana = data.current_mana;
-                maxMana = data.max_mana;
+                SkillButton.mana = data.current_mana;
+                SkillButton.maxMana = data.max_mana;
                 prestigePoints = data.current_passive_points;
                 clickCount = data.click_count;
                 stage = data.stage_passed;
@@ -865,9 +870,11 @@ $(document).ready(function(){
         $('#max_hp').text(maxhp.toFixed(0));
         $('.current_hp').text(current.toFixed(0));
         $('#clickDmg').text((clickDmg*passiveClickDmg).toFixed(2));
-        $("#max_mana").text(maxMana.toFixed(0));
-        $("#current_mana").text(currentMana.toFixed(0));
+        $("#max_mana").text(SkillButton.maxMana.toFixed(0));
+        $("#current_mana").text(SkillButton.mana.toFixed(0));
         $("#prestige_points").text(prestigePoints.toFixed(0));
+        var manaBar = SkillButton.mana/SkillButton.maxMana*100;
+        $("#progress-bar-mana").css('width', manaBar.toFixed(2)+'%');
 
         if(SkillButton.skills[1].isOn){
             var temp = clickDmg*passiveClickDmg + ( ( SkillButton.skills[1].isOn * SkillButton.skills[1].boughtUpgrades)* clickDmg);
@@ -1054,8 +1061,8 @@ $(document).ready(function(){
         $('#click_upgrades_bought').val(clickUpgradesBought);
         $('#var_o').val(max_o);
         $('#current_passive_points').val(prestigePoints);
-        $('#mana').val(maxMana);
-        $('#current_mana1').val(currentMana);
+        $('#mana').val(SkillButton.maxMana);
+        $('#current_mana1').val(SkillButton.mana);
         saveUnits();
         savePassives();
         $('#cookie_form').submit();
