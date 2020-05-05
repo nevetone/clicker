@@ -1,5 +1,6 @@
 <script>
 {% load static %}
+var refresh = false;
     // tworzenei unikatowego id
     function makeCookieId(length) {
         var result = '';
@@ -44,8 +45,10 @@ $(document).ready(function(){
             url: $(this).attr('action'),
             success: function(data) {
                 if(data.loaded == 'true'){
-                    $('#message').text(data.message).fadeIn(1000).fadeOut(1000);
                     $('#loadSave').submit();
+                    $('#message').text(data.message).fadeIn(1000).fadeOut(1000);
+                    refresh = true;
+
                 }else{
                     $('#message').text(data.message).fadeIn(1000).fadeOut(1000);
                 };
@@ -215,6 +218,7 @@ $(document).ready(function(){
     // zmienne dla passives 
         var passiveClickDmg = 1;
         var passiveGold = 1;
+        var unitMultipler = 1;
 
     $("#prestige_points").text(0);
     $('#dps').text(dps.toFixed(1)+' dmg.');
@@ -354,111 +358,49 @@ $(document).ready(function(){
             this.passiveCount = 0;
         };
 
-        buyPassive(){
-            if(Prestige.prestigePoints >= this.passiveCost){
-                Prestige.prestigePoints -= this.passiveCost;
-                this.passiveCount++;
-                $("#prestige_points").text(Prestige.prestigePoints);
-                switch(this.passiveId){
-                    case('passive0'): // przykladowa passive - jeszcze sie nie zapisuje w bazie
-                    passiveClickDmg *= 1.1;
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive1'):
-                    passiveGold *= 1.1;
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive2'):
-                    // dzialanie najlpeiej zmienna nowa
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive3'):
-                    // dzialanie najlpeiej zmienna nowa
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive4'):
-                    // dzialanie najlpeiej zmienna nowa
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive5'):
-                    // dzialanie najlpeiej zmienna nowa
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive6'):
-                    // dzialanie najlpeiej zmienna nowa
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive7'):
-                    // dzialanie najlpeiej zmienna nowa
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive8'):
-                    // dzialanie najlpeiej zmienna nowa
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                    case('passive9'):
-                    // dzialanie najlpeiej zmienna nowa
-                    this.passiveCost++;
-                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
-                    return;
-                    break;
-                };
-            }else{
-                console.log('You have not enough PP');
-            };
-        };
         static doPrestige(){
             if(stagePassed<100){
+                ('#prestige').prop("disabled", true);
                 return;
             }
             //reset zmiennych
-
+            
             Presstige.prestigePoints += stagePassed/10;
         }
+
+        static RefreshButtonPrestige(){
+            if(stagePassed<100){
+                $('#prestige').prop("disabled", true);
+            }else{
+                $('#prestige').prop("disabled", false);
+            };
+        };
 
         static Init(){
             var passiveCosts = [1,2,2,2,3,3,4,4,5,6];
             var passiveNames = [
                 'Click DMG',
                 'More Gold',
-                'Passive 3',
-                'Passive 4',
-                'Passive 5',
-                'Passive 6',
-                'Passive 7',
-                'Passive 8',
-                'Passive 9',
-                'Passive 10',
+                'Max Mana',
+                'Refill Mana',
+                'Units DMG',
+                'Comming soon, maybe',
+                'Comming soon, maybe',
+                'Comming soon, maybe',
+                'Comming soon, maybe',
+                'Comming soon, maybe',
             ];
             var passiveTitles = [
                 'Multiply your ClickDMG by *1.1 for each upgrade',
                 'Multiply your gold income by *1.1 for each upgrade',
-                'Passive 3 title',
-                'Passive 4 title',
-                'Passive 5 title',
-                'Passive 6 title',
-                'Passive 7 title',
-                'Passive 8 title',
-                'Passive 9 title',
-                'Passive 10 title',
+                'Adding 10 points to your MaxMana additional',
+                'Adding 1 mana per sec additional',
+                'Multiply your Units dmg by *1.2 for each upgrade',
+                'Comming soon, maybe',
+                'Comming soon, maybe',
+                'Comming soon, maybe',
+                'Comming soon, maybe',
+                'Comming soon, maybe',
             ];
 
             for(var i = 0; i<10 ;i++){
@@ -491,20 +433,16 @@ $(document).ready(function(){
                 $('#'+Prestige.passives[1].passiveId+'_cost').text(Prestige.passives[1].passiveCost);
             };
             for(var i = 0 ; i<Prestige.passives[2].passiveCount; i++){
-
-
                 Prestige.passives[2].passiveCosts++;
                 $('#'+Prestige.passives[2].passiveId+'_cost').text(Prestige.passives[2].passiveCost);
             };
             for(var i = 0 ; i<Prestige.passives[3].passiveCount; i++){
-
-
+                SkillButton.manaRegen += 1;
                 Prestige.passives[3].passiveCosts++;
                 $('#'+Prestige.passives[3].passiveId+'_cost').text(Prestige.passives[3].passiveCost);
             };
             for(var i = 0 ; i<Prestige.passives[4].passiveCount; i++){
-
-
+                unitMultipler *= 1.2;
                 Prestige.passives[4].passiveCosts++;
                 $('#'+Prestige.passives[4].passiveId+'_cost').text(Prestige.passives[4].passiveCost);
             };
@@ -538,13 +476,77 @@ $(document).ready(function(){
                 Prestige.passives[9].passiveCosts++;
                 $('#'+Prestige.passives[9].passiveId+'_cost').text(Prestige.passives[9].passiveCost);
             };
+            refreshHTML();
 
         };
+
+        buyPassive(){
+            if(Prestige.prestigePoints >= this.passiveCost){
+                Prestige.prestigePoints -= this.passiveCost;
+                this.passiveCount++;
+                this.passiveCost++;
+                $("#prestige_points").text(Prestige.prestigePoints);
+                switch(this.passiveId){
+                    case('passive0'): // przykladowa passive - jeszcze sie nie zapisuje w bazie
+                    passiveClickDmg *= 1.1;
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive1'):
+                    passiveGold *= 1.1;
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive2'):
+                    SkillButton.maxMana += 10;
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive3'):
+                    SkillButton.manaRegen += 1;
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive4'):
+                    unitMultipler *= 1.2;
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive5'):
+                    // dzialanie najlpeiej zmienna nowa
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive6'):
+                    // dzialanie najlpeiej zmienna nowa
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive7'):
+                    // dzialanie najlpeiej zmienna nowa
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive8'):
+                    // dzialanie najlpeiej zmienna nowa
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                    case('passive9'):
+                    // dzialanie najlpeiej zmienna nowa
+                    $('#'+this.passiveId+'_cost').text(this.passiveCost);
+                    return;
+                    break;
+                };
+            }else{
+            };
+        };
+
     };
 
     
     Prestige.Init();
-
+    
 // class units i skills
     class Upgrade{  
         constructor(){
@@ -573,7 +575,7 @@ $(document).ready(function(){
                     return;
                     break;
                 };
-                // tworzenie imputow do forma i aktualizowanie
+                // tworzenie imputow do forma i aktualizowanie                
                 saveUnits();
             };
         };
@@ -649,6 +651,9 @@ $(document).ready(function(){
         static refreshSkills(){
             if(SkillButton.mana < SkillButton.maxMana){
                  SkillButton.mana += SkillButton.manaRegen;
+            }
+            if(SkillButton.mana > SkillButton.maxMana){
+                SkillButton.mana = SkillButton.maxMana;
             }
 
             for(var i = 0;i<this.skills.length;i++){
@@ -728,7 +733,7 @@ $(document).ready(function(){
             var dmg=0;
 
             for(var i = 0;i<this.buttons.length;i++){
-                dmg += this.buttons[i].baseDmg*this.buttons[i].boughtUpgrades/10;
+                dmg += (this.buttons[i].baseDmg*this.buttons[i].boughtUpgrades/10)*unitMultipler;
             };
         return dmg;
         };
@@ -751,6 +756,7 @@ $(document).ready(function(){
 
     UpgradeButton.Init();
     SkillButton.Init();
+    Prestige.RefreshPassives();
 
 // load save ------------------------------------
     $('#loadSave').submit(function() {
@@ -773,8 +779,6 @@ $(document).ready(function(){
                 for(var i=0; i<10; i++){
                     Prestige.passives[i].passiveCost = data.passive_cost[i];
                     Prestige.passives[i].passiveCount = data.passive_count[i];
-                    console.log(data.passive_cost[i]);
-                    console.log(data.passive_count[i]);
                 };
                 
 
@@ -802,13 +806,16 @@ $(document).ready(function(){
                     };
                             
                 };
-
                 min = last_mobs;
                 max = last_mobs + mobs_on_island_count[o+1] - 1;
                 refreshIsland(false);
                 refreshHTML();
-                Prestige.RefreshPassives();
                 setHp();
+                Prestige.RefreshPassives();
+                Prestige.RefreshButtonPrestige();
+                if(refresh == true){
+                    location.reload();
+                }
             }});
         return false;
     });
@@ -868,6 +875,7 @@ $(document).ready(function(){
     function refreshHTML(){
         UpgradeButton.refreshButtons();
         SkillButton.refreshSkills();
+        
 
         $('#gold').text(gold.toFixed(0));
         $('#boughtUpgrades').text(clickUpgradesBought-1);
@@ -934,6 +942,7 @@ $(document).ready(function(){
                     stagePassed++;
                     setHp();
                     level = 1;
+                    Prestige.RefreshButtonPrestige();
                 };
                 refreshIsland(true);
             };
