@@ -212,6 +212,7 @@ $(document).ready(function(){
     var mobs_images = [];
     var mobs_on_island_count = [];
 
+
     // zmienne dla passives 
         var passiveClickDmg = 1;
         var passiveGold = 1;
@@ -247,7 +248,7 @@ $(document).ready(function(){
     function createDmg(x, y, dmg){
         const dmgNumber = document.createElement('dmgNumber');
         document.body.appendChild(dmgNumber);
-        dmgNumber.innerHTML=dmg.toFixed(2);
+        dmgNumber.innerHTML=dmg.toFixed(0);
         const destinationX = x;
         const destinationY = y;
             const animation = dmgNumber.animate([
@@ -280,7 +281,7 @@ $(document).ready(function(){
     function createCoin(gold){
         const goldNumber = document.createElement('goldNumber');
         document.body.appendChild(goldNumber);
-        goldNumber.innerHTML= "<span class=\"text-warning\"><i class=\"fas fa-coins\"></i>+"+gold.toFixed(1)+"</span>" ;
+        goldNumber.innerHTML= "<span class=\"text-warning\"><i class=\"fas fa-coins\"></i>+"+gold.toFixed(0)+"</span>" ;
         $('goldNumber').css('left', '50%');
         $('goldNumber').css('top', '40%');
         min1 = Math.ceil(-50);
@@ -573,6 +574,9 @@ $(document).ready(function(){
     };
     class SkillButton extends Upgrade {
         static skills=[];
+        static mana;
+        static maxMana=100;
+        static manaRegen=1;
         constructor(){
             super();
             this.isOn=false;
