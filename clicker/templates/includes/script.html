@@ -201,7 +201,6 @@ $(document).ready(function(){
     var cost10=clickUpgradePrice*2*10;
     var cost25=clickUpgradePrice*2*25;
     var b_goldSkill=false;
-    var prestigePoints = 1000;
     var maxMana = 100;
     var currentMana = 100;
     // zmienne wysp i mobków z bazy danych \/
@@ -217,7 +216,7 @@ $(document).ready(function(){
         var passiveClickDmg = 1;
         var passiveGold = 1;
 
-    $("#prestige_points").text(prestigePoints);
+    $("#prestige_points").text(0);
     $('#dps').text(dps.toFixed(1)+' dmg.');
 
     {% for island in islands %}
@@ -346,6 +345,7 @@ $(document).ready(function(){
 // class prestige // no i trza dodac system aby zdobywac prestigePoints <- tak sie nazywa zemienna
     class Prestige{
         static passives=[];
+        static prestigePoints=0;
         constructor(){
             this.passiveId = '';
             this.passiveName = '';
@@ -355,10 +355,10 @@ $(document).ready(function(){
         };
 
         buyPassive(){
-            if(prestigePoints >= this.passiveCost){
-                prestigePoints -= this.passiveCost;
+            if(Prestige.prestigePoints >= this.passiveCost){
+                Prestige.prestigePoints -= this.passiveCost;
                 this.passiveCount++;
-                $("#prestige_points").text(prestigePoints);
+                $("#prestige_points").text(Prestige.prestigePoints);
                 switch(this.passiveId){
                     case('passive0'): // przykladowa passive - jeszcze sie nie zapisuje w bazie
                     passiveClickDmg *= 1.1;
@@ -425,6 +425,14 @@ $(document).ready(function(){
                 console.log('You have not enough PP');
             };
         };
+        static doPrestige(){
+            if(stagePassed<100){
+                return;
+            }
+            //reset zmiennych
+
+            Presstige.prestigePoints += stagePassed/10;
+        }
 
         static Init(){
             var passiveCosts = [1,2,2,2,3,3,4,4,5,6];
@@ -775,7 +783,7 @@ $(document).ready(function(){
                 max_o = data.var_o;
                 SkillButton.mana = data.current_mana;
                 SkillButton.maxMana = data.max_mana;
-                prestigePoints = data.current_passive_points;
+                Prestige.prestigePoints = data.current_passive_points;
                 clickCount = data.click_count;
                 stage = data.stage_passed;
                 stagePassed = data.stage_passed;
@@ -872,7 +880,7 @@ $(document).ready(function(){
         $('#clickDmg').text((clickDmg*passiveClickDmg).toFixed(2));
         $("#max_mana").text(SkillButton.maxMana.toFixed(0));
         $("#current_mana").text(SkillButton.mana.toFixed(0));
-        $("#prestige_points").text(prestigePoints.toFixed(0));
+        $("#prestige_points").text(Prestige.prestigePoints.toFixed(0));
         var manaBar = SkillButton.mana/SkillButton.maxMana*100;
         $("#progress-bar-mana").css('width', manaBar.toFixed(2)+'%');
 
@@ -1060,7 +1068,7 @@ $(document).ready(function(){
         $('#stage_passed').val(stagePassed);
         $('#click_upgrades_bought').val(clickUpgradesBought);
         $('#var_o').val(max_o);
-        $('#current_passive_points').val(prestigePoints);
+        $('#current_passive_points').val(Prestige.prestigePoints);
         $('#mana').val(SkillButton.maxMana);
         $('#current_mana1').val(SkillButton.mana);
         saveUnits();
